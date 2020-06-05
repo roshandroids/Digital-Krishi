@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1041602895627",
+    "firebase_url": "https://digital-krishi-9430b.firebaseio.com",
+    "project_id": "digital-krishi-9430b",
+    "storage_bucket": "digital-krishi-9430b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041602895627:android:e196da9e42224607190c0e",
+        "android_client_info": {
+          "package_name": "com.krishi.digitalKrishi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1041602895627-hr2edqtkogo1k3jghra9o3l4nju8gbfu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.krishi.digitalKrishi",
+            "certificate_hash": "8a6af2ff97a5bff70bcc5c63b8a46d6c84cc3aaf"
+          }
+        },
+        {
+          "client_id": "1041602895627-48cq9ok52f6duo2dbfasv3hn2f0j3b02.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOStDLBH09K7JCFqE_EYMYhqUorNDVFjA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1041602895627-48cq9ok52f6duo2dbfasv3hn2f0j3b02.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
