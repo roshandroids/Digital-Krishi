@@ -1,7 +1,7 @@
+import 'package:digitalKrishi/CustomComponents/bubble_indication_painter.dart';
+import 'package:digitalKrishi/CustomComponents/exitAppAlert.dart';
 import 'package:digitalKrishi/UI/AuthScreens/loginScreen.dart';
 import 'package:digitalKrishi/UI/AuthScreens/signUpScreen.dart';
-import 'package:digitalKrishi/style/theme.dart' as Theme;
-import 'package:digitalKrishi/utils/bubble_indication_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -14,8 +14,6 @@ class AuthMainScreen extends StatefulWidget {
 
 class _AuthMainScreenState extends State<AuthMainScreen>
     with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   PageController _pageController;
 
   Color left = Colors.black;
@@ -24,21 +22,18 @@ class _AuthMainScreenState extends State<AuthMainScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: SingleChildScrollView(
+      body: WillPopScope(
+        onWillPop: () => ExitAppAlert().onBackPress(context: context),
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                  colors: [
-                    Theme.Colors.loginGradientStart,
-                    Theme.Colors.loginGradientEnd
-                  ],
+                  colors: [Color(0xFFf67B26F), Color(0xFFf4ca2cd)],
                   begin: const FractionalOffset(0.0, 0.0),
                   end: const FractionalOffset(1.0, 1.0),
                   stops: [0.0, 1.0],
@@ -49,11 +44,19 @@ class _AuthMainScreenState extends State<AuthMainScreen>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 75.0),
-                  child: Image(
-                      width: 250.0,
-                      height: 191.0,
-                      fit: BoxFit.fill,
-                      image: AssetImage('lib/Assets/Images/logo.png')),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Image(
+                        // width: 250.0,
+                        // height: 191.0,
+                        fit: BoxFit.cover,
+                        // color: Colors.white,
+                        image: AssetImage(
+                          'lib/Assets/Images/icon.png',
+                        )),
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 20.0),
@@ -81,11 +84,15 @@ class _AuthMainScreenState extends State<AuthMainScreen>
                     children: <Widget>[
                       ConstrainedBox(
                         constraints: const BoxConstraints.expand(),
-                        child: LoginScreen(),
+                        child: LoginScreen(
+                          pageController: _pageController,
+                        ),
                       ),
                       ConstrainedBox(
                         constraints: const BoxConstraints.expand(),
-                        child: SignUpScreen(),
+                        child: SignUpScreen(
+                          pageController: _pageController,
+                        ),
                       ),
                     ],
                   ),
@@ -131,9 +138,9 @@ class _AuthMainScreenState extends State<AuthMainScreen>
                 child: Text(
                   "Existing",
                   style: TextStyle(
-                      color: left,
-                      fontSize: 16.0,
-                      fontFamily: "WorkSansSemiBold"),
+                    color: left,
+                    fontSize: 16.0,
+                  ),
                 ),
               ),
             ),
@@ -146,9 +153,9 @@ class _AuthMainScreenState extends State<AuthMainScreen>
                 child: Text(
                   "New",
                   style: TextStyle(
-                      color: right,
-                      fontSize: 16.0,
-                      fontFamily: "WorkSansSemiBold"),
+                    color: right,
+                    fontSize: 16.0,
+                  ),
                 ),
               ),
             ),

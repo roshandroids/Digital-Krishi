@@ -1,4 +1,6 @@
 import 'package:digitalKrishi/UI/AuthScreens/authMainScreen.dart';
+import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
+import 'package:digitalKrishi/UI/UserScreens/userMainScreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,7 +16,11 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: AuthMainScreen(),
+      home: SplashScreen(),
+      routes: <String, WidgetBuilder>{
+        '/AuthMainScreen': (BuildContext context) => AuthMainScreen(),
+        '/UserMainScreen': (BuildContext context) => UserMainScreen(),
+      },
     );
   }
 }
