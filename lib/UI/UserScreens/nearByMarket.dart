@@ -2,8 +2,8 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalKrishi/Model/shop_model.dart';
 import 'package:digitalKrishi/UI/OtherScreens/placeDetails.dart';
-import 'package:digitalKrishi/UI/OtherScreens/shop_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -24,6 +24,12 @@ class _NearByMarketState extends State<NearByMarket> {
   PageController _pageController;
   double longitude;
   double latitude;
+  String thumbNail;
+  String shopName;
+  String description;
+
+  LatLng location;
+  String address;
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   int prevPage;
   @override
@@ -46,7 +52,7 @@ class _NearByMarketState extends State<NearByMarket> {
   }
 
   void getLocation() async {
-    geolocator
+    await geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       if (mounted)
@@ -88,6 +94,12 @@ class _NearByMarketState extends State<NearByMarket> {
                   snippet: shop.data["address"]),
               position: LatLng(shop.data["locationCoords"].latitude,
                   shop.data["locationCoords"].longitude)));
+          thumbNail = shop.data['thumbNail'];
+          shopName = shop.data['shopName'];
+          location = LatLng(shop.data['locationCoords'].latitude,
+              shop.data['locationCoords'].longitude);
+          description = shop.data['description'];
+          address = shop.data["address"];
         });
       });
     });
@@ -119,6 +131,20 @@ class _NearByMarketState extends State<NearByMarket> {
       },
       child: InkWell(
         onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PlaceDetails(
+                thumbNail: thumbNail,
+                shopName: shopName,
+                locationCoords: location,
+                description: description,
+                address: address,
+              ),
+            ),
+          );
+        },
+        onDoubleTap: () {
           moveCamera();
         },
         child: Container(
@@ -219,45 +245,64 @@ class _NearByMarketState extends State<NearByMarket> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SafeArea(
-      child: Stack(
-        children: <Widget>[
-          (latitude == null && longitude == null)
-              ? Container()
-              : Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                        target: LatLng(latitude, longitude), zoom: 17.0),
-                    markers: Set.from(allMarkers),
-                    myLocationButtonEnabled: true,
-                    rotateGesturesEnabled: true,
-                    tiltGesturesEnabled: true,
-                    compassEnabled: true,
-                    myLocationEnabled: true,
-                    onMapCreated: mapCreated,
-                    zoomControlsEnabled: true,
-                    zoomGesturesEnabled: true,
-                    mapType: MapType.hybrid,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+            icon: Icon(Icons.chevron_left, size: 30),
+            onPressed: () {
+              Navigator.of(context).pop();
+            }),
+      ),
+      body: (latitude != null && longitude != null)
+          ? Stack(
+              children: <Widget>[
+                (latitude == null && longitude == null)
+                    ? Container()
+                    : Container(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        child: GoogleMap(
+                          initialCameraPosition: CameraPosition(
+                              target: LatLng(latitude, longitude), zoom: 17.0),
+                          markers: Set.from(allMarkers),
+                          myLocationButtonEnabled: true,
+                          rotateGesturesEnabled: true,
+                          tiltGesturesEnabled: true,
+                          compassEnabled: true,
+                          myLocationEnabled: true,
+                          onMapCreated: mapCreated,
+                          zoomControlsEnabled: true,
+                          zoomGesturesEnabled: true,
+                          mapType: MapType.hybrid,
+                        ),
+                      ),
+                Positioned(
+                  top: 50,
+                  child: Container(
+                    height: 120.0,
+                    width: MediaQuery.of(context).size.width,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: shops.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return _shopList(index);
+                      },
+                    ),
                   ),
                 ),
-          Positioned(
-            top: 50,
-            child: Container(
-              height: 120.0,
+              ],
+            )
+          : Container(
+              height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: shops.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _shopList(index);
-                },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Searching Markets"),
+                  CircularProgressIndicator(),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-    ));
+    );
   }
 }

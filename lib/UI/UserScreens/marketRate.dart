@@ -11,6 +11,18 @@ class _MarketRateState extends State<MarketRate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+            icon: Icon(
+              Icons.chevron_left,
+              color: Colors.black,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            }),
+        backgroundColor: Colors.transparent,
+      ),
       body: SafeArea(
         child: Stack(
           children: <Widget>[

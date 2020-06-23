@@ -1,13 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitalKrishi/UI/OtherScreens/marketRate.dart';
-import 'package:digitalKrishi/UI/UserScreens/nearByMarket.dart';
-import 'package:digitalKrishi/UI/UserScreens/userHomeScreen.dart';
-import 'package:digitalKrishi/UI/UserScreens/userProfileScreen.dart';
-import 'package:digitalKrishi/UI/UserScreens/weatherUpdate.dart';
+import 'package:digitalKrishi/UI/ChatScreens/allUsers.dart';
+import 'package:digitalKrishi/UI/OtherScreens/feeds.dart';
+import 'package:digitalKrishi/UI/UserScreens/moreSettings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +27,7 @@ class _UserMainScreenState extends State<UserMainScreen>
   void initState() {
     super.initState();
     getUserData();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   void getUserData() async {
@@ -129,19 +125,14 @@ class _UserMainScreenState extends State<UserMainScreen>
             physics: BouncingScrollPhysics(),
             controller: _tabController,
             children: <Widget>[
-              UserHomeScreen(),
-              MarketRate(),
-              WeatherUpdate(),
-              NearByMarket(),
-              UserProfileScreen(
-                userId: userId,
-              ),
+              Feeds(),
+              AllUsers(),
+              MoreSettings(),
             ],
           ),
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.only(bottom: 5),
             child: TabBar(
-              isScrollable: true,
               controller: _tabController,
               labelColor: Colors.green,
               indicatorSize: TabBarIndicatorSize.label,
@@ -151,27 +142,17 @@ class _UserMainScreenState extends State<UserMainScreen>
               tabs: <Widget>[
                 Tab(
                   icon: FaIcon(FontAwesomeIcons.home),
-                  text: "Home Screen",
+                  text: "Home",
                 ),
                 Tab(
-                  icon: Icon(Icons.attach_money),
-                  text: "Price Screen",
+                  icon: Icon(Icons.forum),
+                  text: "Chat",
                 ),
                 Tab(
-                  icon: Icon(Icons.cloud_circle),
-                  text: "Share Screen",
-                ),
-                Tab(
-                  icon: Icon(Icons.shop),
-                  text: "Market Screen",
-                ),
-                Tab(
-                  icon: CachedNetworkImage(
-                      height: 30,
-                      width: 30,
-                      imageUrl:
-                          "https://img.icons8.com/plasticine/2x/user.png"),
-                  text: "Profile",
+                  icon: Icon(
+                    Icons.more_horiz,
+                  ),
+                  text: "More",
                 ),
               ],
             ),

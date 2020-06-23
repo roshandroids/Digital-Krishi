@@ -19,11 +19,12 @@ class _AllUsersState extends State<AllUsers> {
     FirebaseAuth.instance.currentUser().then(
       (firebaseUser) {
         if (firebaseUser != null) {
-          setState(
-            () {
-              currentUserId = firebaseUser.uid;
-            },
-          );
+          if (mounted)
+            setState(
+              () {
+                currentUserId = firebaseUser.uid;
+              },
+            );
         }
       },
     );
