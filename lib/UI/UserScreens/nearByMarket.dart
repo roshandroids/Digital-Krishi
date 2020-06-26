@@ -2,10 +2,13 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:digitalKrishi/Model/shop_model.dart';
 import 'package:digitalKrishi/UI/OtherScreens/placeDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_offline/flutter_offline.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -67,40 +70,41 @@ class _NearByMarketState extends State<NearByMarket> {
   void getShops() async {
     await Firestore.instance.collection("shops").getDocuments().then((element) {
       element.documents.forEach((shop) {
-        setState(() {
-          shops.add(Shop.fromMap(shop.data));
-          allMarkers.add(Marker(
-              icon: BitmapDescriptor.defaultMarker,
-              markerId: MarkerId(shop.data["markerId"]),
-              draggable: true,
-              infoWindow: InfoWindow(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlaceDetails(
-                          thumbNail: shop.data['thumbNail'],
-                          shopName: shop.data['shopName'],
-                          locationCoords: LatLng(
-                              shop.data['locationCoords'].latitude,
-                              shop.data['locationCoords'].longitude),
-                          description: shop.data['description'],
-                          address: shop.data["address"],
+        if (mounted)
+          setState(() {
+            shops.add(Shop.fromMap(shop.data));
+            allMarkers.add(Marker(
+                icon: BitmapDescriptor.defaultMarker,
+                markerId: MarkerId(shop.data["markerId"]),
+                draggable: true,
+                infoWindow: InfoWindow(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlaceDetails(
+                            thumbNail: shop.data['thumbNail'],
+                            shopName: shop.data['shopName'],
+                            locationCoords: LatLng(
+                                shop.data['locationCoords'].latitude,
+                                shop.data['locationCoords'].longitude),
+                            description: shop.data['description'],
+                            address: shop.data["address"],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  title: shop.data["shopName"],
-                  snippet: shop.data["address"]),
-              position: LatLng(shop.data["locationCoords"].latitude,
-                  shop.data["locationCoords"].longitude)));
-          thumbNail = shop.data['thumbNail'];
-          shopName = shop.data['shopName'];
-          location = LatLng(shop.data['locationCoords'].latitude,
-              shop.data['locationCoords'].longitude);
-          description = shop.data['description'];
-          address = shop.data["address"];
-        });
+                      );
+                    },
+                    title: shop.data["shopName"],
+                    snippet: shop.data["address"]),
+                position: LatLng(shop.data["locationCoords"].latitude,
+                    shop.data["locationCoords"].longitude)));
+            thumbNail = shop.data['thumbNail'];
+            shopName = shop.data['shopName'];
+            location = LatLng(shop.data['locationCoords'].latitude,
+                shop.data['locationCoords'].longitude);
+            description = shop.data['description'];
+            address = shop.data["address"];
+          });
       });
     });
   }
@@ -221,9 +225,10 @@ class _NearByMarketState extends State<NearByMarket> {
   }
 
   void mapCreated(controller) {
-    setState(() {
-      _controller = controller;
-    });
+    if (mounted)
+      setState(() {
+        _controller = controller;
+      });
   }
 
   moveCamera() {
@@ -253,56 +258,73 @@ class _NearByMarketState extends State<NearByMarket> {
               Navigator.of(context).pop();
             }),
       ),
-      body: (latitude != null && longitude != null)
-          ? Stack(
-              children: <Widget>[
-                (latitude == null && longitude == null)
-                    ? Container()
-                    : Container(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        child: GoogleMap(
-                          initialCameraPosition: CameraPosition(
-                              target: LatLng(latitude, longitude), zoom: 17.0),
-                          markers: Set.from(allMarkers),
-                          myLocationButtonEnabled: true,
-                          rotateGesturesEnabled: true,
-                          tiltGesturesEnabled: true,
-                          compassEnabled: true,
-                          myLocationEnabled: true,
-                          onMapCreated: mapCreated,
-                          zoomControlsEnabled: true,
-                          zoomGesturesEnabled: true,
-                          mapType: MapType.hybrid,
+      body: OfflineBuilder(
+        connectivityBuilder: (
+          BuildContext context,
+          ConnectivityResult connectivity,
+          Widget child,
+        ) {
+          bool connected = connectivity != ConnectivityResult.none;
+          return connected
+              ? (latitude != null && longitude != null)
+                  ? Stack(
+                      children: <Widget>[
+                        (latitude == null && longitude == null)
+                            ? Container()
+                            : Container(
+                                height: MediaQuery.of(context).size.height,
+                                width: MediaQuery.of(context).size.width,
+                                child: GoogleMap(
+                                  initialCameraPosition: CameraPosition(
+                                      target: LatLng(latitude, longitude),
+                                      zoom: 17.0),
+                                  markers: Set.from(allMarkers),
+                                  myLocationButtonEnabled: true,
+                                  rotateGesturesEnabled: true,
+                                  tiltGesturesEnabled: true,
+                                  compassEnabled: true,
+                                  myLocationEnabled: true,
+                                  onMapCreated: mapCreated,
+                                  zoomControlsEnabled: true,
+                                  zoomGesturesEnabled: true,
+                                  mapType: MapType.hybrid,
+                                ),
+                              ),
+                        Positioned(
+                          top: 50,
+                          child: Container(
+                            height: 120.0,
+                            width: MediaQuery.of(context).size.width,
+                            child: PageView.builder(
+                              controller: _pageController,
+                              itemCount: shops.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return _shopList(index);
+                              },
+                            ),
+                          ),
                         ),
+                      ],
+                    )
+                  : Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Searching Markets"),
+                          SpinKitWave(
+                            color: Colors.blue,
+                            type: SpinKitWaveType.start,
+                            size: 50.0,
+                          ),
+                        ],
                       ),
-                Positioned(
-                  top: 50,
-                  child: Container(
-                    height: 120.0,
-                    width: MediaQuery.of(context).size.width,
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: shops.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return _shopList(index);
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            )
-          : Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text("Searching Markets"),
-                  CircularProgressIndicator(),
-                ],
-              ),
-            ),
+                    )
+              : Offline();
+        },
+        child: Container(),
+      ),
     );
   }
 }

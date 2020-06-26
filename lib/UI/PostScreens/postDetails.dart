@@ -153,7 +153,10 @@ class _PostDetailsState extends State<PostDetails> {
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
-            icon: Icon(Icons.chevron_left),
+            icon: Icon(
+              Icons.chevron_left,
+              size: 30,
+            ),
             onPressed: () {
               Navigator.of(context).pop();
             }),
@@ -203,70 +206,79 @@ class _PostDetailsState extends State<PostDetails> {
                           ],
                         ),
                       ),
-                      child: ListTile(
-                        onTap: () {},
-                        title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Admin",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border(bottom: BorderSide(width: .5))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Admin",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Icon(Icons.check_circle_outline, size: 15)
+                              ],
                             ),
-                            Icon(Icons.check_circle_outline, size: 15)
+                            Text(timeago.format(widget.postedAt.toDate())),
                           ],
                         ),
-                        subtitle: Text(snapshot.data.data['email']),
-                        trailing:
-                            Text(timeago.format(widget.postedAt.toDate())),
                       ),
                     );
                   } else
                     return Container(
-                      margin: EdgeInsets.only(top: 20, left: 12, right: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(
-                          colors: <Color>[
-                            Color(0xffffCC95C0),
-                            Color(0xfffffDBD4B4),
-                            Color(0xfffff7AA1D2)
-                          ],
+                        margin: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(width: .5),
                         ),
-                      ),
-                      child: ListTile(
-                        onTap: () {},
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: CachedNetworkImage(
-                            height: 60,
-                            width: 60,
-                            imageUrl: snapshot.data.data['photoUrl'],
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                          ),
-                        ),
-                        title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              snapshot.data.data['fullName'],
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: CachedNetworkImage(
+                                    height: 60,
+                                    width: 60,
+                                    imageUrl: snapshot.data.data['photoUrl'],
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        snapshot.data.data['fullName'],
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      (snapshot.data.data['userType'] ==
+                                              "Doctor")
+                                          ? Icon(Icons.check_circle_outline,
+                                              size: 15)
+                                          : Container(),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            (snapshot.data.data['userType'] == "Doctor")
-                                ? Icon(Icons.check_circle_outline, size: 15)
-                                : Container(),
-                          ],
-                        ),
-                        subtitle: Text(snapshot.data.data['email']),
-                        trailing:
                             Text(timeago.format(widget.postedAt.toDate())),
-                      ),
-                    );
+                          ],
+                        ));
                 }),
             Container(
               alignment: Alignment.center,
@@ -419,6 +431,8 @@ class _PostDetailsState extends State<PostDetails> {
                                                     .width /
                                                 1.7,
                                             child: TextFormField(
+                                              textInputAction:
+                                                  TextInputAction.done,
                                               controller: commentController,
                                               cursorColor: Colors.black,
                                               decoration: new InputDecoration(

@@ -1,4 +1,7 @@
+import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:darksky_weather/darksky_weather_io.dart';
 
@@ -64,35 +67,47 @@ class _WeatherUpdateState extends State<WeatherUpdate> {
           ),
         ),
       ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: (summary != null && currentSummary != null)
-            ? Container(
-                child: Column(
-                  children: <Widget>[
-                    (Text(
-                      summary,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Color.fromARGB(0xff, 32, 168, 74),
-                      ),
-                    )),
-                    Container(
-                      child: Text(currentSummary),
-                    )
-                  ],
-                ),
-              )
-            : Container(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.white,
-                    strokeWidth: 6,
-                  ),
-                ),
-              ),
+      body: OfflineBuilder(
+        connectivityBuilder: (
+          BuildContext context,
+          ConnectivityResult connectivity,
+          Widget child,
+        ) {
+          bool connected = connectivity != ConnectivityResult.none;
+          return connected
+              ? Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: (summary != null && currentSummary != null)
+                      ? Container(
+                          child: Column(
+                            children: <Widget>[
+                              (Text(
+                                summary,
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Color.fromARGB(0xff, 32, 168, 74),
+                                ),
+                              )),
+                              Container(
+                                child: Text(currentSummary),
+                              )
+                            ],
+                          ),
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text("Fetching WeatherData !"),
+                            SpinKitWave(
+                              color: Colors.blue,
+                            ),
+                          ],
+                        ),
+                )
+              : Offline();
+        },
+        child: Container(),
       ),
     );
   }

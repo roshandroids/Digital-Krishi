@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/offline.dart';
+import 'package:digitalKrishi/UI/PostScreens/postDetails.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -172,7 +173,21 @@ class _UpdateProfileState extends State<UpdateProfile> {
         String collectionName) {
       Timestamp timestamp = document['PostedAt'];
       return InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PostDetails(
+                        postImage: document['PostImage'],
+                        postTitle: document['PostTitle'],
+                        postDescription: document['PostDescription'],
+                        postedAt: document['PostedAt'],
+                        postedBy: document['PostedBy'],
+                        id: document.documentID,
+                        collectionName: collectionName,
+                      )),
+            );
+          },
           child: Container(
             margin: EdgeInsets.all(8),
             width: MediaQuery.of(context).size.width / 2.2,

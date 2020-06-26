@@ -1,10 +1,13 @@
 import 'dart:async';
 
+import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // ignore: prefer_collection_literals
 final Set<JavascriptChannel> jsChannels = [
@@ -15,17 +18,17 @@ final Set<JavascriptChannel> jsChannels = [
       }),
 ].toSet();
 
-class MarketRate extends StatefulWidget {
+class ReadNews extends StatefulWidget {
   final String url;
 
-  MarketRate({
+  ReadNews({
     @required this.url,
   });
   @override
-  _MarketRateState createState() => _MarketRateState();
+  _ReadnewsState createState() => _ReadnewsState();
 }
 
-class _MarketRateState extends State<MarketRate> {
+class _ReadnewsState extends State<ReadNews> {
   final flutterWebViewPlugin = FlutterWebviewPlugin();
 
   // On urlChanged stream
@@ -119,43 +122,52 @@ class _MarketRateState extends State<MarketRate> {
       ) {
         bool connected = connectivity != ConnectivityResult.none;
         return connected
-            ? Container(
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                child: WebviewScaffold(
-                  url: widget.url,
-                  javascriptChannels: jsChannels,
-                  mediaPlaybackRequiresUserGesture: false,
-                  appBar: AppBar(
-                    leading: IconButton(
-                        icon: Icon(Icons.chevron_left),
-                        onPressed: () async {
-                          flutterWebViewPlugin.close();
-                          Navigator.of(context).pop();
-                        }),
-                  ),
-                  withZoom: true,
-                  withLocalStorage: true,
-                  hidden: true,
-                  initialChild: Container(
-                    color: Colors.white30,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SpinKitWave(
-                            color: Colors.blue,
-                            size: 50.0,
-                          ),
-                          Text(
-                            "Fetching Data..",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
+            ? WebviewScaffold(
+                url: widget.url,
+                javascriptChannels: jsChannels,
+                mediaPlaybackRequiresUserGesture: false,
+                appBar: AppBar(
+                  leading: IconButton(
+                      icon: Icon(Icons.chevron_left),
+                      onPressed: () async {
+                        flutterWebViewPlugin.close();
+                        Navigator.of(context).pop();
+                      }),
+                ),
+                withZoom: true,
+                withLocalStorage: true,
+                hidden: true,
+                initialChild: Container(
+                  color: Colors.white30,
+                  child: Center(
+                    child: SpinKitWave(
+                      color: Colors.blue,
+                      size: 50.0,
                     ),
+                  ),
+                ),
+                bottomNavigationBar: BottomAppBar(
+                  child: Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.arrow_back_ios),
+                        onPressed: () {
+                          flutterWebViewPlugin.goBack();
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.arrow_forward_ios),
+                        onPressed: () {
+                          flutterWebViewPlugin.goForward();
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.autorenew),
+                        onPressed: () {
+                          flutterWebViewPlugin.reload();
+                        },
+                      ),
+                    ],
                   ),
                 ),
               )
@@ -173,30 +185,7 @@ class _MarketRateState extends State<MarketRate> {
                         Navigator.of(context).pop();
                       }),
                 ),
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width / 1.1,
-                        child: Column(
-                          children: [
-                            SpinKitWave(
-                              color: Colors.red,
-                              type: SpinKitWaveType.start,
-                              size: 50.0,
-                            ),
-                            Text(
-                              "OOPS, Looks Like your Internet is not working!",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                body: Offline(),
               );
       },
       child: Container(),

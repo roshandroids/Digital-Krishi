@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class Feeds extends StatefulWidget {
@@ -64,7 +65,7 @@ class _FeedsState extends State<Feeds> {
           width: MediaQuery.of(context).size.width / 1.6,
           decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(5.0),
               boxShadow: [
                 new BoxShadow(
                   color: Color.fromRGBO(0, 0, 0, 0.5),
@@ -72,6 +73,7 @@ class _FeedsState extends State<Feeds> {
                 ),
               ]),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               StreamBuilder(
                   stream: Firestore.instance
@@ -83,48 +85,56 @@ class _FeedsState extends State<Feeds> {
                       return LinearProgressIndicator(
                         backgroundColor: Colors.green,
                       );
+                    if (snapshot.data.data == null)
+                      return CircularProgressIndicator(
+                        backgroundColor: Colors.green,
+                      );
                     return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(
-                          colors: <Color>[
-                            Color(0xffffCC95C0),
-                            Color(0xfffffDBD4B4),
-                            Color(0xfffff7AA1D2)
-                          ],
-                        ),
-                      ),
-                      child: ListTile(
-                        onTap: () {},
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: CachedNetworkImage(
-                            height: 60,
-                            width: 60,
-                            imageUrl: snapshot.data.data['photoUrl'],
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                          ),
-                        ),
-                        title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              snapshot.data.data['fullName'],
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
+                        decoration: BoxDecoration(
+                            border: Border(bottom: BorderSide(width: .5))),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: CachedNetworkImage(
+                                    height: 60,
+                                    width: 60,
+                                    imageUrl: snapshot.data.data['photoUrl'],
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        snapshot.data.data['fullName'],
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      (snapshot.data.data['userType'] ==
+                                              "Doctor")
+                                          ? Icon(Icons.check_circle_outline,
+                                              size: 15)
+                                          : Container(),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            (snapshot.data.data['userType'] == "Doctor")
-                                ? Icon(Icons.check_circle_outline, size: 15)
-                                : Container(),
+                            Text(timeago.format(timestamp.toDate())),
                           ],
-                        ),
-                        trailing: Text(timeago.format(timestamp.toDate())),
-                      ),
-                    );
+                        ));
                   }),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -175,8 +185,28 @@ class _FeedsState extends State<Feeds> {
                                     .snapshots(),
                                 builder: (context, snapshot) {
                                   if (!snapshot.hasData)
-                                    return LinearProgressIndicator(
-                                      backgroundColor: Colors.green,
+                                    return Shimmer.fromColors(
+                                      baseColor: Colors.grey,
+                                      highlightColor: Colors.grey[100],
+                                      child: Container(
+                                        height: 10,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                2,
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  if (snapshot.data == null)
+                                    return Shimmer.fromColors(
+                                      baseColor: Colors.grey,
+                                      highlightColor: Colors.grey[100],
+                                      child: Container(
+                                        height: 10,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                2,
+                                        color: Colors.white,
+                                      ),
                                     );
 
                                   return Text(
@@ -247,8 +277,28 @@ class _FeedsState extends State<Feeds> {
                                     .snapshots(),
                                 builder: (context, snapshot) {
                                   if (!snapshot.hasData)
-                                    return LinearProgressIndicator(
-                                      backgroundColor: Colors.green,
+                                    return Shimmer.fromColors(
+                                      baseColor: Colors.grey,
+                                      highlightColor: Colors.grey[100],
+                                      child: Container(
+                                        height: 10,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                2,
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  if (snapshot.data == null)
+                                    return Shimmer.fromColors(
+                                      baseColor: Colors.grey,
+                                      highlightColor: Colors.grey[100],
+                                      child: Container(
+                                        height: 10,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                2,
+                                        color: Colors.white,
+                                      ),
                                     );
                                   return Text(
                                     snapshot.data.documents.length.toString() +
@@ -342,92 +392,133 @@ class _FeedsState extends State<Feeds> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        color: Colors.black12,
-        child: Column(
-          children: <Widget>[
-            StreamBuilder(
-                stream: Firestore.instance
-                    .collection('users')
-                    .document(userId)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData)
-                    return LinearProgressIndicator(
-                      backgroundColor: Colors.green,
-                    );
-                  if (snapshot.data.data == null)
-                    return CircularProgressIndicator(
-                      backgroundColor: Colors.green,
-                    );
-                  if (snapshot.data.data['userType'] == "Admin") {
-                    return Container();
-                  } else {
-                    return Container(
-                      margin: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                          border: Border.all(width: 0),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: ListTile(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              PageTransition(
-                                  type: PageTransitionType.fade,
-                                  alignment: Alignment.bottomLeft,
-                                  duration: Duration(milliseconds: 250),
-                                  child: NewPost()));
-                        },
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: CachedNetworkImage(
-                            imageUrl: snapshot.data.data['photoUrl'],
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                          ),
-                        ),
-                        title: Text(
-                          "Hello, " + snapshot.data.data['fullName'],
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
-                        subtitle: Text(
-                          "Would you like to share any update today?",
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w400),
-                        ),
-                      ),
-                    );
-                  }
-                }),
-            Expanded(
-              child: StreamBuilder(
-                  stream: Firestore.instance.collection('posts').snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData)
-                      return LinearProgressIndicator(
-                        backgroundColor: Colors.green,
-                      );
-                    if (snapshot.data == null)
-                      return Center(
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    return ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) => _buildListItemPosts(
-                          context, snapshot.data.documents[index], 'posts'),
-                    );
-                  }),
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              expandedHeight: 80.0,
+              floating: true,
+              pinned: false,
+              snap: true,
+              stretch: true,
+              backgroundColor: Colors.black12,
+              flexibleSpace: FlexibleSpaceBar(
+                background: FlexibleSpaceBar(
+                  centerTitle: true,
+                  background: StreamBuilder(
+                      stream: Firestore.instance
+                          .collection('users')
+                          .document(userId)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData)
+                          return LinearProgressIndicator(
+                            backgroundColor: Colors.green,
+                          );
+                        if (snapshot.data.data == null)
+                          return CircularProgressIndicator(
+                            backgroundColor: Colors.green,
+                          );
+                        if (snapshot.data.data['userType'] == "Admin") {
+                          return Container();
+                        } else {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType.fade,
+                                      alignment: Alignment.bottomLeft,
+                                      duration: Duration(milliseconds: 250),
+                                      child: NewPost()));
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(width: 0),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: CachedNetworkImage(
+                                      height: 70,
+                                      width: 70,
+                                      imageUrl: snapshot.data.data['photoUrl'],
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 5),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            "Hello, " +
+                                                snapshot.data.data['fullName'],
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          Text(
+                                            "Would you like to ask anything?",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      }),
+                ),
+              ),
             ),
-          ],
+          ];
+        },
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          color: Colors.black12,
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: StreamBuilder(
+                    stream: Firestore.instance.collection('posts').snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData)
+                        return LinearProgressIndicator(
+                          backgroundColor: Colors.green,
+                        );
+                      if (snapshot.data == null)
+                        return Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      return ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (context, index) => _buildListItemPosts(
+                            context, snapshot.data.documents[index], 'posts'),
+                      );
+                    }),
+              ),
+            ],
+          ),
         ),
       ),
     );

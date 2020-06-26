@@ -72,7 +72,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         await Firestore.instance.collection('users').document(userId).setData({
           'fullName': fullName,
           'email': email,
-          'photoUrl': 'null',
+          'photoUrl':
+              'https://blog.cpanel.com/wp-content/uploads/2019/08/user-01.png',
           'userType': userType,
           'id': userId,
           'isVerified': 'Not Verified',

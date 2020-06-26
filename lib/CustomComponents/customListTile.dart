@@ -14,24 +14,29 @@ class _ListWidgetState extends State<ListWidget> {
   Widget build(BuildContext context) {
     String ico = widget.icon;
     String titl = widget.title;
-    return Container(
-      margin: EdgeInsets.only(top: 20),
-      width: MediaQuery.of(context).size.width / 1.1,
-      decoration: BoxDecoration(
-          border: Border.all(width: 0.5),
-          borderRadius: BorderRadius.circular(10)),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(5),
-        leading: Image.asset(
-          'lib/Assets/Images/$ico.png',
-          height: 40,
-          width: 40,
-        ),
-        title: Text(
-          titl,
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-        ),
-        trailing: Icon(Icons.chevron_right),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            isThreeLine: false,
+            contentPadding: EdgeInsets.all(5),
+            leading: Image.asset(
+              'lib/Assets/Images/$ico.png',
+              height: 40,
+              width: 40,
+            ),
+            title: Text(
+              titl,
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+            ),
+            trailing: Icon(Icons.chevron_right),
+          ),
+          Divider(
+            thickness: 1.5,
+            color: Colors.grey,
+          ),
+        ],
       ),
     );
   }

@@ -1,24 +1,26 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/exitAppAlert.dart';
 import 'package:digitalKrishi/UI/ChatScreens/allUsers.dart';
 import 'package:digitalKrishi/UI/OtherScreens/feeds.dart';
 import 'package:digitalKrishi/UI/UserScreens/moreSettings.dart';
-import 'package:digitalKrishi/UI/UserScreens/userHomeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class UserMainScreen extends StatefulWidget {
+class ExpertMainScreen extends StatefulWidget {
+  final String url;
+  ExpertMainScreen({this.url});
+
   @override
-  _UserMainScreenState createState() => _UserMainScreenState();
+  _ExpertMainScreenState createState() => _ExpertMainScreenState();
 }
 
-class _UserMainScreenState extends State<UserMainScreen>
+class _ExpertMainScreenState extends State<ExpertMainScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
@@ -29,7 +31,7 @@ class _UserMainScreenState extends State<UserMainScreen>
   void initState() {
     super.initState();
     getUserData();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   void getUserData() async {
@@ -129,7 +131,6 @@ class _UserMainScreenState extends State<UserMainScreen>
               physics: BouncingScrollPhysics(),
               controller: _tabController,
               children: <Widget>[
-                UserHomeScreen(),
                 Feeds(),
                 AllUsers(),
                 MoreSettings(),
@@ -146,22 +147,33 @@ class _UserMainScreenState extends State<UserMainScreen>
                 unselectedLabelColor: Colors.black,
                 tabs: <Widget>[
                   Tab(
-                    icon: FaIcon(FontAwesomeIcons.home),
-                    text: "Home",
-                  ),
-                  Tab(
-                    icon: Icon(Icons.forum),
+                    icon: Icon(
+                      Icons.forum,
+                      size: 30,
+                    ),
                     text: "Forum",
                   ),
                   Tab(
-                    icon: Icon(Icons.chat),
+                    icon: Icon(
+                      Icons.chat,
+                      size: 30,
+                    ),
                     text: "Messages",
                   ),
                   Tab(
-                    icon: Icon(
-                      Icons.more_horiz,
+                    icon: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: CachedNetworkImage(
+                        height: 30,
+                        width: 30,
+                        imageUrl: widget.url,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      ),
                     ),
-                    text: "More",
+                    text: "Profile",
                   ),
                 ],
               ),
