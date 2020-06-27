@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/UI/OtherScreens/listvideos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -18,11 +19,12 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
       onTap: () {
         Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => ListVideos(
-                      category: document['title'],
-                      videoUrl: document['videoUrl'],
-                    )));
+            PageTransition(
+                type: PageTransitionType.leftToRight,
+                child: ListVideos(
+                  category: document['title'],
+                  videoUrl: document['videoUrl'],
+                )));
       },
       child: Container(
         margin: EdgeInsets.all(10),

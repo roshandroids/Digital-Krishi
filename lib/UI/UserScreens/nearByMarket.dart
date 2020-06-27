@@ -11,6 +11,7 @@ import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 
 class NearByMarket extends StatefulWidget {
   @override
@@ -32,7 +33,6 @@ class _NearByMarketState extends State<NearByMarket> {
   String description;
 
   LatLng location;
-  String address;
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   int prevPage;
   @override
@@ -78,24 +78,23 @@ class _NearByMarketState extends State<NearByMarket> {
                 markerId: MarkerId(shop.data["markerId"]),
                 draggable: true,
                 infoWindow: InfoWindow(
-                    onTap: () {
-                      Navigator.push(
+                  onTap: () {
+                    Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => PlaceDetails(
+                        PageTransition(
+                          type: PageTransitionType.leftToRight,
+                          child: PlaceDetails(
                             thumbNail: shop.data['thumbNail'],
                             shopName: shop.data['shopName'],
                             locationCoords: LatLng(
                                 shop.data['locationCoords'].latitude,
                                 shop.data['locationCoords'].longitude),
                             description: shop.data['description'],
-                            address: shop.data["address"],
                           ),
-                        ),
-                      );
-                    },
-                    title: shop.data["shopName"],
-                    snippet: shop.data["address"]),
+                        ));
+                  },
+                  title: shop.data["shopName"],
+                ),
                 position: LatLng(shop.data["locationCoords"].latitude,
                     shop.data["locationCoords"].longitude)));
             thumbNail = shop.data['thumbNail'];
@@ -103,7 +102,6 @@ class _NearByMarketState extends State<NearByMarket> {
             location = LatLng(shop.data['locationCoords'].latitude,
                 shop.data['locationCoords'].longitude);
             description = shop.data['description'];
-            address = shop.data["address"];
           });
       });
     });
@@ -189,11 +187,6 @@ class _NearByMarketState extends State<NearByMarket> {
                           style: TextStyle(
                               fontSize: 12.5, fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          shops[index].address,
-                          style: TextStyle(
-                              fontSize: 12.0, fontWeight: FontWeight.w600),
-                        ),
                         Expanded(
                           child: Container(
                             width: 170.0,
@@ -238,7 +231,7 @@ class _NearByMarketState extends State<NearByMarket> {
         thumbNail = shops[_pageController.page.toInt()].thumbNail;
         shopName = shops[_pageController.page.toInt()].shopName;
         description = shops[_pageController.page.toInt()].description;
-        address = shops[_pageController.page.toInt()].address;
+
         location = shops[_pageController.page.toInt()].locationCoords;
       });
     }
@@ -257,17 +250,16 @@ class _NearByMarketState extends State<NearByMarket> {
                     onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PlaceDetails(
-                            thumbNail: thumbNail,
-                            shopName: shopName,
-                            locationCoords: location,
-                            description: description,
-                            address: address,
-                          ),
-                        ),
-                      );
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.leftToRight,
+                            child: PlaceDetails(
+                              thumbNail: thumbNail,
+                              shopName: shopName,
+                              locationCoords: location,
+                              description: description,
+                            ),
+                          ));
                     }),
                 ListTile(
                   leading: Icon(Icons.navigation),

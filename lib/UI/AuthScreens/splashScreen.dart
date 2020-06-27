@@ -16,9 +16,7 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+class _SplashScreenState extends State<SplashScreen> {
   String loggedInUserType;
   String userId;
   String isFirstTime;
@@ -33,23 +31,31 @@ class _SplashScreenState extends State<SplashScreen>
         FirebaseAuth _auth = FirebaseAuth.instance;
 
         var user = await _auth.currentUser();
-
-        await Firestore.instance
-            .collection('users')
-            .document(user.uid)
-            .get()
-            .then((DocumentSnapshot ds) {
-          setState(() {
-            userId = user.uid;
-            isFirstTime = ds.data['isFirstTime'];
-            loggedInUserType = ds.data['userType'];
-            url = ds.data['photoUrl'];
-          });
-          // use ds as a snapshot
-          print("User type:- " + loggedInUserType);
-        });
-
         if (user != null) {
+          await Firestore.instance
+              .collection('users')
+              .document(user.uid)
+              .get()
+              .then((DocumentSnapshot ds) {
+            setState(() {
+              userId = user.uid;
+              isFirstTime = ds.data['isFirstTime'];
+              loggedInUserType = ds.data['userType'];
+              url = ds.data['photoUrl'];
+            });
+            // use ds as a snapshot
+            print("User type:- " + loggedInUserType);
+          });
+        }
+
+        if (user == null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AuthMainScreen(),
+            ),
+          );
+        } else {
           if (isFirstTime == 'yes' && loggedInUserType != "Admin") {
             Navigator.pushReplacement(
               context,
@@ -93,13 +99,6 @@ class _SplashScreenState extends State<SplashScreen>
               );
             }
           }
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AuthMainScreen(),
-            ),
-          );
         }
       },
     );

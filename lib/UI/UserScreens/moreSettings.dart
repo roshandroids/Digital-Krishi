@@ -338,7 +338,7 @@ class _MoreSettingsState extends State<MoreSettings> {
                   },
                   child: ListWidget(
                     icon: "search",
-                    title: "Search Nearby vegetable Markets",
+                    title: "Vegetable Markets",
                   ),
                 ),
                 GestureDetector(

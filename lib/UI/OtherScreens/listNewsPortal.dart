@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/UI/OtherScreens/readNews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:page_transition/page_transition.dart';
 
 class ListNewsPortal extends StatefulWidget {
   @override
@@ -17,10 +18,11 @@ class _ListNewsPortalState extends State<ListNewsPortal>
       onTap: () {
         Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => ReadNews(
-                      url: document['url'],
-                    )));
+            PageTransition(
+                type: PageTransitionType.leftToRight,
+                child: ReadNews(
+                  url: document['url'],
+                )));
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),

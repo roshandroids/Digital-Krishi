@@ -11,6 +11,7 @@ import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:path/path.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -177,16 +178,17 @@ class _UpdateProfileState extends State<UpdateProfile> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => PostDetails(
-                        postImage: document['PostImage'],
-                        postTitle: document['PostTitle'],
-                        postDescription: document['PostDescription'],
-                        postedAt: document['PostedAt'],
-                        postedBy: document['PostedBy'],
-                        id: document.documentID,
-                        collectionName: collectionName,
-                      )),
+              PageTransition(
+                  type: PageTransitionType.leftToRight,
+                  child: PostDetails(
+                    postImage: document['PostImage'],
+                    postTitle: document['PostTitle'],
+                    postDescription: document['PostDescription'],
+                    postedAt: document['PostedAt'],
+                    postedBy: document['PostedBy'],
+                    id: document.documentID,
+                    collectionName: collectionName,
+                  )),
             );
           },
           child: Container(

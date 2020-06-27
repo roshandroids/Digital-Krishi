@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/UI/ChatScreens/chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class AllUsers extends StatefulWidget {
   @override
@@ -159,11 +160,12 @@ class _AllUsersState extends State<AllUsers> {
               print(document.documentID);
               Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => Chat(
-                            peerId: document.documentID,
-                            peerAvatar: document['photoUrl'],
-                          )));
+                  PageTransition(
+                      type: PageTransitionType.leftToRight,
+                      child: Chat(
+                        peerId: document.documentID,
+                        peerAvatar: document['photoUrl'],
+                      )));
             },
             color: Colors.grey,
             padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),

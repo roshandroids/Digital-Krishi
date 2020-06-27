@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 
 class Chat extends StatelessWidget {
   final String peerId;
@@ -245,9 +246,9 @@ class ChatScreenState extends State<ChatScreen> {
                         onPressed: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      FullPhoto(url: document['content'])));
+                              PageTransition(
+                                  type: PageTransitionType.leftToRight,
+                                  child: FullPhoto(url: document['content'])));
                         },
                         padding: EdgeInsets.all(0),
                       ),
@@ -359,8 +360,9 @@ class ChatScreenState extends State<ChatScreen> {
                               onPressed: () {
                                 Navigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FullPhoto(
+                                    PageTransition(
+                                        type: PageTransitionType.leftToRight,
+                                        child: FullPhoto(
                                             url: document['content'])));
                               },
                               padding: EdgeInsets.all(0),

@@ -22,10 +22,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       onTap: () {
         Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => ReadNews(
-                      url: document['url'],
-                    )));
+            PageTransition(
+                type: PageTransitionType.leftToRight,
+                child: ReadNews(
+                  url: document['url'],
+                )));
       },
       child: Container(
         width: MediaQuery.of(context).size.width / 2.18,
@@ -73,11 +74,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           onTap: () {
             Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => ListVideos(
-                          category: document['title'],
-                          videoUrl: document['videoUrl'],
-                        )));
+                PageTransition(
+                    type: PageTransitionType.leftToRight,
+                    child: ListVideos(
+                      category: document['title'],
+                      videoUrl: document['videoUrl'],
+                    )));
           },
           child: Container(
             decoration: BoxDecoration(
@@ -155,7 +157,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               stretch: true,
               backgroundColor: Colors.black12,
               flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.pin,
+                collapseMode: CollapseMode.parallax,
                 centerTitle: true,
                 background: Carousel(
                     boxFit: BoxFit.cover,

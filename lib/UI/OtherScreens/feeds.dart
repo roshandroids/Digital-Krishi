@@ -158,16 +158,17 @@ class _FeedsState extends State<Feeds> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => PostDetails(
-                          postImage: document['PostImage'],
-                          postTitle: document['PostTitle'],
-                          postDescription: document['PostDescription'],
-                          postedAt: document['PostedAt'],
-                          postedBy: document['PostedBy'],
-                          id: document.documentID,
-                          collectionName: collectionName,
-                        )),
+                PageTransition(
+                    type: PageTransitionType.leftToRight,
+                    child: PostDetails(
+                      postImage: document['PostImage'],
+                      postTitle: document['PostTitle'],
+                      postDescription: document['PostDescription'],
+                      postedAt: document['PostedAt'],
+                      postedBy: document['PostedBy'],
+                      id: document.documentID,
+                      collectionName: collectionName,
+                    )),
               );
             },
             child: Container(
@@ -330,17 +331,18 @@ class _FeedsState extends State<Feeds> {
                             onPressed: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => PostDetails(
-                                          postImage: document['PostImage'],
-                                          postTitle: document['PostTitle'],
-                                          postDescription:
-                                              document['PostDescription'],
-                                          postedAt: document['PostedAt'],
-                                          postedBy: document['PostedBy'],
-                                          id: document.documentID,
-                                          collectionName: collectionName,
-                                        )),
+                                PageTransition(
+                                    type: PageTransitionType.leftToRight,
+                                    child: PostDetails(
+                                      postImage: document['PostImage'],
+                                      postTitle: document['PostTitle'],
+                                      postDescription:
+                                          document['PostDescription'],
+                                      postedAt: document['PostedAt'],
+                                      postedBy: document['PostedBy'],
+                                      id: document.documentID,
+                                      collectionName: collectionName,
+                                    )),
                               );
                             }),
                       ],
