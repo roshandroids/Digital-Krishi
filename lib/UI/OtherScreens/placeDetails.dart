@@ -26,13 +26,16 @@ class _PlaceDetailsState extends State<PlaceDetails> {
       body: Center(
         child: Container(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(widget.shopName),
               Text(widget.address),
               Text(widget.description),
               Text(widget.thumbNail),
               Text(widget.shopName),
-              Text(widget.locationCoords.toString())
+              Text(widget.locationCoords.toString()),
+              Text(widget.description)
             ],
           ),
         ),

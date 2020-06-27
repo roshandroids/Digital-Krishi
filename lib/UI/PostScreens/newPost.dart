@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class NewPost extends StatefulWidget {
   @override
@@ -121,49 +122,40 @@ class _NewPostState extends State<NewPost> {
   }
 
   void _choosePictureOption(BuildContext context) {
-    showDialog(
+    Alert(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            "Choose any option",
-            style: TextStyle(),
+      type: AlertType.none,
+      title: "Select Any",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Take New",
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
-          content: Text(
-            "You can choose image from gallery or take picture from camera",
-            style: TextStyle(),
+          onPressed: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+            takePicture();
+            Navigator.of(context).pop();
+          },
+          color: Color.fromRGBO(0, 179, 134, 1.0),
+        ),
+        DialogButton(
+          child: Text(
+            "Open Gallery",
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: IconButton(
-                icon: Icon(
-                  Icons.camera_alt,
-                  color: Colors.orange,
-                  size: 30,
-                ),
-                onPressed: () {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                  takePicture();
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-            IconButton(
-                icon: Icon(
-                  FontAwesomeIcons.cloudUploadAlt,
-                  color: Colors.orange,
-                  size: 30,
-                ),
-                onPressed: () {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                  getImage();
-                  Navigator.of(context).pop();
-                })
-          ],
-        );
-      },
-    );
+          onPressed: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+            getImage();
+            Navigator.of(context).pop();
+          },
+          gradient: LinearGradient(colors: [
+            Color.fromRGBO(116, 116, 191, 1.0),
+            Color.fromRGBO(52, 138, 199, 1.0)
+          ]),
+        )
+      ],
+    ).show();
   }
 
   @override
@@ -204,6 +196,7 @@ class _NewPostState extends State<NewPost> {
               child: Form(
                 key: _formKey,
                 child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     child: Column(
@@ -223,7 +216,8 @@ class _NewPostState extends State<NewPost> {
                           controller: postDescription,
                           onSaved: (postDescription) =>
                               postDescription = postDescription.trim(),
-                          maxLines: 5,
+                          maxLines: 10,
+                          textInputAction: TextInputAction.done,
                           decoration: InputDecoration(
                             labelText: "Post Description",
                             hintText: "Post Description",
@@ -236,29 +230,51 @@ class _NewPostState extends State<NewPost> {
                             _choosePictureOption(context);
                           },
                           child: Container(
-                            width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
                                 border:
                                     Border.all(width: 1, color: Colors.grey),
                                 borderRadius: BorderRadius.circular(5)),
-                            child: (_image != null)
-                                ? Image.file(_image)
-                                : Container(
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          FaIcon(FontAwesomeIcons.cameraRetro),
-                                          Text(
-                                            "Choose or take a picture",
-                                            style: TextStyle(),
-                                          ),
-                                        ],
+                            child: Stack(
+                              children: <Widget>[
+                                (_image != null)
+                                    ? Container(
+                                        height: 150,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                2.5,
+                                        child: Image.file(
+                                          _image,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Container(
+                                        height: 150,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                2.5,
                                       ),
-                                    ),
+                                Container(
+                                  alignment: Alignment.center,
+                                  height: 150,
+                                  color: Colors.black54,
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.5,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      FaIcon(
+                                        FontAwesomeIcons.cameraRetro,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        "Tap to get image",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
                                   ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(

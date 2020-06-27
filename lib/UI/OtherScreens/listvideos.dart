@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digitalKrishi/UI/OtherScreens/playVideo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -64,77 +65,78 @@ class _ListVideosState extends State<ListVideos> {
         ),
         title: Text(widget.category),
       ),
-      body: SafeArea(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: ListView.builder(
-              itemCount: widget.videoUrl.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => PlayVideo(
-                              url: widget.videoUrl[index],
-                            )));
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(
-                        left: 10, right: 10, top: 10, bottom: 10),
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 1),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: FutureBuilder(
-                              future: getVideo(widget.videoUrl[index]),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return Shimmer.fromColors(
-                                    baseColor: Colors.grey,
-                                    highlightColor: Colors.grey[100],
-                                    child: Container(
-                                      height: 10,
-                                      width:
-                                          MediaQuery.of(context).size.width / 2,
-                                      color: Colors.white,
-                                    ),
+      body: Container(
+        margin: EdgeInsets.all(10),
+        child: ListView.builder(
+            physics: BouncingScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            itemCount: widget.videoUrl.length,
+            itemBuilder: (context, index) {
+              return Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 10,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => PlayVideo(
+                                url: widget.videoUrl[index],
+                              )));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(width: .5),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: FutureBuilder(
+                                future: getVideo(widget.videoUrl[index]),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Shimmer.fromColors(
+                                      baseColor: Colors.grey,
+                                      highlightColor: Colors.grey[100],
+                                      child: Container(
+                                        height: 10,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                2,
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  }
+                                  return Text(
+                                    snapshot.data,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
                                   );
-                                }
-                                return Text(
-                                  snapshot.data,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
-                                );
-                              }),
-                        ),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Shimmer.fromColors(
-                                    baseColor: Colors.grey,
-                                    highlightColor: Colors.grey[100],
-                                    child: Container(
-                                      height: 10,
-                                      width:
-                                          MediaQuery.of(context).size.width / 2,
-                                      color: Colors.white,
+                                }),
+                          ),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => SpinKitWave(
+                                      color: Colors.blue,
+                                      size: 60.0,
                                     ),
-                                  ),
-                              imageUrl:
-                                  "https://i3.ytimg.com/vi/${YoutubePlayer.convertUrlToId(widget.videoUrl[index])}/sddefault.jpg"),
-                        ),
-                      ],
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                                imageUrl:
+                                    "https://i3.ytimg.com/vi/${YoutubePlayer.convertUrlToId(widget.videoUrl[index])}/sddefault.jpg"),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                );
-              }),
-        ),
+                ],
+              );
+            }),
       ),
     );
   }

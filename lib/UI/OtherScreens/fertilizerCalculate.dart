@@ -14,6 +14,7 @@ class _FertilizerCalculateState extends State<FertilizerCalculate> {
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         padding: EdgeInsets.all(20),
         child: Column(
           children: <Widget>[

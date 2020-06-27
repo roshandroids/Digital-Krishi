@@ -3,9 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class PostDetails extends StatefulWidget {
@@ -40,7 +42,7 @@ class _PostDetailsState extends State<PostDetails> {
   String uId;
   String userName;
   String image;
-
+  bool isPosting = false;
   String loggedInUserType;
   @override
   void initState() {
@@ -73,53 +75,24 @@ class _PostDetailsState extends State<PostDetails> {
     });
   }
 
-  void showSheet() {
+  void fullImage() {
     showModalBottomSheet(
-        enableDrag: false,
-        isDismissible: false,
+        enableDrag: true,
+        isDismissible: true,
         context: context,
         builder: (BuildContext bc) {
           return Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 50, right: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          "Full photo",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w600),
-                        ),
-                        IconButton(
-                            icon: Icon(
-                              Icons.close,
-                              color: Colors.red,
-                              size: 20,
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            }),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: PhotoView(
-                      tightMode: true,
-                      imageProvider: NetworkImage(widget.postImage),
-                    ),
-                  ),
-                ],
+              child: PhotoView(
+                imageProvider: NetworkImage(widget.postImage),
               ));
         });
   }
 
   @override
   Widget build(BuildContext context) {
-    String id1 = widget.id;
+    String postId = widget.id;
 
     void postComment() async {
       if (commentController.text.isEmpty) {
@@ -128,11 +101,12 @@ class _PostDetailsState extends State<PostDetails> {
       } else {
         setState(() {
           FocusScope.of(context).requestFocus(new FocusNode());
+          isPosting = true;
         });
 
         await Firestore.instance
             .collection("posts")
-            .document(id1)
+            .document(postId)
             .collection("comments")
             .add({
           "commentedBy": userName,
@@ -141,12 +115,43 @@ class _PostDetailsState extends State<PostDetails> {
           "userType": loggedInUserType,
           "time": DateTime.now(),
         });
+        commentController.clear();
         setState(() {
-          commentController.clear();
+          isPosting = false;
+          Navigator.of(context).pop();
           Fluttertoast.showToast(
               msg: "Posted Successfully", backgroundColor: Colors.green);
         });
       }
+    }
+
+    void showCommentInput() {
+      showModalBottomSheet(
+          context: context,
+          builder: (BuildContext bc) {
+            return Container(
+              height: 100,
+              color: Colors.black12,
+              padding: EdgeInsets.only(left: 5, right: 5),
+              child: (!isPosting)
+                  ? TextFormField(
+                      decoration: InputDecoration(hintText: "Enter your text"),
+                      controller: commentController,
+                      textInputAction: TextInputAction.send,
+                      onEditingComplete: () => postComment(),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SpinKitWanderingCubes(
+                          color: Colors.blue,
+                          size: 50.0,
+                        ),
+                        Text("Posting")
+                      ],
+                    ),
+            );
+          });
     }
 
     return Scaffold(
@@ -179,329 +184,271 @@ class _PostDetailsState extends State<PostDetails> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: SingleChildScrollView(
-            child: Column(
-          children: <Widget>[
-            StreamBuilder(
-                stream: Firestore.instance
-                    .collection('users')
-                    .document(widget.postedBy)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData)
-                    return LinearProgressIndicator(
-                      backgroundColor: Colors.green,
-                    );
-
-                  if (snapshot.data.data['userType'] == "Admin") {
-                    return Container(
-                      margin: EdgeInsets.only(top: 20, left: 12, right: 12),
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Stack(
+            children: <Widget>[
+              SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(
-                          colors: <Color>[
-                            Color(0xffffCC95C0),
-                            Color(0xfffffDBD4B4),
-                            Color(0xfffff7AA1D2)
-                          ],
-                        ),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(width: .5))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Admin",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                Icon(Icons.check_circle_outline, size: 15)
-                              ],
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5.0),
+                          boxShadow: [
+                            new BoxShadow(
+                              color: Color.fromRGBO(0, 0, 0, 0.5),
+                              blurRadius: 20.0,
                             ),
-                            Text(timeago.format(widget.postedAt.toDate())),
-                          ],
-                        ),
-                      ),
-                    );
-                  } else
-                    return Container(
-                        margin: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(width: .5),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: CachedNetworkImage(
-                                    height: 60,
-                                    width: 60,
-                                    imageUrl: snapshot.data.data['photoUrl'],
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 5),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        snapshot.data.data['fullName'],
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      (snapshot.data.data['userType'] ==
-                                              "Doctor")
-                                          ? Icon(Icons.check_circle_outline,
-                                              size: 15)
-                                          : Container(),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Text(timeago.format(widget.postedAt.toDate())),
-                          ],
-                        ));
-                }),
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(top: 20, left: 12, right: 12),
-              width: MediaQuery.of(context).size.width,
-              child: Text(
-                widget.postTitle,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                showSheet();
-              },
-              child: Container(
-                height: MediaQuery.of(context).size.height / 2.5,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      new BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.08),
-                        blurRadius: 20.0,
-                      ),
-                    ]),
-                margin: EdgeInsets.only(top: 20, left: 12, right: 12),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    width: MediaQuery.of(context).size.width,
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    imageUrl: widget.postImage,
-                  ),
-                ),
-              ),
-            ),
-            Column(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.all(12.0),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        new BoxShadow(
-                          color: Color.fromRGBO(0, 0, 0, 0.08),
-                          blurRadius: 10.0,
-                        ),
-                      ]),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      widget.postDescription,
-                      style: TextStyle(fontSize: 15.0),
-                      textAlign: TextAlign.justify,
-                    ),
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.all(12.0),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        new BoxShadow(
-                          color: Color.fromRGBO(0, 0, 0, 0.08),
-                          blurRadius: 20.0,
-                        ),
-                      ]),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Comment Section',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Container(
-                          // height: MediaQuery.of(context).size.height / 3,
-                          child: StreamBuilder(
+                          ]),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          StreamBuilder(
                               stream: Firestore.instance
-                                  .collection('posts')
-                                  .document(id1)
-                                  .collection('comments')
-                                  .orderBy("time", descending: false)
+                                  .collection('users')
+                                  .document(widget.postedBy)
                                   .snapshots(),
                               builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return Container(
-                                    child: Center(
-                                      child: Column(
+                                if (!snapshot.hasData)
+                                  return LinearProgressIndicator(
+                                    backgroundColor: Colors.green,
+                                  );
+                                if (snapshot.data.data == null)
+                                  return CircularProgressIndicator(
+                                    backgroundColor: Colors.green,
+                                  );
+                                return Container(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Row(
                                         children: <Widget>[
-                                          CircularProgressIndicator(
-                                            backgroundColor: Colors.green,
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            child: CachedNetworkImage(
+                                              height: 60,
+                                              width: 60,
+                                              imageUrl: snapshot
+                                                  .data.data['photoUrl'],
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  SpinKitWave(
+                                                color: Colors.blue,
+                                                size: 60.0,
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
+                                            ),
                                           ),
-                                          Text(
-                                            "No comments",
-                                            style: TextStyle(),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 5),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  snapshot
+                                                      .data.data['fullName'],
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                (snapshot.data
+                                                            .data['userType'] ==
+                                                        "Doctor")
+                                                    ? Icon(
+                                                        Icons
+                                                            .check_circle_outline,
+                                                        size: 15)
+                                                    : Container(),
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),
+                                      Text(timeago
+                                          .format(widget.postedAt.toDate())),
+                                    ],
+                                  ),
+                                );
+                              }),
+                          Divider(
+                            endIndent: 2,
+                            indent: 2,
+                            color: Colors.black,
+                            height: 5,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.postTitle,
+                              overflow: TextOverflow.fade,
+                              style: TextStyle(
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          Divider(
+                            endIndent: 2,
+                            indent: 2,
+                            color: Colors.black,
+                            height: 5,
+                          ),
+                          Stack(
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(left: 2, right: 2),
+                                height: 250,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 1, color: Colors.black38),
+                                    borderRadius: BorderRadius.circular(0)),
+                                child: CachedNetworkImage(
+                                  imageUrl: widget.postImage,
+                                  width: MediaQuery.of(context).size.width,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => SpinKitWave(
+                                    color: Colors.blue,
+                                    size: 60.0,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
+                                ),
+                              ),
+                              Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: IconButton(
+                                    icon: Icon(
+                                      Icons.fullscreen,
+                                      size: 40,
                                     ),
-                                  );
-                                }
+                                    onPressed: () => fullImage()),
+                              )
+                            ],
+                          ),
+                          Divider(
+                            endIndent: 2,
+                            indent: 2,
+                            color: Colors.black,
+                            height: 5,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.postDescription,
+                              overflow: TextOverflow.fade,
+                              style: TextStyle(
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5.0),
+                          boxShadow: [
+                            new BoxShadow(
+                              color: Color.fromRGBO(0, 0, 0, 0.5),
+                              blurRadius: 20.0,
+                            ),
+                          ]),
+                      child: Column(
+                        children: <Widget>[
+                          Shimmer.fromColors(
+                            baseColor: Colors.black,
+                            highlightColor: Colors.black12,
+                            child: Text(
+                              "Comment Section",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () => showCommentInput(),
+                            child: Container(
+                                alignment: Alignment.centerLeft,
+                                width: MediaQuery.of(context).size.width,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: Colors.black12,
+                                    border: Border.all(width: .5),
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      new BoxShadow(
+                                          color: Colors.white, blurRadius: 10),
+                                    ]),
+                                margin: EdgeInsets.all(10),
+                                padding: EdgeInsets.only(left: 5),
+                                child: Text("Write Something..")),
+                          ),
+                          StreamBuilder(
+                            stream: Firestore.instance
+                                .collection('posts')
+                                .document(postId)
+                                .collection('comments')
+                                .orderBy("time", descending: false)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return LinearProgressIndicator(
+                                  backgroundColor: Colors.green,
+                                );
+                              } else if (snapshot.data == null) {
+                                return Container(
+                                  height: 100,
+                                  child: Column(
+                                    children: <Widget>[
+                                      SpinKitPulse(
+                                        color: Colors.blue,
+                                        size: 30.0,
+                                      ),
+                                      Text("No Comments Yet."),
+                                    ],
+                                  ),
+                                );
+                              } else {
                                 List<Comment> comments = [];
                                 snapshot.data.documents.forEach((doc) {
                                   comments.add(Comment.fromDocument(doc));
                                 });
-                                if (snapshot.data != null) {
-                                  return Column(
-                                    children: comments,
-                                  );
-                                } else {
-                                  return Container(
-                                    child: Center(
-                                      child: Text(
-                                        "No comments",
-                                        style: TextStyle(),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }),
-                        ),
-                        OfflineBuilder(
-                          connectivityBuilder: (
-                            BuildContext context,
-                            ConnectivityResult connectivity,
-                            Widget child,
-                          ) {
-                            bool connected =
-                                connectivity != ConnectivityResult.none;
-                            return connected
-                                ? Container(
-                                    padding: EdgeInsets.only(top: 10),
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            height: 50,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                1.7,
-                                            child: TextFormField(
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              controller: commentController,
-                                              cursorColor: Colors.black,
-                                              decoration: new InputDecoration(
-                                                hintText: "Your Comment...",
-                                                hintStyle: TextStyle(),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        IconButton(
-                                          icon: FaIcon(
-                                              FontAwesomeIcons.paperPlane),
-                                          onPressed: () {
-                                            if (commentController.text !=
-                                                null) {
-                                              postComment();
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg: "Write Something");
-                                            }
-                                          },
-                                          color: Colors.blue[800],
-                                          padding: EdgeInsets.fromLTRB(
-                                              10, 10, 10, 10),
-                                          splashColor: Colors.grey,
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                : Column(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(width: 2),
-                                        ),
-                                        alignment: Alignment.center,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                1.1,
-                                        child: Column(
-                                          children: [
-                                            Image.asset(
-                                                'lib/Assets/offline.gif'),
-                                            Text(
-                                              "OOPS, Looks Like your Internet is not working!",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      )
-                                    ],
-                                  );
-                          },
-                          child: Container(),
-                        ),
-                      ],
+                                return Column(
+                                  children: comments,
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ],
-        )),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -533,51 +480,63 @@ class Comment extends StatelessWidget {
     var pos = s.lastIndexOf(' ');
     String result = (pos != -1) ? s.substring(0, pos) : s;
 
-    return Column(
-      children: <Widget>[
-        ListTile(
-          title: Row(
-            children: <Widget>[
-              Flexible(
-                child: (userName == null)
-                    ? CircularProgressIndicator()
-                    : Text(
-                        result,
-                        style: TextStyle(),
-                      ),
+    return Container(
+      margin: EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: Colors.black12,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            title: Row(
+              children: <Widget>[
+                Flexible(
+                  child: (userName == null)
+                      ? Shimmer.fromColors(
+                          baseColor: Colors.grey,
+                          highlightColor: Colors.grey[200],
+                          child: Container(
+                            height: 10,
+                            width: 70,
+                          ))
+                      : Text(
+                          result,
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
+                ),
+                Flexible(
+                  child: (usertype == "Doctor")
+                      ? Icon(
+                          Icons.check_circle_outline,
+                          size: 15,
+                        )
+                      : (usertype == "Admin")
+                          ? Icon(
+                              Icons.check_circle_outline,
+                              size: 15,
+                            )
+                          : Container(),
+                ),
+              ],
+            ),
+            leading: CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(
+                image,
               ),
-              Flexible(
-                child: (usertype == "Doctor")
-                    ? Icon(
-                        Icons.check_circle_outline,
-                        size: 15,
-                      )
-                    : (usertype == "Admin")
-                        ? Icon(
-                            Icons.check_circle_outline,
-                            size: 15,
-                          )
-                        : Container(),
-              ),
-            ],
+            ),
+            subtitle: Text(
+              comment,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+            trailing: Text(
+              timeago.format(timestamp.toDate()),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
           ),
-          leading: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(image),
-          ),
-          subtitle: Text(
-            comment,
-            style: TextStyle(),
-          ),
-          trailing: Text(
-            timeago.format(timestamp.toDate()),
-            style: TextStyle(),
-          ),
-        ),
-        Divider(
-          thickness: 1,
-          color: Colors.black,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

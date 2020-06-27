@@ -134,23 +134,7 @@ class _NearByMarketState extends State<NearByMarket> {
         );
       },
       child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PlaceDetails(
-                thumbNail: thumbNail,
-                shopName: shopName,
-                locationCoords: location,
-                description: description,
-                address: address,
-              ),
-            ),
-          );
-        },
-        onDoubleTap: () {
-          moveCamera();
-        },
+        onTap: () => shopOption(context),
         child: Container(
           margin: EdgeInsets.symmetric(
             horizontal: 10.0,
@@ -184,8 +168,14 @@ class _NearByMarketState extends State<NearByMarket> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child:
-                          CachedNetworkImage(imageUrl: shops[index].thumbNail),
+                      child: CachedNetworkImage(
+                        imageUrl: shops[index].thumbNail,
+                        placeholder: (context, url) => SpinKitWave(
+                          color: Colors.blue,
+                          size: 60.0,
+                        ),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      ),
                     ),
                   ),
                 ),
@@ -244,7 +234,53 @@ class _NearByMarketState extends State<NearByMarket> {
               tilt: 45.0),
         ),
       );
+      setState(() {
+        thumbNail = shops[_pageController.page.toInt()].thumbNail;
+        shopName = shops[_pageController.page.toInt()].shopName;
+        description = shops[_pageController.page.toInt()].description;
+        address = shops[_pageController.page.toInt()].address;
+        location = shops[_pageController.page.toInt()].locationCoords;
+      });
     }
+  }
+
+  void shopOption(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
+                    leading: Icon(Icons.not_listed_location),
+                    title: Text('About This Shop'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlaceDetails(
+                            thumbNail: thumbNail,
+                            shopName: shopName,
+                            locationCoords: location,
+                            description: description,
+                            address: address,
+                          ),
+                        ),
+                      );
+                    }),
+                ListTile(
+                  leading: Icon(Icons.navigation),
+                  title: Text('Navigate'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    moveCamera();
+                  },
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   @override
@@ -309,13 +345,17 @@ class _NearByMarketState extends State<NearByMarket> {
                   : Container(
                       height: MediaQuery.of(context).size.height,
                       width: MediaQuery.of(context).size.width,
+                      color: Colors.black.withOpacity(.2),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text("Searching Markets"),
-                          SpinKitWave(
+                          Text(
+                            "Searching Markets",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                          SpinKitDoubleBounce(
                             color: Colors.blue,
-                            type: SpinKitWaveType.start,
                             size: 50.0,
                           ),
                         ],

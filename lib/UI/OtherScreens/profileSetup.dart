@@ -365,17 +365,12 @@ class _ProfileSetupState extends State<ProfileSetup> {
                                     ? Material(
                                         child: CachedNetworkImage(
                                           placeholder: (context, url) =>
-                                              Container(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2.0,
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                      Color(0xfff5a623)),
-                                            ),
-                                            width: 150.0,
-                                            height: 150.0,
-                                            padding: EdgeInsets.all(20.0),
+                                              SpinKitWave(
+                                            color: Colors.blue,
+                                            size: 60.0,
                                           ),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.error),
                                           imageUrl: photoUrl,
                                           width: 150.0,
                                           height: 150.0,
@@ -773,6 +768,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
         child: Stack(
           children: <Widget>[
             SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               child: Column(
                 children: <Widget>[
                   (widget.userType != "Farmer")

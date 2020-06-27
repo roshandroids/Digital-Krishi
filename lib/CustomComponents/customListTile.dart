@@ -24,6 +24,7 @@ class _ListWidgetState extends State<ListWidget> {
             leading: Image.asset(
               'lib/Assets/Images/$ico.png',
               height: 40,
+              color: Colors.green,
               width: 40,
             ),
             title: Text(

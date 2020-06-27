@@ -64,50 +64,46 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 
   Widget _buildListVideos(BuildContext context, DocumentSnapshot document) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ListVideos(
-                      category: document['title'],
-                      videoUrl: document['videoUrl'],
-                    )));
-      },
-      child: Container(
-        padding: EdgeInsets.only(bottom: 5),
-        width: MediaQuery.of(context).size.width / 2.1,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              flex: 8,
-              child: Container(
-                child: Stack(
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => SpinKitWave(
-                                color: Colors.blue,
-                                size: 50.0,
-                              ),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                          imageUrl:
-                              "https://i3.ytimg.com/vi/${YoutubePlayer.convertUrlToId(document['videoUrl'][0])}/sddefault.jpg"),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      top: 0,
+    return Row(
+      children: <Widget>[
+        SizedBox(
+          width: 5,
+        ),
+        InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ListVideos(
+                          category: document['title'],
+                          videoUrl: document['videoUrl'],
+                        )));
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: EdgeInsets.only(bottom: 5),
+            width: MediaQuery.of(context).size.width / 2.1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10)),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: CachedNetworkImageProvider(
+                                  "https://i3.ytimg.com/vi/${YoutubePlayer.convertUrlToId(document['videoUrl'][0])}/sddefault.jpg"))),
                       child: Container(
                         decoration: BoxDecoration(
                             color: Colors.black38,
-                            borderRadius: BorderRadius.circular(20)),
+                            borderRadius: BorderRadius.circular(10)),
                         child: Center(
                           child: ((document['videoUrl'].length - 1) >= 1)
                               ? Text(
@@ -127,20 +123,20 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                Text(
+                  document['title'],
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+              ],
             ),
-            Expanded(
-              flex: 0,
-              child: Text(
-                document['title'],
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        SizedBox(
+          width: 5,
+        ),
+      ],
     );
   }
 
@@ -176,15 +172,39 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     indicatorBgPadding: 7.0,
                     images: [
                       CachedNetworkImage(
+                          placeholder: (context, url) => SpinKitWave(
+                                color: Colors.blue,
+                                size: 60.0,
+                              ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                           imageUrl:
                               "https://firebasestorage.googleapis.com/v0/b/digital-krishi-9430b.appspot.com/o/slider_images%2Fweather.jpg?alt=media&token=6a5fddd4-1dd7-4573-b122-1df595875061"),
                       CachedNetworkImage(
+                          placeholder: (context, url) => SpinKitWave(
+                                color: Colors.blue,
+                                size: 60.0,
+                              ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                           imageUrl:
                               "https://firebasestorage.googleapis.com/v0/b/digital-krishi-9430b.appspot.com/o/slider_images%2Fnews.jpg?alt=media&token=de9b5d02-8491-47d9-84d6-37d8c575de0e"),
                       CachedNetworkImage(
+                          placeholder: (context, url) => SpinKitWave(
+                                color: Colors.blue,
+                                size: 60.0,
+                              ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                           imageUrl:
                               "https://firebasestorage.googleapis.com/v0/b/digital-krishi-9430b.appspot.com/o/slider_images%2Ffertilizer.jpg?alt=media&token=f796864d-225b-43a8-a4e8-dddf60133ebd"),
                       CachedNetworkImage(
+                          placeholder: (context, url) => SpinKitWave(
+                                color: Colors.blue,
+                                size: 60.0,
+                              ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                           imageUrl:
                               "https://firebasestorage.googleapis.com/v0/b/digital-krishi-9430b.appspot.com/o/slider_images%2Fmap.jpg?alt=media&token=a8f1e852-2c37-40a5-86bd-724c02b1708d"),
                     ]),
@@ -197,6 +217,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               children: <Widget>[
                 Container(
@@ -222,7 +243,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                   color: Colors.green,
                                 ),
                                 Text(
-                                  "Agriculture News",
+                                  "News Portals",
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600),
@@ -276,6 +297,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                 ],
                               );
                             return ListView.builder(
+                              physics: BouncingScrollPhysics(),
                               scrollDirection: Axis.horizontal,
                               itemCount: snapshot.data.documents.length,
                               itemBuilder: (context, index) => _buildListNews(
@@ -358,6 +380,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                 ],
                               );
                             return ListView.builder(
+                              physics: BouncingScrollPhysics(),
                               scrollDirection: Axis.horizontal,
                               itemCount: snapshot.data.documents.length,
                               itemBuilder: (context, index) => _buildListVideos(

@@ -56,6 +56,7 @@ class _AllUsersState extends State<AllUsers> {
                   );
                 } else {
                   return ListView.builder(
+                    physics: BouncingScrollPhysics(),
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) =>
                         buildItem(context, snapshot.data.documents[index]),

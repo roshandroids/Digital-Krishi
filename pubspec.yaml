@@ -57,6 +57,7 @@ dependencies:
   path_provider: ^1.6.11
   webview_flutter: ^0.3.22+1
   shimmer: ^1.1.1
+  flare_flutter: ^2.0.3
 
 dev_dependencies:
   flutter_test:

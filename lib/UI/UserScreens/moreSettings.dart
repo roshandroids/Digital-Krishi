@@ -275,6 +275,7 @@ class _MoreSettingsState extends State<MoreSettings> {
         body: Container(
           height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               children: <Widget>[
                 GestureDetector(

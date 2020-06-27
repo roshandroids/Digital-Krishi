@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -212,8 +213,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         imageUrl: document['PostImage'],
                         width: MediaQuery.of(context).size.width,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            CircularProgressIndicator(),
+                        placeholder: (context, url) => SpinKitWave(
+                          color: Colors.blue,
+                          size: 60.0,
+                        ),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),
@@ -274,6 +277,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
           children: <Widget>[
             OfflineBuilder(
@@ -670,6 +674,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height / 2.5,
                           child: ListView.builder(
+                            physics: BouncingScrollPhysics(),
                             // itemExtent: 200,
                             scrollDirection: Axis.horizontal,
                             itemCount: snapshot.data.documents.length,

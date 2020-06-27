@@ -35,8 +35,6 @@ class _ListNewsPortalState extends State<ListNewsPortal>
               placeholder: (context, url) => SpinKitWave(
                 color: Colors.blue,
                 size: 50.0,
-                // controller: AnimationController(
-                //     vsync: this, duration: const Duration(milliseconds: 1200)),
               ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
@@ -97,6 +95,7 @@ class _ListNewsPortalState extends State<ListNewsPortal>
                         ],
                       );
                     return ListView.builder(
+                      physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.vertical,
                       itemCount: snapshot.data.documents.length,
                       itemBuilder: (context, index) => _buildListBooks(

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/UI/OtherScreens/listvideos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class AllCategoryVideos extends StatefulWidget {
@@ -25,8 +26,25 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
       },
       child: Container(
         margin: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+            border: Border.all(width: .5),
+            borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: <Widget>[
+            Expanded(
+                flex: 0,
+                child: Container(
+                  margin: EdgeInsets.all(10),
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.black,
+                    highlightColor: Colors.black12,
+                    child: Text(
+                      document['title'],
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                )),
             Container(
               child: Stack(
                 children: <Widget>[
@@ -73,13 +91,6 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
                 ],
               ),
             ),
-            Expanded(
-              flex: 0,
-              child: Text(
-                document['title'],
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-            ),
           ],
         ),
       ),
@@ -89,46 +100,36 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(),
-        child: Expanded(
+        appBar: AppBar(),
+        body: Container(
           child: StreamBuilder(
               stream: Firestore.instance.collection('videos').snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData)
                   return LinearProgressIndicator(
-                    backgroundColor: Colors.black12,
+                    backgroundColor: Colors.green,
                   );
                 if (snapshot.data.documents.length <= 0)
-                  return Stack(
-                    children: [
-                      LinearProgressIndicator(
-                        backgroundColor: Colors.green,
-                      ),
-                      Container(
-                        alignment: Alignment.center,
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        child: Text(
-                          "There are no videos uploaded yet",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w700),
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SpinKitThreeBounce(
+                          color: Colors.green,
+                          size: 30.0,
                         ),
-                      ),
-                    ],
+                        Text("No Videos Available yet")
+                      ],
+                    ),
                   );
                 return ListView.builder(
+                  physics: BouncingScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   itemCount: snapshot.data.documents.length,
                   itemBuilder: (context, index) => _buildListvideos(
                       context, snapshot.data.documents[index], 'videos'),
                 );
               }),
-        ),
-      ),
-    );
+        ));
   }
 }

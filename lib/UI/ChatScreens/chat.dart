@@ -470,6 +470,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildSticker() {
     return SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
       child: Container(
         child: Wrap(
           children: <Widget>[
@@ -700,6 +701,7 @@ class ChatScreenState extends State<ChatScreen> {
                 } else {
                   listMessage = snapshot.data.documents;
                   return ListView.builder(
+                    physics: BouncingScrollPhysics(),
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) =>
                         buildItem(index, snapshot.data.documents[index]),

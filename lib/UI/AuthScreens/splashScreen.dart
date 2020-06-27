@@ -4,11 +4,12 @@ import 'package:digitalKrishi/UI/ExpertScreens/expertMainScreen.dart';
 import 'package:digitalKrishi/UI/OtherScreens/profileSetup.dart';
 import 'package:digitalKrishi/UI/UserScreens/userMainScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:digitalKrishi/UI/AuthScreens/authMainScreen.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -27,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
-    Future.delayed(Duration(seconds: 1)).then(
+    Future.delayed(Duration(milliseconds: 3000)).then(
       (val) async {
         FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -107,47 +108,54 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [Color(0xffffC9D6FF), Color(0xffffE2E2E2)])),
-      child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 400,
-              width: 200,
+      backgroundColor: Colors.white,
+      body: Container(
+        child: Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height / 2.0,
+            child: Center(
               child: Column(
-                children: [
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
                   Expanded(
-                    child: Image.asset(
-                      'lib/Assets/Images/icon.png',
+                    child: FlareActor(
+                      "lib/Assets/Images/splash_screen.flr",
+                      fit: BoxFit.cover,
+                      color: Colors.green,
+                      animation: "Untitled",
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Text(
-                      "Please Wait.. ",
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+                  Container(
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.green,
+                      highlightColor: Colors.greenAccent,
+                      child: RichText(
+                        text: TextSpan(
+                            text: 'Welcome To,',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: ' Digital Krishi'.toUpperCase(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              )
+                            ]),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.only(top: 20),
-              child: SpinKitWave(
-                color: Colors.green,
-                size: 50.0,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
-    ));
+    );
   }
 }
