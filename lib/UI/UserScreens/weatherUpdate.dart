@@ -41,9 +41,6 @@ class _WeatherUpdateState extends State<WeatherUpdate> {
           icon = forecast.daily.icon;
         });
       }
-
-      print(position.longitude);
-      print(position.latitude);
     }).catchError((e) {
       print(e);
     });
@@ -53,7 +50,14 @@ class _WeatherUpdateState extends State<WeatherUpdate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(0xff, 32, 168, 74),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: <Color>[
+            Color(0xff1D976C),
+            Color(0xff11998e),
+            Color(0xff1D976C),
+          ])),
+        ),
         centerTitle: true,
         title: Text("Today's Weather Update"),
         leading: IconButton(
@@ -63,7 +67,7 @@ class _WeatherUpdateState extends State<WeatherUpdate> {
           icon: Icon(
             Icons.chevron_left,
             color: Colors.white,
-            size: 40,
+            size: 30,
           ),
         ),
       ),

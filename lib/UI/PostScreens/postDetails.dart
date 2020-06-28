@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -129,27 +129,43 @@ class _PostDetailsState extends State<PostDetails> {
       showModalBottomSheet(
           context: context,
           builder: (BuildContext bc) {
-            return Container(
-              height: 100,
-              color: Colors.black12,
-              padding: EdgeInsets.only(left: 5, right: 5),
-              child: (!isPosting)
-                  ? TextFormField(
-                      decoration: InputDecoration(hintText: "Enter your text"),
-                      controller: commentController,
-                      textInputAction: TextInputAction.send,
-                      onEditingComplete: () => postComment(),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SpinKitWanderingCubes(
-                          color: Colors.blue,
-                          size: 50.0,
-                        ),
-                        Text("Posting")
-                      ],
-                    ),
+            return OfflineBuilder(
+              connectivityBuilder: (
+                BuildContext context,
+                ConnectivityResult connectivity,
+                Widget child,
+              ) {
+                bool connected = connectivity != ConnectivityResult.none;
+                return connected
+                    ? Container(
+                        height: 100,
+                        color: Colors.black12,
+                        padding: EdgeInsets.only(left: 5, right: 5),
+                        child: (!isPosting)
+                            ? TextFormField(
+                                decoration: InputDecoration(
+                                    hintText: "Enter your text"),
+                                controller: commentController,
+                                textInputAction: TextInputAction.send,
+                                onEditingComplete: () => postComment(),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SpinKitWanderingCubes(
+                                    color: Colors.blue,
+                                    size: 50.0,
+                                  ),
+                                  Text("Posting")
+                                ],
+                              ),
+                      )
+                    : Container(
+                        height: 100,
+                        child: Offline(),
+                      );
+              },
+              child: Container(),
             );
           });
     }
@@ -167,10 +183,11 @@ class _PostDetailsState extends State<PostDetails> {
             }),
         flexibleSpace: Container(
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[Color(0xffff9966), Color(0xffff5e62)])),
+              gradient: LinearGradient(colors: <Color>[
+            Color(0xff1D976C),
+            Color(0xff11998e),
+            Color(0xff1D976C),
+          ])),
         ),
         centerTitle: true,
         title: Text(
@@ -179,7 +196,6 @@ class _PostDetailsState extends State<PostDetails> {
               TextStyle(color: Color(0xff203152), fontWeight: FontWeight.bold),
         ),
       ),
-      backgroundColor: Color.fromARGB(0xff, 241, 241, 254),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -276,8 +292,13 @@ class _PostDetailsState extends State<PostDetails> {
                                           ),
                                         ],
                                       ),
-                                      Text(timeago
-                                          .format(widget.postedAt.toDate())),
+                                      Expanded(
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(timeago.format(
+                                              widget.postedAt.toDate())),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 );

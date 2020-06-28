@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_offline/flutter_offline.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path/path.dart';
@@ -36,7 +37,6 @@ class _NewPostState extends State<NewPost> {
       userEmail = email;
       uId = user.uid;
     });
-    print(userEmail);
     return email;
   }
 
@@ -67,10 +67,9 @@ class _NewPostState extends State<NewPost> {
         var downUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
         var url = downUrl.toString();
         setState(() {
-          print("Post Picture uploaded");
           imgUrl = url;
         });
-        print("Download URL :$url");
+
         await databaseReference.collection('posts').document().setData(
           {
             'PostedBy': uId,
@@ -96,13 +95,11 @@ class _NewPostState extends State<NewPost> {
         });
       }
     } else {
-      print("eroor");
       Fluttertoast.showToast(msg: 'Please fill all fields');
     }
   }
 
   takePicture() async {
-    print('Picker is called');
     PickedFile image = await picker.getImage(source: ImageSource.camera);
 
     if (image != null) {
@@ -161,7 +158,6 @@ class _NewPostState extends State<NewPost> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(0xff, 241, 241, 254),
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
@@ -179,10 +175,11 @@ class _NewPostState extends State<NewPost> {
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[Color(0xffff9966), Color(0xffff5e62)])),
+              gradient: LinearGradient(colors: <Color>[
+            Color(0xff1D976C),
+            Color(0xff11998e),
+            Color(0xff1D976C),
+          ])),
         ),
       ),
       body: GestureDetector(
@@ -191,14 +188,14 @@ class _NewPostState extends State<NewPost> {
         },
         child: Stack(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Form(
+                  key: _formKey,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
                     child: Column(
                       children: <Widget>[
                         SizedBox(height: 10),
@@ -332,8 +329,9 @@ class _NewPostState extends State<NewPost> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            CircularProgressIndicator(
-                              backgroundColor: Colors.green,
+                            SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 50,
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),

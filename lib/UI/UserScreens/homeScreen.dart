@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalKrishi/UI/ExpertScreens/expertDetails.dart';
 import 'package:digitalKrishi/UI/OtherScreens/allCategoryvideos.dart';
 import 'package:digitalKrishi/UI/OtherScreens/listNewsPortal.dart';
 import 'package:digitalKrishi/UI/OtherScreens/listvideos.dart';
@@ -12,6 +13,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class UserHomeScreen extends StatefulWidget {
+  final String userType;
+  UserHomeScreen({@required this.userType});
   @override
   _UserHomeScreenState createState() => _UserHomeScreenState();
 }
@@ -23,7 +26,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         Navigator.push(
             context,
             PageTransition(
-                type: PageTransitionType.leftToRight,
+                type: PageTransitionType.fade,
                 child: ReadNews(
                   url: document['url'],
                 )));
@@ -31,9 +34,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       child: Container(
         width: MediaQuery.of(context).size.width / 2.18,
         margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-        decoration: BoxDecoration(
-            border: Border.all(width: .1),
-            borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(boxShadow: [
+          new BoxShadow(
+            color: Color.fromRGBO(0, 0, 0, 0.5),
+            blurRadius: 20.0,
+          ),
+        ], color: Colors.white, borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -75,7 +81,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             Navigator.push(
                 context,
                 PageTransition(
-                    type: PageTransitionType.leftToRight,
+                    type: PageTransitionType.fade,
                     child: ListVideos(
                       category: document['title'],
                       videoUrl: document['videoUrl'],
@@ -83,6 +89,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           },
           child: Container(
             decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                new BoxShadow(
+                  color: Color.fromRGBO(0, 0, 0, 0.5),
+                  blurRadius: 20.0,
+                ),
+              ],
               borderRadius: BorderRadius.circular(10),
             ),
             padding: EdgeInsets.only(bottom: 5),
@@ -92,6 +105,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Expanded(
+                  flex: 5,
                   child: ClipRRect(
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10),
@@ -127,9 +141,15 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     ),
                   ),
                 ),
-                Text(
-                  document['title'],
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                Expanded(
+                  child: Text(
+                    document['title'],
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -142,18 +162,123 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
+  Widget _buildListItemExpert(
+      BuildContext context, DocumentSnapshot document, String collectionName) {
+    return InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ExpertDetails(
+                      profileImage: document['photoUrl'],
+                      fullName: document['fullName'],
+                      email: document['email'],
+                      userId: document['id'],
+                      contact: document['contact'],
+                      userType: document['userType'],
+                      address: document['address'],
+                      isVerified: document["isVerified"],
+                      id: document.documentID,
+                      collectionName: collectionName,
+                    )),
+          );
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width / 2,
+          margin: EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 10),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.0),
+              boxShadow: [
+                new BoxShadow(
+                  color: Color.fromRGBO(0, 0, 0, 0.5),
+                  blurRadius: 20.0,
+                ),
+              ]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10)),
+                    child: CachedNetworkImage(
+                      imageUrl: document['photoUrl'],
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 4,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Text(
+                          document['fullName'],
+                          overflow: TextOverflow.fade,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                        (document['isVerified'] == "Verified")
+                            ? Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                                size: 15,
+                              )
+                            : Container(),
+                      ],
+                    ),
+                    Text(
+                      document['email'],
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ));
+  }
+
+  void showInfo(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+              color: Colors.black.withOpacity(.1),
+              margin: EdgeInsets.all(20),
+              child: Text(
+                "You can directly contact the available farming experties, if you need any help. You can contact the through direct call or chat with them.",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ));
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
-        physics: BouncingScrollPhysics(),
+        // physics: BouncingScrollPhysics(),
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
               expandedHeight: 250.0,
               floating: true,
               pinned: false,
-              snap: true,
+              snap: false,
               stretch: true,
               backgroundColor: Colors.black12,
               flexibleSpace: FlexibleSpaceBar(
@@ -240,15 +365,19 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                FaIcon(
-                                  FontAwesomeIcons.newspaper,
-                                  color: Colors.green,
+                                Expanded(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.newspaper,
+                                    color: Colors.green,
+                                  ),
                                 ),
-                                Text(
-                                  "News Portals",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600),
+                                Expanded(
+                                  child: Text(
+                                    "News Portals",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
                                 ),
                               ],
                             ),
@@ -331,15 +460,19 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                FaIcon(
-                                  FontAwesomeIcons.youtube,
-                                  color: Colors.red,
+                                Expanded(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.youtube,
+                                    color: Colors.red,
+                                  ),
                                 ),
-                                Text(
-                                  "Agriculture Videos",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600),
+                                Expanded(
+                                  child: Text(
+                                    "Agriculture Videos",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
                                 ),
                               ],
                             ),
@@ -396,6 +529,94 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     ],
                   ),
                 ),
+                (widget.userType != "Expert")
+                    ? Container(
+                        margin: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            border:
+                                Border.all(width: .5, color: Colors.black12),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              margin:
+                                  EdgeInsets.only(left: 5, right: 0, top: 10),
+                              height: 50,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Expanded(
+                                          child: Image.asset(
+                                        'lib/Assets/Images/expert.png',
+                                        color: Colors.green,
+                                        height: 30,
+                                        width: 30,
+                                      )),
+                                      Expanded(
+                                        child: Text(
+                                          "Farming Experties",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.live_help),
+                                    onPressed: () => showInfo(context),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: 200,
+                              child: StreamBuilder(
+                                stream: Firestore.instance
+                                    .collection('users')
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return LinearProgressIndicator(
+                                      backgroundColor: Colors.green,
+                                    );
+                                  } else {
+                                    var users = [];
+                                    for (int i = 0;
+                                        i < snapshot.data.documents.length;
+                                        i++) {
+                                      if (snapshot.data.documents[i]
+                                              ["userType"] ==
+                                          "Expert") {
+                                        if (snapshot.data.documents[i]
+                                                ["isVerified"] ==
+                                            "Verified") {
+                                          users.add(snapshot.data.documents[i]);
+                                        }
+                                      }
+                                    }
+                                    return ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: users.length,
+                                      itemBuilder: (context, index) =>
+                                          _buildListItemExpert(
+                                              context, users[index], 'users'),
+                                    );
+                                  }
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    : Container(),
               ],
             ),
           ),

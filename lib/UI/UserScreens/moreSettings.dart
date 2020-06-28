@@ -1,13 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/customListTile.dart';
 import 'package:digitalKrishi/CustomComponents/popupMenu.dart';
+import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
 import 'package:digitalKrishi/UI/OtherScreens/allCategoryvideos.dart';
 import 'package:digitalKrishi/UI/OtherScreens/calculate.dart';
-import 'package:digitalKrishi/UI/OtherScreens/fertilizerCalculate.dart';
 import 'package:digitalKrishi/UI/OtherScreens/listNewsPortal.dart';
-import 'package:digitalKrishi/UI/OtherScreens/listvideos.dart';
 import 'package:digitalKrishi/UI/OtherScreens/updateProfile.dart';
 import 'package:digitalKrishi/UI/UserScreens/marketRate.dart';
 import 'package:digitalKrishi/UI/UserScreens/nearByMarket.dart';
@@ -20,6 +18,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MoreSettings extends StatefulWidget {
+  final userType;
+  MoreSettings({@required this.userType});
   @override
   _MoreSettingsState createState() => _MoreSettingsState();
 }
@@ -44,15 +44,25 @@ class _MoreSettingsState extends State<MoreSettings> {
 
   void logOut() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.of(context).pushReplacementNamed('/AuthMainScreen');
+    Navigator.pushReplacement(
+      context,
+      PageTransition(
+        type: PageTransitionType.fade,
+        duration: Duration(milliseconds: 300),
+        child: SplashScreen(),
+      ),
+    );
   }
 
   void onItemMenuPress(Choice choice) {
     if (choice.title == 'Log out') {
       logoutAlert(context);
     } else {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => UpdateProfile()));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => UpdateProfile(
+                userId: userId,
+                userType: widget.userType,
+              )));
     }
   }
 
@@ -72,7 +82,7 @@ class _MoreSettingsState extends State<MoreSettings> {
                     }),
                 ListTile(
                   leading: FaIcon(FontAwesomeIcons.ban),
-                  title: Text('No, Stay logged In Picture'),
+                  title: Text('No, Stay logged In'),
                   onTap: () {
                     Navigator.of(context).pop();
                   },
@@ -95,16 +105,17 @@ class _MoreSettingsState extends State<MoreSettings> {
                 Expanded(
                   child: ListTile(
                       leading: Image.asset(
-                        'lib/Assets/Images/pesticide.png',
+                        'lib/Assets/Images/seeds.png',
                         height: 30,
                         width: 30,
                       ),
                       trailing: Icon(Icons.arrow_right),
-                      title: Text('Fertilizer Calculator'),
+                      title: Text('Seed Calculator'),
                       onTap: () {
                         Navigator.of(context).pop();
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => Calculate(
+                                  title: "Seed Calculator",
                                   url: "https://agritechnepal.com/calc/seed/",
                                 )));
                       }),
@@ -112,16 +123,17 @@ class _MoreSettingsState extends State<MoreSettings> {
                 Expanded(
                   child: ListTile(
                     leading: Image.asset(
-                      'lib/Assets/Images/seeds.png',
+                      'lib/Assets/Images/pesticide.png',
                       height: 30,
                       width: 30,
                     ),
                     trailing: Icon(Icons.arrow_right),
-                    title: Text('Seed calculator'),
+                    title: Text('Fertilizer calculator'),
                     onTap: () {
                       Navigator.of(context).pop();
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => Calculate(
+                                title: "Fertilizer Calculator",
                                 url:
                                     "https://agritechnepal.com/calc/fertilizer/",
                               )));
@@ -173,8 +185,7 @@ class _MoreSettingsState extends State<MoreSettings> {
             bottom: 0,
             child: Container(
               decoration: BoxDecoration(
-                  color: Colors.white30,
-                  borderRadius: BorderRadius.circular(10)),
+                  color: Colors.black, borderRadius: BorderRadius.circular(10)),
               margin: EdgeInsets.only(left: 5, bottom: 5),
               padding: EdgeInsets.all(8),
               child: Text(
@@ -198,6 +209,9 @@ class _MoreSettingsState extends State<MoreSettings> {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
+              actionsIconTheme: IconThemeData(
+                color: Colors.black,
+              ),
               actions: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
@@ -234,8 +248,8 @@ class _MoreSettingsState extends State<MoreSettings> {
               expandedHeight: 300.0,
               floating: true,
               pinned: false,
-              snap: true,
               stretch: true,
+              snap: true,
               backgroundColor: Colors.white,
               flexibleSpace: FlexibleSpaceBar(
                 collapseMode: CollapseMode.parallax,

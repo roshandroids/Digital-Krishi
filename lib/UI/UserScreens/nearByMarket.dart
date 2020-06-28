@@ -82,7 +82,7 @@ class _NearByMarketState extends State<NearByMarket> {
                     Navigator.push(
                         context,
                         PageTransition(
-                          type: PageTransitionType.leftToRight,
+                          type: PageTransitionType.fade,
                           child: PlaceDetails(
                             thumbNail: shop.data['thumbNail'],
                             shopName: shop.data['shopName'],
@@ -216,7 +216,6 @@ class _NearByMarketState extends State<NearByMarket> {
 
   moveCamera() {
     if (shops.length == 0) {
-      print("Is Null");
     } else {
       _controller.animateCamera(
         CameraUpdate.newCameraPosition(
@@ -242,17 +241,21 @@ class _NearByMarketState extends State<NearByMarket> {
         context: context,
         builder: (BuildContext bc) {
           return Container(
+            color: Colors.black.withOpacity(.1),
             child: Wrap(
               children: <Widget>[
                 ListTile(
-                    leading: Icon(Icons.not_listed_location),
+                    leading: Icon(
+                      Icons.not_listed_location,
+                      color: Colors.green,
+                    ),
                     title: Text('About This Shop'),
                     onTap: () {
                       Navigator.of(context).pop();
                       Navigator.push(
                           context,
                           PageTransition(
-                            type: PageTransitionType.leftToRight,
+                            type: PageTransitionType.fade,
                             child: PlaceDetails(
                               thumbNail: thumbNail,
                               shopName: shopName,
@@ -261,8 +264,17 @@ class _NearByMarketState extends State<NearByMarket> {
                             ),
                           ));
                     }),
+                Divider(
+                  color: Colors.blueGrey,
+                  thickness: 1,
+                  indent: 20,
+                  endIndent: 10,
+                ),
                 ListTile(
-                  leading: Icon(Icons.navigation),
+                  leading: Icon(
+                    Icons.navigation,
+                    color: Colors.green,
+                  ),
                   title: Text('Navigate'),
                   onTap: () {
                     Navigator.of(context).pop();
@@ -279,7 +291,16 @@ class _NearByMarketState extends State<NearByMarket> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        title: Text("Vegetable Markets"),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: <Color>[
+            Color(0xff1D976C),
+            Color(0xff11998e),
+            Color(0xff1D976C),
+          ])),
+        ),
         leading: IconButton(
             icon: Icon(Icons.chevron_left, size: 30),
             onPressed: () {

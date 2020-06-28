@@ -3,18 +3,24 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/exitAppAlert.dart';
-import 'package:digitalKrishi/UI/ChatScreens/allUsers.dart';
+import 'package:digitalKrishi/UI/ChatScreens/usersList.dart';
 import 'package:digitalKrishi/UI/OtherScreens/feeds.dart';
+import 'package:digitalKrishi/UI/UserScreens/homeScreen.dart';
 import 'package:digitalKrishi/UI/UserScreens/moreSettings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ExpertMainScreen extends StatefulWidget {
   final String url;
-  ExpertMainScreen({this.url});
+  final String userType;
+  final String usrId;
+
+  ExpertMainScreen(
+      {@required this.url, @required this.userType, @required this.usrId});
 
   @override
   _ExpertMainScreenState createState() => _ExpertMainScreenState();
@@ -31,7 +37,7 @@ class _ExpertMainScreenState extends State<ExpertMainScreen>
   void initState() {
     super.initState();
     getUserData();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   void getUserData() async {
@@ -131,21 +137,28 @@ class _ExpertMainScreenState extends State<ExpertMainScreen>
               physics: BouncingScrollPhysics(),
               controller: _tabController,
               children: <Widget>[
+                UserHomeScreen(userType: widget.userType),
                 Feeds(),
-                AllUsers(),
-                MoreSettings(),
+                UsersList(),
+                MoreSettings(
+                  userType: widget.userType,
+                ),
               ],
             ),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.only(bottom: 5),
               child: TabBar(
                 controller: _tabController,
-                labelColor: Colors.green,
+                labelColor: Color.fromARGB(0xff, 25, 125, 35),
                 indicatorSize: TabBarIndicatorSize.label,
                 indicatorWeight: 2.0,
-                indicatorColor: Colors.green,
-                unselectedLabelColor: Colors.black,
+                indicatorColor: Color.fromARGB(0xff, 25, 125, 35),
+                unselectedLabelColor: Colors.blueGrey,
                 tabs: <Widget>[
+                  Tab(
+                    icon: FaIcon(FontAwesomeIcons.home),
+                    text: "Home",
+                  ),
                   Tab(
                     icon: Icon(
                       Icons.forum,
@@ -173,7 +186,7 @@ class _ExpertMainScreenState extends State<ExpertMainScreen>
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),
-                    text: "Profile",
+                    text: "More",
                   ),
                 ],
               ),

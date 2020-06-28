@@ -118,7 +118,17 @@ class _FeedsState extends State<Feeds> {
                             ),
                           ],
                         ),
-                        Text(timeago.format(timestamp.toDate())),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              timeago.format(
+                                timestamp.toDate(),
+                              ),
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ),
                       ],
                     ));
               }),
@@ -159,7 +169,7 @@ class _FeedsState extends State<Feeds> {
               Navigator.push(
                 context,
                 PageTransition(
-                    type: PageTransitionType.leftToRight,
+                    type: PageTransitionType.fade,
                     child: PostDetails(
                       postImage: document['PostImage'],
                       postTitle: document['PostTitle'],
@@ -332,7 +342,7 @@ class _FeedsState extends State<Feeds> {
                               Navigator.push(
                                 context,
                                 PageTransition(
-                                    type: PageTransitionType.leftToRight,
+                                    type: PageTransitionType.fade,
                                     child: PostDetails(
                                       postImage: document['PostImage'],
                                       postTitle: document['PostTitle'],

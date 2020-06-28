@@ -49,10 +49,7 @@ class _AuthMainScreenState extends State<AuthMainScreen>
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10)),
                     child: Image(
-                        // width: 250.0,
-                        // height: 191.0,
                         fit: BoxFit.cover,
-                        // color: Colors.white,
                         image: AssetImage(
                           'lib/Assets/Images/icon.png',
                         )),

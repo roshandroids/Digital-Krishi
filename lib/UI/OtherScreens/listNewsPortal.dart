@@ -19,7 +19,7 @@ class _ListNewsPortalState extends State<ListNewsPortal>
         Navigator.push(
             context,
             PageTransition(
-                type: PageTransitionType.leftToRight,
+                type: PageTransitionType.fade,
                 child: ReadNews(
                   url: document['url'],
                 )));
@@ -40,7 +40,10 @@ class _ListNewsPortalState extends State<ListNewsPortal>
               ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
-            Text(document['siteName']),
+            Text(
+              document['siteName'],
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
           ],
         ),
       ),
@@ -53,7 +56,14 @@ class _ListNewsPortalState extends State<ListNewsPortal>
       appBar: AppBar(
         title: Text("Available News Portals"),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: <Color>[
+            Color(0xff1D976C),
+            Color(0xff11998e),
+            Color(0xff1D976C),
+          ])),
+        ),
         leading: IconButton(
             icon: Icon(
               Icons.chevron_left,

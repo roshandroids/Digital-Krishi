@@ -19,7 +19,7 @@ class ListVideos extends StatefulWidget {
 class _ListVideosState extends State<ListVideos> {
   String title;
   String thumbnail;
-  YoutubePlayerController _controller;
+
   Future<String> getVideo(String videoUrl) async {
     var jsonData = await getDetail(videoUrl);
 
@@ -52,8 +52,15 @@ class _ListVideosState extends State<ListVideos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: <Color>[
+            Color(0xff1D976C),
+            Color(0xff11998e),
+            Color(0xff1D976C),
+          ])),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: Icon(
             Icons.chevron_left,

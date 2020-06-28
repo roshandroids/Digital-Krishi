@@ -20,7 +20,7 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
         Navigator.push(
             context,
             PageTransition(
-                type: PageTransitionType.leftToRight,
+                type: PageTransitionType.fade,
                 child: ListVideos(
                   category: document['title'],
                   videoUrl: document['videoUrl'],
@@ -102,7 +102,26 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("All Videos"),
+          leading: IconButton(
+              icon: Icon(
+                Icons.chevron_left,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              }),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(colors: <Color>[
+              Color(0xff1D976C),
+              Color(0xff11998e),
+              Color(0xff1D976C),
+            ])),
+          ),
+        ),
         body: Container(
           child: StreamBuilder(
               stream: Firestore.instance.collection('videos').snapshots(),

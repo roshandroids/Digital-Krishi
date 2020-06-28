@@ -1,5 +1,7 @@
+import 'package:digitalKrishi/UI/AuthScreens/authMainScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class PendingVerification extends StatefulWidget {
   @override
@@ -10,7 +12,14 @@ class _PendingVerificationState extends State<PendingVerification> {
   void signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
-      Navigator.of(context).pushReplacementNamed('/LoginScreen');
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          type: PageTransitionType.fade,
+          duration: Duration(milliseconds: 300),
+          child: AuthMainScreen(),
+        ),
+      );
     } catch (e) {
       print(e);
     }
@@ -20,6 +29,14 @@ class _PendingVerificationState extends State<PendingVerification> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: <Color>[
+            Color(0xff1D976C),
+            Color(0xff11998e),
+            Color(0xff1D976C),
+          ])),
+        ),
         title: Text("Verification Status"),
         centerTitle: true,
       ),

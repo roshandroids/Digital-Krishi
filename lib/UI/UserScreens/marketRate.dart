@@ -128,8 +128,21 @@ class _MarketRateState extends State<MarketRate> {
                   javascriptChannels: jsChannels,
                   mediaPlaybackRequiresUserGesture: false,
                   appBar: AppBar(
+                    centerTitle: true,
+                    title: Text("Latest Price List"),
+                    flexibleSpace: Container(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(colors: <Color>[
+                        Color(0xff1D976C),
+                        Color(0xff11998e),
+                        Color(0xff1D976C),
+                      ])),
+                    ),
                     leading: IconButton(
-                        icon: Icon(Icons.chevron_left),
+                        icon: Icon(
+                          Icons.chevron_left,
+                          size: 30,
+                        ),
                         onPressed: () async {
                           flutterWebViewPlugin.close();
                           Navigator.of(context).pop();
@@ -161,15 +174,23 @@ class _MarketRateState extends State<MarketRate> {
               )
             : Scaffold(
                 appBar: AppBar(
-                  backgroundColor: Colors.white,
-                  elevation: 0,
+                  centerTitle: true,
+                  flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: <Color>[
+                      Color(0xff1D976C),
+                      Color(0xff11998e),
+                      Color(0xff1D976C),
+                    ])),
+                  ),
+                  title: Text("Latest Price List"),
                   leading: IconButton(
                       icon: Icon(
                         Icons.chevron_left,
                         size: 30,
-                        color: Colors.black,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        flutterWebViewPlugin.close();
                         Navigator.of(context).pop();
                       }),
                 ),

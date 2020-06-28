@@ -2,19 +2,28 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
+import 'package:digitalKrishi/UI/ExpertScreens/expertMainScreen.dart';
+import 'package:digitalKrishi/UI/UserScreens/userMainScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:path/path.dart';
 
 class ProfileSetup extends StatefulWidget {
   final String userId;
   final String userType;
+  final String imageUrl;
 
-  ProfileSetup({@required this.userId, @required this.userType});
+  ProfileSetup(
+      {@required this.userId,
+      @required this.userType,
+      @required this.imageUrl});
   @override
   _ProfileSetupState createState() => _ProfileSetupState();
 }
@@ -22,8 +31,8 @@ class ProfileSetup extends StatefulWidget {
 class _ProfileSetupState extends State<ProfileSetup> {
   TextEditingController fullNameController;
   TextEditingController emailController;
-  TextEditingController contactController;
-  TextEditingController addressController;
+  TextEditingController contactController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
   TextEditingController userTypeController;
   TextEditingController isVerifiedController;
 
@@ -34,7 +43,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
   String photoUrl = '';
   String isVerified = '';
   String userType = '';
-
+  String docUrl;
   bool isLoading = false;
   bool isUploadingProfile = false;
   bool isUploadingDocument = false;
@@ -269,7 +278,16 @@ class _ProfileSetupState extends State<ProfileSetup> {
               textColor: Colors.red,
               backgroundColor: Colors.black);
         });
-        Navigator.of(context).pushReplacementNamed('/UserMainScreen');
+        Navigator.pushReplacement(
+          context,
+          PageTransition(
+            type: PageTransitionType.fade,
+            duration: Duration(milliseconds: 300),
+            child: UserMainScreen(
+              userType: widget.userType,
+            ),
+          ),
+        );
       }).catchError((err) {
         setState(() {
           isLoading = false;
@@ -283,7 +301,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
 
   //update the profile name, address, contact for expert
   void handleUpdateDataExpert(context) {
-    if (_image != null &&
+    if ((_image != null || docUrl != null) &&
         fullNameController.text.isNotEmpty &&
         contactController.text.isNotEmpty &&
         addressController.text.isNotEmpty) {
@@ -314,7 +332,18 @@ class _ProfileSetupState extends State<ProfileSetup> {
               textColor: Colors.red,
               backgroundColor: Colors.black);
         });
-        Navigator.of(context).pushReplacementNamed('/ExpertMainScreen');
+        Navigator.pushReplacement(
+          context,
+          PageTransition(
+            type: PageTransitionType.fade,
+            duration: Duration(milliseconds: 300),
+            child: ExpertMainScreen(
+              userType: widget.userType,
+              usrId: widget.userId,
+              url: photoUrl,
+            ),
+          ),
+        );
       }).catchError((err) {
         setState(() {
           isLoading = false;
@@ -326,6 +355,45 @@ class _ProfileSetupState extends State<ProfileSetup> {
     }
   }
 
+  void logOut(context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      PageTransition(
+        type: PageTransitionType.fade,
+        duration: Duration(milliseconds: 300),
+        child: SplashScreen(),
+      ),
+    );
+  }
+
+  void logoutAlert(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
+                    leading: FaIcon(FontAwesomeIcons.signOutAlt),
+                    title: Text('Yes, log Out'),
+                    onTap: () {
+                      logOut(context);
+                      Navigator.of(context).pop();
+                    }),
+                ListTile(
+                  leading: FaIcon(FontAwesomeIcons.ban),
+                  title: Text('No, Stay logged In'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget _buildProfileListItem(BuildContext context, snapshot) {
@@ -333,16 +401,14 @@ class _ProfileSetupState extends State<ProfileSetup> {
           TextEditingController(text: snapshot.data.data['fullName']);
       emailController =
           TextEditingController(text: snapshot.data.data['email']);
-      contactController =
-          TextEditingController(text: snapshot.data.data['contact']);
-      addressController =
-          TextEditingController(text: snapshot.data.data['address']);
+
       isVerifiedController =
           TextEditingController(text: snapshot.data.data['isVerified']);
       userTypeController =
           TextEditingController(text: snapshot.data.data['userType']);
 
       photoUrl = snapshot.data.data["photoUrl"];
+      docUrl = snapshot.data.data['verificationDocument'];
 
       return Column(
         children: <Widget>[
@@ -403,7 +469,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
                               child: IconButton(
                                 icon: Icon(
                                   Icons.camera_alt,
-                                  color: Colors.white,
+                                  color: Colors.blue,
                                 ),
                                 onPressed: () => chosePicture(context),
                                 highlightColor: Color(0xffaeaeae),
@@ -662,51 +728,79 @@ class _ProfileSetupState extends State<ProfileSetup> {
                 height: 20,
                 child: Text("All field must be filled"),
               ),
-              (widget.userType != "Farmer")
-                  ? (!isUploadingDocument)
-                      ? InkWell(
-                          onTap: getDocumentImage,
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 25),
-                            height: MediaQuery.of(context).size.height / 4,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 4, color: Colors.grey),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: (_image != null)
-                                ? Image.file(
-                                    _image,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text("Choose or take a picture"),
-                                    ),
+              Stack(
+                children: <Widget>[
+                  (widget.userType != "Farmer")
+                      ? (!isUploadingDocument)
+                          ? Container(
+                              margin: EdgeInsets.symmetric(horizontal: 25),
+                              height: MediaQuery.of(context).size.height / 4,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 4, color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: (docUrl != null)
+                                  ? CachedNetworkImage(imageUrl: docUrl)
+                                  : (_image != null)
+                                      ? Image.file(
+                                          _image,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Container(),
+                            )
+                          : Container(
+                              margin: EdgeInsets.symmetric(horizontal: 25),
+                              height: MediaQuery.of(context).size.height / 4,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border.all(width: 1),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SpinKitWave(
+                                    color: Colors.blue,
+                                    size: 50.0,
                                   ),
-                          ),
-                        )
-                      : Container(
-                          margin: EdgeInsets.symmetric(horizontal: 25),
-                          height: MediaQuery.of(context).size.height / 4,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              border: Border.all(width: 1),
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SpinKitWave(
-                                color: Colors.blue,
-                                size: 50.0,
+                                  Text("Uploading..")
+                                ],
                               ),
-                              Text("Uploading..")
-                            ],
+                            )
+                      : Container(),
+                  InkWell(
+                    onTap: getDocumentImage,
+                    child: Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.symmetric(horizontal: 25),
+                      height: MediaQuery.of(context).size.height / 4,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(.5),
+                          border: Border.all(width: 1, color: Colors.black),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          FaIcon(
+                            FontAwesomeIcons.cameraRetro,
+                            color: Colors.white,
+                            size: 30,
                           ),
-                        )
-                  : Container(),
+                          Text(
+                            "Tap to pick image",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
             crossAxisAlignment: CrossAxisAlignment.center,
           ),
@@ -727,7 +821,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
                         Radius.circular(10),
                       ),
                     ),
-                    child: Text("Request Account Verification".toUpperCase()),
+                    child: Text("Proceed to Verification".toUpperCase()),
                   ),
                 )
               : InkWell(
@@ -753,13 +847,28 @@ class _ProfileSetupState extends State<ProfileSetup> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black12,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: <Color>[
+            Color(0xff1D976C),
+            Color(0xff11998e),
+            Color(0xff1D976C),
+          ])),
+        ),
         title: Text(
           'Profile Setup',
           style:
               TextStyle(color: Color(0xff203152), fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(
+                Icons.exit_to_app,
+                size: 30,
+              ),
+              onPressed: () => logoutAlert(context))
+        ],
       ),
       body: GestureDetector(
         onTap: () {

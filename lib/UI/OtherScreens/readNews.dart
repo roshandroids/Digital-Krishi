@@ -1,13 +1,9 @@
 import 'dart:async';
-
 import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // ignore: prefer_collection_literals
 final Set<JavascriptChannel> jsChannels = [
@@ -127,6 +123,14 @@ class _ReadnewsState extends State<ReadNews> {
                 javascriptChannels: jsChannels,
                 mediaPlaybackRequiresUserGesture: false,
                 appBar: AppBar(
+                  flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: <Color>[
+                      Color(0xff1D976C),
+                      Color(0xff11998e),
+                      Color(0xff1D976C),
+                    ])),
+                  ),
                   leading: IconButton(
                       icon: Icon(Icons.chevron_left),
                       onPressed: () async {

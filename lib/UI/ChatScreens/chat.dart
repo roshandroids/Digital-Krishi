@@ -2,62 +2,49 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:digitalKrishi/UI/PostScreens/fullPhoto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:page_transition/page_transition.dart';
-
-class Chat extends StatelessWidget {
-  final String peerId;
-  final String peerAvatar;
-
-  Chat({Key key, @required this.peerId, @required this.peerAvatar})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(
-          'CHAT',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: new ChatScreen(
-        peerId: peerId,
-        peerAvatar: peerAvatar,
-      ),
-    );
-  }
-}
 
 class ChatScreen extends StatefulWidget {
   final String peerId;
   final String peerAvatar;
 
-  ChatScreen({Key key, @required this.peerId, @required this.peerAvatar})
-      : super(key: key);
+  ChatScreen({
+    Key key,
+    @required this.peerId,
+    @required this.peerAvatar,
+  }) : super(key: key);
 
   @override
-  State createState() =>
-      new ChatScreenState(peerId: peerId, peerAvatar: peerAvatar);
+  State createState() => new ChatScreenState(
+        peerId: peerId,
+        peerAvatar: peerAvatar,
+      );
 }
 
 class ChatScreenState extends State<ChatScreen> {
-  ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar});
+  ChatScreenState({
+    Key key,
+    @required this.peerId,
+    @required this.peerAvatar,
+  });
 
   String peerId;
   String peerAvatar;
+
   String id;
 
   var listMessage;
   String groupChatId;
-  final picker = ImagePicker();
+
   File imageFile;
   bool isLoading;
   bool isShowSticker;
@@ -71,6 +58,7 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+
     focusNode.addListener(onFocusChange);
 
     groupChatId = '';
@@ -110,22 +98,14 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Future getImage() async {
-    PickedFile image = await picker.getImage(source: ImageSource.gallery);
+    imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if (image != null) {
+    if (imageFile != null) {
       setState(() {
         isLoading = true;
       });
       uploadFile();
     }
-  }
-
-  void getSticker() {
-    // Hide keyboard when sticker appear
-    focusNode.unfocus();
-    setState(() {
-      isShowSticker = !isShowSticker;
-    });
   }
 
   Future uploadFile() async {
@@ -149,7 +129,6 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   void onSendMessage(String content, int type) {
-    // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
       textEditingController.clear();
 
@@ -191,12 +170,12 @@ class ChatScreenState extends State<ChatScreen> {
               ? Container(
                   child: Text(
                     document['content'],
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.blueGrey),
                   ),
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                   width: 200.0,
                   decoration: BoxDecoration(
-                      color: Colors.blue,
+                      color: Color.fromARGB(0xff, 107, 162, 194),
                       borderRadius: BorderRadius.circular(8.0)),
                   margin: EdgeInsets.only(
                       bottom: isLastMessageRight(index) ? 20.0 : 10.0,
@@ -246,9 +225,9 @@ class ChatScreenState extends State<ChatScreen> {
                         onPressed: () {
                           Navigator.push(
                               context,
-                              PageTransition(
-                                  type: PageTransitionType.leftToRight,
-                                  child: FullPhoto(url: document['content'])));
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      FullPhoto(url: document['content'])));
                         },
                         padding: EdgeInsets.all(0),
                       ),
@@ -257,17 +236,7 @@ class ChatScreenState extends State<ChatScreen> {
                           right: 10.0),
                     )
                   // Sticker
-                  : Container(
-                      child: new Image.asset(
-                        'lib/images/${document['content']}.gif',
-                        width: 100.0,
-                        height: 100.0,
-                        fit: BoxFit.cover,
-                      ),
-                      margin: EdgeInsets.only(
-                          bottom: isLastMessageRight(index) ? 20.0 : 10.0,
-                          right: 10.0),
-                    ),
+                  : Container(),
         ],
         mainAxisAlignment: MainAxisAlignment.end,
       );
@@ -311,7 +280,7 @@ class ChatScreenState extends State<ChatScreen> {
                         padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                         width: 200.0,
                         decoration: BoxDecoration(
-                            color: Colors.black,
+                            color: Color.fromARGB(0xff, 131, 198, 201),
                             borderRadius: BorderRadius.circular(8.0)),
                         margin: EdgeInsets.only(left: 10.0),
                       )
@@ -360,26 +329,15 @@ class ChatScreenState extends State<ChatScreen> {
                               onPressed: () {
                                 Navigator.push(
                                     context,
-                                    PageTransition(
-                                        type: PageTransitionType.leftToRight,
-                                        child: FullPhoto(
+                                    MaterialPageRoute(
+                                        builder: (context) => FullPhoto(
                                             url: document['content'])));
                               },
                               padding: EdgeInsets.all(0),
                             ),
                             margin: EdgeInsets.only(left: 10.0),
                           )
-                        : Container(
-                            child: new Image.asset(
-                              'lib/images/${document['content']}.gif',
-                              width: 150.0,
-                              height: 100.0,
-                              fit: BoxFit.cover,
-                            ),
-                            margin: EdgeInsets.only(
-                                bottom: isLastMessageRight(index) ? 20.0 : 10.0,
-                                right: 10.0),
-                          ),
+                        : Container(),
               ],
             ),
 
@@ -446,156 +404,45 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              // List of messages
-              buildListMessage(),
-
-              // Sticker
-              (isShowSticker ? buildSticker() : Container()),
-
-              // Input content
-              buildInput(),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: <Color>[
+            Color(0xff1D976C),
+            Color(0xff11998e),
+            Color(0xff1D976C),
+          ])),
+        ),
+        leading: IconButton(
+            icon: Icon(
+              Icons.chevron_left,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            }),
+        centerTitle: true,
+        title: Text(
+          "Chat",
+          style: TextStyle(
+            color: Color(0xff203152),
           ),
-
-          // Loading
-          buildLoading()
-        ],
+        ),
       ),
-      onWillPop: onBackPress,
-    );
-  }
-
-  Widget buildSticker() {
-    return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
-      child: Container(
-        child: Wrap(
+      body: WillPopScope(
+        child: Stack(
           children: <Widget>[
-            Wrap(
+            Column(
               children: <Widget>[
-                FlatButton(
-                  onPressed: () => onSendMessage('namaste', 2),
-                  child: new Image.asset(
-                    'lib/images/namaste.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('whatYouDoing', 2),
-                  child: new Image.asset(
-                    'lib/images/whatYouDoing.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('howAreYou', 2),
-                  child: new Image.asset(
-                    'lib/images/howAreYou.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('mimi1', 2),
-                  child: new Image.asset(
-                    'lib/images/mimi1.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('mimi2', 2),
-                  child: new Image.asset(
-                    'lib/images/mimi2.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('mimi3', 2),
-                  child: new Image.asset(
-                    'lib/images/mimi3.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('mimi4', 2),
-                  child: new Image.asset(
-                    'lib/images/mimi4.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('mimi5', 2),
-                  child: new Image.asset(
-                    'lib/images/mimi5.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('mimi6', 2),
-                  child: new Image.asset(
-                    'lib/images/mimi6.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('mimi7', 2),
-                  child: new Image.asset(
-                    'images/mimi7.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('mimi8', 2),
-                  child: new Image.asset(
-                    'images/mimi8.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () => onSendMessage('mimi9', 2),
-                  child: new Image.asset(
-                    'images/mimi9.gif',
-                    width: 60.0,
-                    height: 60.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                buildListMessage(),
+                buildInput(),
               ],
             ),
+            buildLoading()
           ],
         ),
-        decoration: new BoxDecoration(
-            border:
-                new Border(top: new BorderSide(color: Colors.blue, width: 0.5)),
-            color: Colors.white),
-        padding: EdgeInsets.all(5.0),
-        height: 200.0,
+        onWillPop: onBackPress,
       ),
     );
   }
@@ -615,68 +462,73 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Widget buildInput() {
-    return Container(
-      child: Row(
-        children: <Widget>[
-          // Button send image
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              child: new IconButton(
-                icon: new Icon(Icons.image),
-                onPressed: getImage,
-                color: Colors.black,
-              ),
-            ),
-            color: Colors.white,
-          ),
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              child: new IconButton(
-                icon: new Icon(Icons.face),
-                onPressed: getSticker,
-                color: Colors.black,
-              ),
-            ),
-            color: Colors.white,
-          ),
+    return OfflineBuilder(
+      connectivityBuilder: (
+        BuildContext context,
+        ConnectivityResult connectivity,
+        Widget child,
+      ) {
+        bool connected = connectivity != ConnectivityResult.none;
+        return connected
+            ? Container(
+                child: Row(
+                  children: <Widget>[
+                    // Button send image
+                    Material(
+                      child: new Container(
+                        margin: new EdgeInsets.symmetric(horizontal: 1.0),
+                        child: new IconButton(
+                          icon: new Icon(Icons.image),
+                          onPressed: getImage,
+                          color: Colors.black,
+                        ),
+                      ),
+                      color: Colors.white,
+                    ),
 
-          // Edit text
-          Flexible(
-            child: Container(
-              child: TextField(
-                style: TextStyle(color: Colors.black, fontSize: 15.0),
-                controller: textEditingController,
-                decoration: InputDecoration.collapsed(
-                  hintText: 'Type your message...',
-                  hintStyle: TextStyle(color: Colors.grey),
+                    // Edit text
+                    Flexible(
+                      child: Container(
+                        child: TextFormField(
+                          style: TextStyle(color: Colors.black, fontSize: 15.0),
+                          controller: textEditingController,
+                          textInputAction: TextInputAction.send,
+                          onFieldSubmitted: (value) =>
+                              onSendMessage(textEditingController.text, 0),
+                          decoration: InputDecoration.collapsed(
+                            hintText: 'Type your message...',
+                            hintStyle: TextStyle(color: Colors.grey),
+                          ),
+                          focusNode: focusNode,
+                        ),
+                      ),
+                    ),
+
+                    // Button send message
+                    Material(
+                      child: new Container(
+                        margin: new EdgeInsets.symmetric(horizontal: 8.0),
+                        child: new IconButton(
+                          icon: new Icon(Icons.send),
+                          onPressed: () =>
+                              onSendMessage(textEditingController.text, 0),
+                          color: Colors.black,
+                        ),
+                      ),
+                      color: Colors.white,
+                    ),
+                  ],
                 ),
-                focusNode: focusNode,
-              ),
-            ),
-          ),
-
-          // Button send message
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 8.0),
-              child: new IconButton(
-                icon: new Icon(Icons.send),
-                onPressed: () => onSendMessage(textEditingController.text, 0),
-                color: Colors.black,
-              ),
-            ),
-            color: Colors.white,
-          ),
-        ],
-      ),
-      width: double.infinity,
-      height: 50.0,
-      decoration: new BoxDecoration(
-          border:
-              new Border(top: new BorderSide(color: Colors.blue, width: 0.5)),
-          color: Colors.white),
+                width: double.infinity,
+                height: 50.0,
+                decoration: new BoxDecoration(
+                    border: new Border(
+                        top: new BorderSide(color: Colors.blue, width: 0.5)),
+                    color: Colors.white),
+              )
+            : Offline();
+      },
+      child: Container(),
     );
   }
 
@@ -703,7 +555,6 @@ class ChatScreenState extends State<ChatScreen> {
                 } else {
                   listMessage = snapshot.data.documents;
                   return ListView.builder(
-                    physics: BouncingScrollPhysics(),
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) =>
                         buildItem(index, snapshot.data.documents[index]),

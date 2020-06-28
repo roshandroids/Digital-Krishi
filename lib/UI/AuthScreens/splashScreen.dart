@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/UI/AdminScreens/adminMainScreen.dart';
 import 'package:digitalKrishi/UI/ExpertScreens/expertMainScreen.dart';
+import 'package:digitalKrishi/UI/OtherScreens/pendingVerification.dart';
 import 'package:digitalKrishi/UI/OtherScreens/profileSetup.dart';
 import 'package:digitalKrishi/UI/UserScreens/userMainScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +9,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:digitalKrishi/UI/AuthScreens/authMainScreen.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,6 +22,8 @@ class _SplashScreenState extends State<SplashScreen> {
   String userId;
   String isFirstTime;
   String url;
+  bool emailVerified = false;
+  String isVerified;
   @override
   void initState() {
     super.initState();
@@ -31,36 +34,52 @@ class _SplashScreenState extends State<SplashScreen> {
         FirebaseAuth _auth = FirebaseAuth.instance;
 
         var user = await _auth.currentUser();
+
         if (user != null) {
-          await Firestore.instance
-              .collection('users')
-              .document(user.uid)
-              .get()
-              .then((DocumentSnapshot ds) {
+          if (user.isEmailVerified) {
             setState(() {
+              emailVerified = true;
               userId = user.uid;
-              isFirstTime = ds.data['isFirstTime'];
-              loggedInUserType = ds.data['userType'];
-              url = ds.data['photoUrl'];
             });
-            // use ds as a snapshot
-            print("User type:- " + loggedInUserType);
-          });
+            await Firestore.instance
+                .collection('users')
+                .document(user.uid)
+                .get()
+                .then((DocumentSnapshot ds) {
+              setState(() {
+                userId = user.uid;
+                isFirstTime = ds.data['isFirstTime'];
+                loggedInUserType = ds.data['userType'];
+                url = ds.data['photoUrl'];
+                isVerified = ds.data['isVerified'];
+              });
+            });
+          } else {
+            setState(() {
+              emailVerified = false;
+              userId = user.uid;
+            });
+          }
         }
 
-        if (user == null) {
+        if (userId == null) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-              builder: (context) => AuthMainScreen(),
+            PageTransition(
+              type: PageTransitionType.fade,
+              duration: Duration(milliseconds: 300),
+              child: AuthMainScreen(),
             ),
           );
         } else {
           if (isFirstTime == 'yes' && loggedInUserType != "Admin") {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => ProfileSetup(
+              PageTransition(
+                type: PageTransitionType.fade,
+                duration: Duration(milliseconds: 300),
+                child: ProfileSetup(
+                  imageUrl: url,
                   userId: userId,
                   userType: loggedInUserType,
                 ),
@@ -70,31 +89,69 @@ class _SplashScreenState extends State<SplashScreen> {
             if (loggedInUserType == "Farmer") {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => UserMainScreen(),
-                ),
-              );
-            } else if (loggedInUserType == "Expert") {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ExpertMainScreen(
-                    url: url,
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  duration: Duration(milliseconds: 300),
+                  child: UserMainScreen(
+                    userType: loggedInUserType,
                   ),
                 ),
               );
+            } else if (loggedInUserType == "Expert") {
+              if (isFirstTime == "yes") {
+                Navigator.pushReplacement(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.fade,
+                    duration: Duration(milliseconds: 300),
+                    child: ProfileSetup(
+                      userType: loggedInUserType,
+                      imageUrl: url,
+                      userId: userId,
+                    ),
+                  ),
+                );
+              } else {
+                if (isVerified == "Verified") {
+                  Navigator.pushReplacement(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.fade,
+                      duration: Duration(milliseconds: 300),
+                      child: ExpertMainScreen(
+                        userType: loggedInUserType,
+                        url: url,
+                        usrId: userId,
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.pushReplacement(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.fade,
+                      duration: Duration(milliseconds: 300),
+                      child: PendingVerification(),
+                    ),
+                  );
+                }
+              }
             } else if (loggedInUserType == "Admin") {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => AdminMainScreen(),
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  duration: Duration(milliseconds: 300),
+                  child: AdminMainScreen(),
                 ),
               );
             } else {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => AuthMainScreen(),
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  duration: Duration(milliseconds: 300),
+                  child: AuthMainScreen(),
                 ),
               );
             }

@@ -38,9 +38,6 @@ class _PlaceDetailsState extends State<PlaceDetails> {
       postalCode = placemark[0].postalCode;
       locality = placemark[0].locality;
     });
-    print(placemark[0].country);
-    print(placemark[0].position);
-    print(placemark[0].locality);
   }
 
   launchMap() async {

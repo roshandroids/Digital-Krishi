@@ -67,8 +67,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       try {
         await signUp(email, password);
-        // FirebaseUser user = await _firebaseAuth.currentUser();
-        // await user.sendEmailVerification();
+        FirebaseUser user = await _firebaseAuth.currentUser();
+        await user.sendEmailVerification();
         await Firestore.instance.collection('users').document(userId).setData({
           'fullName': fullName,
           'email': email,
@@ -93,8 +93,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             backgroundColor: Colors.white,
             textColor: Colors.black);
         changeTab();
-
-        print('Signed up user: $userId');
       } catch (e) {
         setState(() {
           _isLoading = false;
@@ -112,211 +110,270 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
-      child: Form(
-        key: _formKey,
-        child: Container(
-          padding: EdgeInsets.only(top: 23.0, bottom: 30),
-          child: Stack(
-            alignment: Alignment.topCenter,
-            overflow: Overflow.visible,
-            children: <Widget>[
-              Card(
-                elevation: 2.0,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: .5),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Container(
-                  width: 300.0,
-                  height: 420.00,
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: TextFormField(
-                          focusNode: nameFocusNode,
-                          textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.text,
-                          onEditingComplete: () {
-                            FocusScope.of(context).requestFocus(emailFocusNode);
-                          },
-                          textCapitalization: TextCapitalization.words,
-                          style: TextStyle(fontSize: 16.0, color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.user,
-                              color: Colors.black,
-                            ),
-                            hintText: "Full Name",
-                            hintStyle: TextStyle(fontSize: 16.0),
-                          ),
-                          validator: validateName,
-                          onSaved: (value) => fullName = value.trim(),
-                        ),
+    return Stack(
+      children: <Widget>[
+        SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Center(
+            child: Form(
+              key: _formKey,
+              child: Container(
+                padding: EdgeInsets.only(top: 23.0, bottom: 30),
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: <Widget>[
+                    Card(
+                      elevation: 2.0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(width: .5),
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
-                      Divider(
-                        indent: 20,
-                        endIndent: 20,
-                        thickness: 1,
-                        color: Colors.grey[600],
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: TextFormField(
-                          focusNode: emailFocusNode,
-                          textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.emailAddress,
-                          onEditingComplete: () {
-                            FocusScope.of(context)
-                                .requestFocus(passwordFocusNode);
-                          },
-                          style: TextStyle(fontSize: 16.0, color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.envelope,
-                              color: Colors.black,
-                            ),
-                            hintText: "Email Address",
-                            hintStyle: TextStyle(fontSize: 16.0),
-                          ),
-                          validator: validateEmail,
-                          onSaved: (value) => email = value.trim(),
-                        ),
-                      ),
-                      Divider(
-                        indent: 20,
-                        endIndent: 20,
-                        thickness: 1,
-                        color: Colors.grey[600],
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: TextFormField(
-                          focusNode: passwordFocusNode,
-                          obscureText: _obscureText,
-                          textInputAction: TextInputAction.done,
-                          style: TextStyle(fontSize: 16.0, color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.lock,
-                              color: Colors.black,
-                            ),
-                            hintText: "Password",
-                            hintStyle: TextStyle(fontSize: 16.0),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureText
-                                    ? FontAwesomeIcons.eye
-                                    : FontAwesomeIcons.eyeSlash,
-                                size: 15.0,
-                                color: Colors.black,
-                              ),
-                              onPressed: () => _toggleSignup(),
-                            ),
-                          ),
-                          validator: validatePassword,
-                          onSaved: (value) => password = value.trim(),
-                        ),
-                      ),
-                      Divider(
-                        indent: 20,
-                        endIndent: 20,
-                        thickness: 1,
-                        color: Colors.grey[600],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Text("Choose Your Account Type"),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 50),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      child: Container(
+                        width: 300.0,
+                        // height: 420.00,
+                        child: Column(
                           children: <Widget>[
                             Padding(
-                              padding: EdgeInsets.only(top: 10.0, right: 40.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    userType = "Farmer";
-                                  });
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              child: TextFormField(
+                                focusNode: nameFocusNode,
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.text,
+                                onEditingComplete: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(emailFocusNode);
                                 },
-                                child: Container(
-                                    padding: const EdgeInsets.all(10.0),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(width: 1),
-                                      shape: BoxShape.circle,
-                                      color: (userType == "Farmer")
-                                          ? Colors.greenAccent
-                                          : Colors.white,
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Image.asset(
-                                          'lib/Assets/Images/farmer.png',
-                                          height: 25,
-                                          width: 25,
-                                          color: (userType == "Farmer")
-                                              ? Colors.red
-                                              : Colors.black,
-                                        ),
-                                        Text(
-                                          "Farmer",
-                                          style: TextStyle(
-                                            color: (userType == "Farmer")
-                                                ? Colors.red
-                                                : Colors.black,
-                                          ),
-                                        )
-                                      ],
-                                    )),
+                                textCapitalization: TextCapitalization.words,
+                                style: TextStyle(
+                                    fontSize: 16.0, color: Colors.black),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  icon: Icon(
+                                    FontAwesomeIcons.user,
+                                    color: Colors.black,
+                                  ),
+                                  hintText: "Full Name",
+                                  hintStyle: TextStyle(fontSize: 16.0),
+                                ),
+                                validator: validateName,
+                                onSaved: (value) => fullName = value.trim(),
                               ),
                             ),
+                            Divider(
+                              indent: 20,
+                              endIndent: 20,
+                              thickness: 1,
+                              color: Colors.grey[600],
+                            ),
                             Padding(
-                              padding: EdgeInsets.only(top: 10.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    userType = "Expert";
-                                  });
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 5),
+                              child: TextFormField(
+                                focusNode: emailFocusNode,
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.emailAddress,
+                                onEditingComplete: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(passwordFocusNode);
                                 },
-                                child: Container(
-                                  padding: const EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(width: 1),
-                                    shape: BoxShape.circle,
-                                    color: (userType == "Expert")
-                                        ? Colors.greenAccent
-                                        : Colors.white,
+                                style: TextStyle(
+                                    fontSize: 16.0, color: Colors.black),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  icon: Icon(
+                                    FontAwesomeIcons.envelope,
+                                    color: Colors.black,
                                   ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Image.asset(
-                                        'lib/Assets/Images/expert.png',
-                                        height: 25,
-                                        width: 25,
-                                        color: (userType == "Expert")
-                                            ? Colors.red
-                                            : Colors.black,
-                                      ),
-                                      Text(
-                                        "Expert",
-                                        style: TextStyle(
+                                  hintText: "Email Address",
+                                  hintStyle: TextStyle(fontSize: 16.0),
+                                ),
+                                validator: validateEmail,
+                                onSaved: (value) => email = value.trim(),
+                              ),
+                            ),
+                            Divider(
+                              indent: 20,
+                              endIndent: 20,
+                              thickness: 1,
+                              color: Colors.grey[600],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 5),
+                              child: TextFormField(
+                                focusNode: passwordFocusNode,
+                                obscureText: _obscureText,
+                                textInputAction: TextInputAction.done,
+                                style: TextStyle(
+                                    fontSize: 16.0, color: Colors.black),
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  icon: Icon(
+                                    FontAwesomeIcons.lock,
+                                    color: Colors.black,
+                                  ),
+                                  hintText: "Password",
+                                  hintStyle: TextStyle(fontSize: 16.0),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _obscureText
+                                          ? FontAwesomeIcons.eye
+                                          : FontAwesomeIcons.eyeSlash,
+                                      size: 15.0,
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () => _toggleSignup(),
+                                  ),
+                                ),
+                                validator: validatePassword,
+                                onSaved: (value) => password = value.trim(),
+                              ),
+                            ),
+                            Divider(
+                              indent: 20,
+                              endIndent: 20,
+                              thickness: 1,
+                              color: Colors.grey[600],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 5),
+                              child: Text("Choose Your Account Type"),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 50),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(top: 5.0, right: 40.0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          userType = "Farmer";
+                                        });
+                                      },
+                                      child: Container(
+                                          padding: const EdgeInsets.all(10.0),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(width: 1),
+                                            shape: BoxShape.circle,
+                                            color: (userType == "Farmer")
+                                                ? Colors.greenAccent
+                                                : Colors.white,
+                                          ),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Image.asset(
+                                                'lib/Assets/Images/farmer.png',
+                                                height: 25,
+                                                width: 25,
+                                                color: (userType == "Farmer")
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                              ),
+                                              Text(
+                                                "Farmer",
+                                                style: TextStyle(
+                                                  color: (userType == "Farmer")
+                                                      ? Colors.red
+                                                      : Colors.black,
+                                                ),
+                                              )
+                                            ],
+                                          )),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10.0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          userType = "Expert";
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(10.0),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(width: 1),
+                                          shape: BoxShape.circle,
                                           color: (userType == "Expert")
-                                              ? Colors.red
-                                              : Colors.black,
+                                              ? Colors.greenAccent
+                                              : Colors.white,
                                         ),
-                                      )
+                                        child: Column(
+                                          children: <Widget>[
+                                            Image.asset(
+                                              'lib/Assets/Images/expert.png',
+                                              height: 25,
+                                              width: 25,
+                                              color: (userType == "Expert")
+                                                  ? Colors.red
+                                                  : Colors.black,
+                                            ),
+                                            Text(
+                                              "Expert",
+                                              style: TextStyle(
+                                                color: (userType == "Expert")
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                border: Border.all(width: .5),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0)),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    color: Color(0xFFf67B26F),
+                                    offset: Offset(1.0, 6.0),
+                                    blurRadius: 20.0,
+                                  ),
+                                  BoxShadow(
+                                    color: Color(0xFFf4ca2cd),
+                                    offset: Offset(1.0, 6.0),
+                                    blurRadius: 20.0,
+                                  ),
+                                ],
+                                gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xFFf4ca2cd),
+                                      Color(0xFFf67B26F)
                                     ],
+                                    begin: const FractionalOffset(0.2, 0.2),
+                                    end: const FractionalOffset(1.0, 1.0),
+                                    stops: [0.0, 1.0],
+                                    tileMode: TileMode.clamp),
+                              ),
+                              child: MaterialButton(
+                                onPressed: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                  _validateAndSubmit();
+                                },
+                                highlightColor: Colors.transparent,
+                                splashColor: Color(0xFFf4ca2cd),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 42.0),
+                                  child: Text(
+                                    "SIGN UP",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 25.0,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -324,64 +381,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              _isLoading
-                  ? LoadingIndicator()
-                  : Positioned(
-                      bottom: -15,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(width: .5),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                              color: Color(0xFFf67B26F),
-                              offset: Offset(1.0, 6.0),
-                              blurRadius: 20.0,
-                            ),
-                            BoxShadow(
-                              color: Color(0xFFf4ca2cd),
-                              offset: Offset(1.0, 6.0),
-                              blurRadius: 20.0,
-                            ),
-                          ],
-                          gradient: LinearGradient(
-                              colors: [Color(0xFFf4ca2cd), Color(0xFFf67B26F)],
-                              begin: const FractionalOffset(0.2, 0.2),
-                              end: const FractionalOffset(1.0, 1.0),
-                              stops: [0.0, 1.0],
-                              tileMode: TileMode.clamp),
-                        ),
-                        child: MaterialButton(
-                          onPressed: () {
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            _validateAndSubmit();
-                          },
-                          highlightColor: Colors.transparent,
-                          splashColor: Color(0xFFf4ca2cd),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 42.0),
-                            child: Text(
-                              "SIGN UP",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 25.0,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-            ],
+            ),
           ),
         ),
-      ),
+        _isLoading ? LoadingIndicator() : Container(),
+      ],
     );
-  } //validator for email
+  }
+  //validator for email
 
   String validateEmail(String value) {
     Pattern pattern =

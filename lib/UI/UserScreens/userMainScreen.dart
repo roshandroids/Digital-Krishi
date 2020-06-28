@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/exitAppAlert.dart';
-import 'package:digitalKrishi/UI/ChatScreens/allUsers.dart';
+import 'package:digitalKrishi/UI/ChatScreens/usersList.dart';
 import 'package:digitalKrishi/UI/OtherScreens/feeds.dart';
 import 'package:digitalKrishi/UI/UserScreens/moreSettings.dart';
-import 'package:digitalKrishi/UI/UserScreens/userHomeScreen.dart';
+import 'package:digitalKrishi/UI/UserScreens/homeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +14,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class UserMainScreen extends StatefulWidget {
+  final String userType;
+  UserMainScreen({@required this.userType});
   @override
   _UserMainScreenState createState() => _UserMainScreenState();
 }
@@ -129,21 +131,25 @@ class _UserMainScreenState extends State<UserMainScreen>
               physics: BouncingScrollPhysics(),
               controller: _tabController,
               children: <Widget>[
-                UserHomeScreen(),
+                UserHomeScreen(
+                  userType: widget.userType,
+                ),
                 Feeds(),
-                AllUsers(),
-                MoreSettings(),
+                UsersList(),
+                MoreSettings(
+                  userType: widget.userType,
+                ),
               ],
             ),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.only(bottom: 5),
               child: TabBar(
                 controller: _tabController,
-                labelColor: Colors.green,
+                labelColor: Color.fromARGB(0xff, 25, 125, 35),
                 indicatorSize: TabBarIndicatorSize.label,
                 indicatorWeight: 2.0,
-                indicatorColor: Colors.green,
-                unselectedLabelColor: Colors.black,
+                indicatorColor: Color.fromARGB(0xff, 25, 125, 35),
+                unselectedLabelColor: Colors.blueGrey,
                 tabs: <Widget>[
                   Tab(
                     icon: FaIcon(FontAwesomeIcons.home),
