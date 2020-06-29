@@ -179,6 +179,8 @@ class _HomeScreenState extends State<HomeScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => ExpertDetails(
+                      viewBy: widget.userType,
+                      verificationDocument: document['verificationDocument'],
                       profileImage: document['photoUrl'],
                       fullName: document['fullName'],
                       email: document['email'],

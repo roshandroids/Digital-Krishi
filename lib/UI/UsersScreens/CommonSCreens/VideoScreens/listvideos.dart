@@ -94,7 +94,6 @@ class _ListVideosState extends State<ListVideos> {
                       margin: EdgeInsets.all(5),
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(width: .1),
                           boxShadow: [
                             new BoxShadow(
                               color: Color.fromRGBO(0, 0, 0, 0.5),

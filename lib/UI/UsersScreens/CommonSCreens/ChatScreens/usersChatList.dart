@@ -4,18 +4,17 @@ import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/ChatScreens/chat.dar
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class UsersList extends StatefulWidget {
+class UsersChatList extends StatefulWidget {
   @override
-  _UsersListState createState() => _UsersListState();
+  _UsersChatListState createState() => _UsersChatListState();
 }
 
-class _UsersListState extends State<UsersList> {
+class _UsersChatListState extends State<UsersChatList> {
   bool showExpert = true;
   bool isLoading = false;
   String currentUserId;
   String loggedInUserType;
 
-  bool isoffline = false;
   @override
   void initState() {
     super.initState();

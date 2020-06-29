@@ -336,6 +336,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 _validateAndSubmit();
                               },
                               child: Container(
+                                alignment: Alignment.center,
+                                height: 50,
+                                width: MediaQuery.of(context).size.width / 3,
                                 margin: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   border: Border.all(width: .5),
@@ -363,24 +366,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       stops: [0.0, 1.0],
                                       tileMode: TileMode.clamp),
                                 ),
-                                child: MaterialButton(
-                                  onPressed: () {
-                                    FocusScope.of(context)
-                                        .requestFocus(FocusNode());
-                                    _validateAndSubmit();
-                                  },
-                                  highlightColor: Colors.transparent,
-                                  splashColor: Color(0xFFf4ca2cd),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 42.0),
-                                    child: Text(
-                                      "SIGN UP",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 25.0,
-                                      ),
-                                    ),
+                                child: Text(
+                                  "SIGN UP",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25.0,
                                   ),
                                 ),
                               ),

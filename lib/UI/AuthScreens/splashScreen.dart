@@ -142,7 +142,10 @@ class _SplashScreenState extends State<SplashScreen> {
                 PageTransition(
                   type: PageTransitionType.fade,
                   duration: Duration(milliseconds: 300),
-                  child: AdminMainScreen(),
+                  child: AdminMainScreen(
+                    userId: userId,
+                    userType: loggedInUserType,
+                  ),
                 ),
               );
             } else {

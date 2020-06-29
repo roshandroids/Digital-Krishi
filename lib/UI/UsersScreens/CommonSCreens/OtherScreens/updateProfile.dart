@@ -675,37 +675,49 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       margin: EdgeInsets.only(left: 30.0, right: 30.0),
                     )
                   : Container(),
+              SizedBox(
+                height: 10,
+              ),
 
               Stack(
                 children: <Widget>[
                   (widget.userType != "Farmer")
-                      ? InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                PageTransition(
-                                    type: PageTransitionType.fade,
-                                    alignment: Alignment.bottomLeft,
-                                    duration: Duration(milliseconds: 250),
-                                    child: FullPhoto(url: docUrl)));
-                          },
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 25),
-                            height: MediaQuery.of(context).size.height / 4,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 4, color: Colors.grey),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: (docUrl != null)
-                                ? CachedNetworkImage(imageUrl: docUrl)
-                                : (_image != null)
-                                    ? Image.file(
-                                        _image,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Container(),
-                          ),
+                      ? Column(
+                          children: <Widget>[
+                            Text(
+                              "Verification Document",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w500),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    PageTransition(
+                                        type: PageTransitionType.fade,
+                                        alignment: Alignment.bottomLeft,
+                                        duration: Duration(milliseconds: 250),
+                                        child: FullPhoto(url: docUrl)));
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: 25),
+                                height: MediaQuery.of(context).size.height / 4,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: .5, color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: (docUrl != null)
+                                    ? CachedNetworkImage(imageUrl: docUrl)
+                                    : (_image != null)
+                                        ? Image.file(
+                                            _image,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Container(),
+                              ),
+                            ),
+                          ],
                         )
                       : Container(),
                 ],
@@ -785,7 +797,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
               Navigator.of(context).pop();
             }),
         title: Text(
-          'Profile Update',
+          'Update Profile',
           style:
               TextStyle(color: Color(0xff203152), fontWeight: FontWeight.bold),
         ),

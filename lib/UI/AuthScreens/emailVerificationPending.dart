@@ -1,7 +1,7 @@
 import 'package:argon_buttons_flutter/argon_buttons_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:digitalKrishi/CustomComponents/exitAppAlert.dart';
-import 'package:digitalKrishi/UI/AuthScreens/authMainScreen.dart';
+import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -31,7 +31,7 @@ class _EmailVerificationPendingState extends State<EmailVerificationPending> {
         PageTransition(
           type: PageTransitionType.fade,
           duration: Duration(milliseconds: 300),
-          child: AuthMainScreen(),
+          child: SplashScreen(),
         ),
       );
     } catch (e) {

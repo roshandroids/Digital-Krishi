@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/newPost.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/postDetails.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -113,9 +115,10 @@ class _FeedsState extends State<Feeds> {
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600),
                                   ),
-                                  (snapshot.data.data['userType'] == "Doctor")
-                                      ? Icon(Icons.check_circle_outline,
-                                          size: 15)
+                                  (snapshot.data.data['isVerified'] ==
+                                          "Verified")
+                                      ? Icon(Icons.verified_user,
+                                          color: Colors.green, size: 15)
                                       : Container(),
                                 ],
                               ),
@@ -125,11 +128,15 @@ class _FeedsState extends State<Feeds> {
                         Expanded(
                           child: Align(
                             alignment: Alignment.centerRight,
-                            child: Text(
-                              timeago.format(
-                                timestamp.toDate(),
-                              ),
-                              style: TextStyle(fontSize: 12),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  timeago.format(
+                                    timestamp.toDate(),
+                                  ),
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -367,7 +374,7 @@ class _FeedsState extends State<Feeds> {
                     ),
                   ),
                 ),
-                Flexible(
+                Expanded(
                   child: StreamBuilder(
                       stream: Firestore.instance
                           .collection('users')
@@ -385,27 +392,97 @@ class _FeedsState extends State<Feeds> {
                         } else if (snapshot.data.data['userType'] == "Admin") {
                           return InkWell(
                             onTap: () async {
-                              await FirebaseStorage.instance
-                                  .getReferenceFromUrl(document['PostImage'])
-                                  .then((value) => value.delete())
-                                  .catchError((onError) {
-                                print(onError);
-                              });
-                              await Firestore.instance
-                                  .collection('posts')
-                                  .document(document.documentID)
-                                  .delete();
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext bc) {
+                                    return OfflineBuilder(
+                                      connectivityBuilder: (
+                                        BuildContext context,
+                                        ConnectivityResult connectivity,
+                                        Widget child,
+                                      ) {
+                                        bool connected = connectivity !=
+                                            ConnectivityResult.none;
+                                        return connected
+                                            ? Container(
+                                                color: Colors.black
+                                                    .withOpacity(.1),
+                                                child: Wrap(
+                                                  children: <Widget>[
+                                                    ListTile(
+                                                        leading: Icon(
+                                                          Icons.warning,
+                                                          color: Colors.red,
+                                                        ),
+                                                        title: Text(
+                                                            'Delete This Post'),
+                                                        onTap: () async {
+                                                          Navigator.of(context)
+                                                              .pop();
 
-                              Fluttertoast.showToast(
-                                  msg: "Deleted Successfully",
-                                  toastLength: Toast.LENGTH_LONG,
-                                  backgroundColor: Colors.green,
-                                  textColor: Colors.white);
+                                                          await FirebaseStorage
+                                                              .instance
+                                                              .getReferenceFromUrl(
+                                                                  document[
+                                                                      'PostImage'])
+                                                              .then((value) =>
+                                                                  value
+                                                                      .delete())
+                                                              .catchError(
+                                                                  (onError) {
+                                                            print(onError);
+                                                          });
+                                                          await Firestore
+                                                              .instance
+                                                              .collection(
+                                                                  'posts')
+                                                              .document(document
+                                                                  .documentID)
+                                                              .delete();
+
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Deleted Successfully",
+                                                              toastLength: Toast
+                                                                  .LENGTH_LONG,
+                                                              backgroundColor:
+                                                                  Colors.green,
+                                                              textColor:
+                                                                  Colors.white);
+                                                        }),
+                                                    Divider(
+                                                      color: Colors.blueGrey,
+                                                      thickness: 1,
+                                                      indent: 20,
+                                                      endIndent: 10,
+                                                    ),
+                                                    ListTile(
+                                                      leading: Icon(
+                                                        Icons.cancel,
+                                                        color: Colors.blue,
+                                                      ),
+                                                      title: Text('Cancel'),
+                                                      onTap: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            : Container(
+                                                height: 100,
+                                                child: Offline(),
+                                              );
+                                      },
+                                      child: Container(),
+                                    );
+                                  });
                             },
                             child: Container(
                                 margin: EdgeInsets.all(8),
                                 child: Image.asset(
-                                  'lib/Assets/delete.png',
+                                  'lib/Assets/Images/delete.png',
                                   height: 30,
                                 )),
                           );
@@ -454,7 +531,93 @@ class _FeedsState extends State<Feeds> {
                             backgroundColor: Colors.green,
                           );
                         if (snapshot.data.data['userType'] == "Admin") {
-                          return Container();
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType.fade,
+                                      alignment: Alignment.bottomLeft,
+                                      duration: Duration(milliseconds: 250),
+                                      child: NewPost()));
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    new BoxShadow(
+                                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                                      blurRadius: 5.0,
+                                    ),
+                                  ],
+                                  border: Border.all(
+                                      width: 0.1, color: Colors.blueGrey),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(5),
+                                        bottomLeft: Radius.circular(5)),
+                                    child: CachedNetworkImage(
+                                      height: 70,
+                                      width: 70,
+                                      imageUrl: snapshot.data.data['photoUrl'],
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          SpinKitWave(
+                                        color: Colors.blue,
+                                        size: 60.0,
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 5),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Row(
+                                            children: <Widget>[
+                                              Text(
+                                                "Hello, " +
+                                                    snapshot
+                                                        .data.data['fullName'],
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              (snapshot.data
+                                                          .data['isVerified'] ==
+                                                      "Verified")
+                                                  ? Icon(
+                                                      Icons.verified_user,
+                                                      color: Colors.green,
+                                                      size: 15,
+                                                    )
+                                                  : Container(),
+                                            ],
+                                          ),
+                                          Text(
+                                            "Make announcement ?",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
                         } else {
                           return InkWell(
                             onTap: () {
@@ -507,12 +670,27 @@ class _FeedsState extends State<Feeds> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          Text(
-                                            "Hello, " +
-                                                snapshot.data.data['fullName'],
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600),
+                                          Row(
+                                            children: <Widget>[
+                                              Text(
+                                                "Hello, " +
+                                                    snapshot
+                                                        .data.data['fullName'],
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              (snapshot.data
+                                                          .data['isVerified'] ==
+                                                      "Verified")
+                                                  ? Icon(
+                                                      Icons.verified_user,
+                                                      color: Colors.green,
+                                                      size: 15,
+                                                    )
+                                                  : Container(),
+                                            ],
                                           ),
                                           Text(
                                             "Would you like to ask anything?",

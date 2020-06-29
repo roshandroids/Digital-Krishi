@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/exitAppAlert.dart';
-import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/ChatScreens/usersList.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/ChatScreens/usersChatList.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/feeds.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/homeScreen.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/moreSettings.dart';
@@ -136,19 +136,28 @@ class _FarmerMainScreenState extends State<FarmerMainScreen>
                   userType: widget.userType,
                 ),
                 Feeds(),
-                UsersList(),
+                UsersChatList(),
                 MoreSettings(
                   userType: widget.userType,
                 ),
               ],
             ),
-            bottomNavigationBar: Padding(
-              padding: const EdgeInsets.only(bottom: 5),
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  new BoxShadow(
+                    color: Color.fromRGBO(0, 0, 0, 0.5),
+                    blurRadius: 5.0,
+                  ),
+                ],
+              ),
               child: TabBar(
                 controller: _tabController,
                 labelColor: Color.fromARGB(0xff, 25, 125, 35),
                 indicatorSize: TabBarIndicatorSize.label,
                 indicatorWeight: 2.0,
+                indicatorPadding: EdgeInsets.only(bottom: 5),
                 indicatorColor: Color.fromARGB(0xff, 25, 125, 35),
                 unselectedLabelColor: Colors.blueGrey,
                 labelStyle:

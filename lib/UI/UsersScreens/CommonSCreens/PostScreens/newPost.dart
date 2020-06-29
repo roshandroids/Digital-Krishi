@@ -214,8 +214,9 @@ class _NewPostState extends State<NewPost> {
                           controller: postDescription,
                           onSaved: (postDescription) =>
                               postDescription = postDescription.trim(),
-                          maxLines: 10,
                           textInputAction: TextInputAction.done,
+                          maxLength: 250,
+                          maxLines: 10,
                           decoration: InputDecoration(
                             labelText: "Post Description",
                             hintText: "Post Description",

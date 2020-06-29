@@ -129,7 +129,10 @@ class _LoginScreenState extends State<LoginScreen> {
               PageTransition(
                 type: PageTransitionType.fade,
                 duration: Duration(milliseconds: 300),
-                child: AdminMainScreen(),
+                child: AdminMainScreen(
+                  userId: userId,
+                  userType: loggedInUserType,
+                ),
               ),
             );
           } else if (loggedInUserType == "Farmer") {
@@ -456,6 +459,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                       _validateAndSubmit();
                                     },
                                     child: Container(
+                                      alignment: Alignment.center,
+                                      height: 50,
+                                      width:
+                                          MediaQuery.of(context).size.width / 3,
                                       margin: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                         border: Border.all(width: .5),
@@ -485,24 +492,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                             stops: [0.0, 1.0],
                                             tileMode: TileMode.clamp),
                                       ),
-                                      child: MaterialButton(
-                                        onPressed: () {
-                                          FocusScope.of(context)
-                                              .requestFocus(FocusNode());
-                                          _validateAndSubmit();
-                                        },
-                                        highlightColor: Colors.transparent,
-                                        splashColor: Color(0xFFf4ca2cd),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10.0, horizontal: 42.0),
-                                          child: Text(
-                                            "LOGIN",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 25.0,
-                                            ),
-                                          ),
+                                      child: Text(
+                                        "LOGIN",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25.0,
                                         ),
                                       ),
                                     ),

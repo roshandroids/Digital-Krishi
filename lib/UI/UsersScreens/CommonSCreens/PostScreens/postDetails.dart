@@ -39,11 +39,14 @@ class PostDetails extends StatefulWidget {
 class _PostDetailsState extends State<PostDetails> {
   final commentController = TextEditingController();
   final databaseReference = Firestore.instance;
+
   String uId;
   String userName;
   String image;
   bool isPosting = false;
+
   String loggedInUserType;
+
   @override
   void initState() {
     super.initState();
@@ -203,274 +206,452 @@ class _PostDetailsState extends State<PostDetails> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Stack(
-            children: <Widget>[
-              SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5.0),
-                        boxShadow: [
-                          new BoxShadow(
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                            blurRadius: 20.0,
-                          ),
-                        ],
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5.0),
+                    boxShadow: [
+                      new BoxShadow(
+                        color: Color.fromRGBO(0, 0, 0, 0.5),
+                        blurRadius: 10.0,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          StreamBuilder(
-                              stream: Firestore.instance
-                                  .collection('users')
-                                  .document(widget.postedBy)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData)
-                                  return LinearProgressIndicator(
-                                    backgroundColor: Colors.green,
-                                  );
-                                if (snapshot.data.data == null)
-                                  return CircularProgressIndicator(
-                                    backgroundColor: Colors.green,
-                                  );
-                                return Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      StreamBuilder(
+                          stream: Firestore.instance
+                              .collection('users')
+                              .document(widget.postedBy)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData)
+                              return LinearProgressIndicator(
+                                backgroundColor: Colors.green,
+                              );
+                            if (snapshot.data.data == null)
+                              return CircularProgressIndicator(
+                                backgroundColor: Colors.green,
+                              );
+                            return Container(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Row(
                                     children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(5),
-                                                bottomRight:
-                                                    Radius.circular(5)),
-                                            child: CachedNetworkImage(
-                                              height: 60,
-                                              width: 60,
-                                              imageUrl: snapshot
-                                                  .data.data['photoUrl'],
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) =>
-                                                  SpinKitWave(
-                                                color: Colors.blue,
-                                                size: 60.0,
-                                              ),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Icon(Icons.error),
-                                            ),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(5),
+                                            bottomRight: Radius.circular(5)),
+                                        child: CachedNetworkImage(
+                                          height: 60,
+                                          width: 60,
+                                          imageUrl:
+                                              snapshot.data.data['photoUrl'],
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              SpinKitWave(
+                                            color: Colors.blue,
+                                            size: 60.0,
                                           ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 5),
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  snapshot
-                                                      .data.data['fullName'],
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                (snapshot.data
-                                                            .data['userType'] ==
-                                                        "Doctor")
-                                                    ? Icon(
-                                                        Icons
-                                                            .check_circle_outline,
-                                                        size: 15)
-                                                    : Container(),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.error),
+                                        ),
                                       ),
-                                      Expanded(
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(timeago.format(
-                                              widget.postedAt.toDate())),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              snapshot.data.data['fullName'],
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            (snapshot.data.data['isVerified'] ==
+                                                    "Verified")
+                                                ? Icon(Icons.verified_user,
+                                                    color: Colors.green,
+                                                    size: 15)
+                                                : Container(),
+                                          ],
                                         ),
                                       ),
                                     ],
                                   ),
-                                );
-                              }),
-                          Divider(
-                            endIndent: 2,
-                            indent: 2,
-                            color: Colors.black,
-                            height: 5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              widget.postTitle,
-                              overflow: TextOverflow.fade,
-                              style: TextStyle(
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          Divider(
-                            endIndent: 2,
-                            indent: 2,
-                            color: Colors.black,
-                            height: 5,
-                          ),
-                          Stack(
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(left: 2, right: 2),
-                                height: 250,
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(color: Colors.white),
-                                child: CachedNetworkImage(
-                                  imageUrl: widget.postImage,
-                                  width: MediaQuery.of(context).size.width,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => SpinKitWave(
-                                    color: Colors.blue,
-                                    size: 60.0,
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
-                                ),
-                              ),
-                              Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: IconButton(
-                                    icon: Icon(
-                                      Icons.fullscreen,
-                                      size: 40,
-                                    ),
-                                    onPressed: () => fullImage()),
-                              )
-                            ],
-                          ),
-                          Divider(
-                            endIndent: 2,
-                            indent: 2,
-                            color: Colors.black,
-                            height: 5,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              widget.postDescription,
-                              overflow: TextOverflow.fade,
-                              style: TextStyle(
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.0),
-                          boxShadow: [
-                            new BoxShadow(
-                              color: Color.fromRGBO(0, 0, 0, 0.5),
-                              blurRadius: 20.0,
-                            ),
-                          ]),
-                      child: Column(
-                        children: <Widget>[
-                          Shimmer.fromColors(
-                            baseColor: Colors.black,
-                            highlightColor: Colors.black12,
-                            child: Text(
-                              "Comment Section",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () => showCommentInput(),
-                            child: Container(
-                                alignment: Alignment.centerLeft,
-                                width: MediaQuery.of(context).size.width,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    color: Colors.black12,
-                                    border: Border.all(width: .5),
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [
-                                      new BoxShadow(
-                                          color: Colors.white, blurRadius: 10),
-                                    ]),
-                                margin: EdgeInsets.all(10),
-                                padding: EdgeInsets.only(left: 5),
-                                child: Text("Write Something..")),
-                          ),
-                          StreamBuilder(
-                            stream: Firestore.instance
-                                .collection('posts')
-                                .document(postId)
-                                .collection('comments')
-                                .orderBy("time", descending: false)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return LinearProgressIndicator(
-                                  backgroundColor: Colors.green,
-                                );
-                              } else if (snapshot.data == null) {
-                                return Container(
-                                  height: 100,
-                                  child: Column(
-                                    children: <Widget>[
-                                      SpinKitPulse(
-                                        color: Colors.blue,
-                                        size: 30.0,
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text(timeago.format(
+                                              widget.postedAt.toDate())),
+                                          (loggedInUserType == "Admin")
+                                              ? Container()
+                                              : IconButton(
+                                                  icon: Icon(
+                                                    Icons.more_vert,
+                                                    color: Colors.black,
+                                                  ),
+                                                  onPressed: () {
+                                                    showModalBottomSheet(
+                                                        context: context,
+                                                        builder:
+                                                            (BuildContext bc) {
+                                                          return Container(
+                                                            height: 150,
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                    .1),
+                                                            child: Column(
+                                                              children: <
+                                                                  Widget>[
+                                                                Expanded(
+                                                                  child:
+                                                                      StreamBuilder(
+                                                                    stream: Firestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            "users")
+                                                                        .document(
+                                                                            uId)
+                                                                        .collection(
+                                                                            "SavedBooks")
+                                                                        .document(
+                                                                            postId)
+                                                                        .snapshots(),
+                                                                    builder:
+                                                                        (context,
+                                                                            snapshot) {
+                                                                      if (!snapshot
+                                                                          .hasData) {
+                                                                        return ListTile(
+                                                                          leading:
+                                                                              Icon(
+                                                                            Icons.bookmark_border,
+                                                                            color:
+                                                                                Colors.green,
+                                                                          ),
+                                                                          title:
+                                                                              Text('Save This post'),
+                                                                        );
+                                                                      } else {
+                                                                        return ListTile(
+                                                                          leading: (snapshot.data.data == null)
+                                                                              ? Icon(
+                                                                                  Icons.bookmark_border,
+                                                                                  color: Colors.green,
+                                                                                )
+                                                                              : Icon(
+                                                                                  Icons.bookmark,
+                                                                                  color: Colors.green,
+                                                                                ),
+                                                                          title: Text((snapshot.data.data == null)
+                                                                              ? "Save This Post"
+                                                                              : "Already Saved"),
+                                                                          onTap:
+                                                                              () async {
+                                                                            if (snapshot.data.data ==
+                                                                                null) {
+                                                                              Navigator.of(context).pop();
+                                                                              Fluttertoast.showToast(msg: (snapshot.data.data == null) ? "Saved Successfully" : "Already Saved");
+                                                                              await Firestore.instance.collection('users').document(uId).collection('SavedBooks').document(postId).setData({
+                                                                                "BookId": postId
+                                                                              });
+                                                                            } else {
+                                                                              Navigator.of(context).pop();
+                                                                              Fluttertoast.showToast(msg: (snapshot.data.data == null) ? "Saved Successfully" : "Already Saved");
+                                                                            }
+                                                                          },
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                                Divider(
+                                                                  color: Colors
+                                                                      .blueGrey,
+                                                                  indent: 5,
+                                                                  endIndent: 5,
+                                                                  thickness: 1,
+                                                                ),
+                                                                Expanded(
+                                                                  child:
+                                                                      StreamBuilder(
+                                                                    stream: Firestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            "reports")
+                                                                        .snapshots(),
+                                                                    builder:
+                                                                        (context,
+                                                                            snapshot) {
+                                                                      if (!snapshot
+                                                                          .hasData) {
+                                                                        return ListTile(
+                                                                          leading:
+                                                                              Icon(
+                                                                            Icons.report,
+                                                                            color:
+                                                                                Colors.red,
+                                                                          ),
+                                                                          title:
+                                                                              Text('Report This post'),
+                                                                        );
+                                                                      } else if (snapshot
+                                                                              .data
+                                                                              .documents
+                                                                              .length <=
+                                                                          0) {
+                                                                        return ListTile(
+                                                                          leading:
+                                                                              Icon(
+                                                                            Icons.report,
+                                                                            color:
+                                                                                Colors.red,
+                                                                          ),
+                                                                          title:
+                                                                              Text("Report This Post"),
+                                                                          onTap:
+                                                                              () async {
+                                                                            Navigator.of(context).pop();
+                                                                            Fluttertoast.showToast(msg: "Successfully Reported");
+                                                                            await Firestore.instance.collection('reports').document().setData({
+                                                                              "postId": postId,
+                                                                              "reportedBy": uId,
+                                                                            });
+                                                                          },
+                                                                        );
+                                                                      } else {
+                                                                        for (int i =
+                                                                                0;
+                                                                            i < snapshot.data.documents.length;
+                                                                            i++) {
+                                                                          if (snapshot.data.documents[i]['reportedBy'] ==
+                                                                              uId) {
+                                                                            return ListTile(
+                                                                              leading: Icon(
+                                                                                Icons.check,
+                                                                                color: Colors.green,
+                                                                              ),
+                                                                              title: Text("Already Reported"),
+                                                                              onTap: () {
+                                                                                Fluttertoast.showToast(msg: "Already Reported");
+                                                                              },
+                                                                            );
+                                                                          } else {
+                                                                            return ListTile(
+                                                                              leading: Icon(
+                                                                                Icons.report,
+                                                                                color: Colors.red,
+                                                                              ),
+                                                                              title: Text("Report This Post"),
+                                                                              onTap: () async {
+                                                                                Navigator.of(context).pop();
+                                                                                Fluttertoast.showToast(msg: "Successfully Reported");
+                                                                                await Firestore.instance.collection('reports').document().setData({
+                                                                                  "postId": postId,
+                                                                                  "reportedBy": uId,
+                                                                                });
+                                                                              },
+                                                                            );
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                      return null;
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        });
+                                                  })
+                                        ],
                                       ),
-                                      Text("No Comments Yet."),
-                                    ],
+                                    ),
                                   ),
-                                );
-                              } else {
-                                List<Comment> comments = [];
-                                snapshot.data.documents.forEach((doc) {
-                                  comments.add(Comment.fromDocument(doc));
-                                });
-                                return Column(
-                                  children: comments,
-                                );
-                              }
-                            },
+                                ],
+                              ),
+                            );
+                          }),
+                      Divider(
+                        endIndent: 2,
+                        indent: 2,
+                        color: Colors.black,
+                        height: 5,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          widget.postTitle,
+                          overflow: TextOverflow.fade,
+                          style: TextStyle(
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
                           ),
+                        ),
+                      ),
+                      Divider(
+                        endIndent: 2,
+                        indent: 2,
+                        color: Colors.black,
+                        thickness: .5,
+                      ),
+                      Stack(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 2, right: 2),
+                            height: 250,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(color: Colors.white),
+                            child: CachedNetworkImage(
+                              imageUrl: widget.postImage,
+                              width: MediaQuery.of(context).size.width,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => SpinKitWave(
+                                color: Colors.blue,
+                                size: 60.0,
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: IconButton(
+                                icon: Icon(
+                                  Icons.fullscreen,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
+                                onPressed: () => fullImage()),
+                          )
                         ],
                       ),
-                    ),
-                  ],
+                      Divider(
+                        endIndent: 2,
+                        indent: 2,
+                        color: Colors.black,
+                        thickness: .5,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          widget.postDescription,
+                          overflow: TextOverflow.fade,
+                          style: TextStyle(
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5.0),
+                      boxShadow: [
+                        new BoxShadow(
+                          color: Color.fromRGBO(0, 0, 0, 0.5),
+                          blurRadius: 20.0,
+                        ),
+                      ]),
+                  child: Column(
+                    children: <Widget>[
+                      Shimmer.fromColors(
+                        baseColor: Colors.black,
+                        highlightColor: Colors.black12,
+                        child: Text(
+                          "Comment Section",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => showCommentInput(),
+                        child: Container(
+                            alignment: Alignment.centerLeft,
+                            width: MediaQuery.of(context).size.width,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                color: Colors.black12,
+                                border: Border.all(width: .5),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  new BoxShadow(
+                                      color: Colors.white, blurRadius: 10),
+                                ]),
+                            margin: EdgeInsets.all(10),
+                            padding: EdgeInsets.only(left: 5),
+                            child: Text("Write Something..")),
+                      ),
+                      StreamBuilder(
+                        stream: Firestore.instance
+                            .collection('posts')
+                            .document(postId)
+                            .collection('comments')
+                            .orderBy("time", descending: false)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return LinearProgressIndicator(
+                              backgroundColor: Colors.green,
+                            );
+                          } else if (snapshot.data == null) {
+                            return Container(
+                              height: 100,
+                              child: Column(
+                                children: <Widget>[
+                                  SpinKitPulse(
+                                    color: Colors.blue,
+                                    size: 30.0,
+                                  ),
+                                  Text("No Comments Yet."),
+                                ],
+                              ),
+                            );
+                          } else {
+                            List<Comment> comments = [];
+                            snapshot.data.documents.forEach((doc) {
+                              comments.add(Comment.fromDocument(doc));
+                            });
+                            return Column(
+                              children: comments,
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -531,14 +712,16 @@ class Comment extends StatelessWidget {
                         ),
                 ),
                 Flexible(
-                  child: (usertype == "Doctor")
+                  child: (usertype == "Expert")
                       ? Icon(
-                          Icons.check_circle_outline,
+                          Icons.verified_user,
+                          color: Colors.green,
                           size: 15,
                         )
                       : (usertype == "Admin")
                           ? Icon(
-                              Icons.check_circle_outline,
+                              Icons.verified_user,
+                              color: Colors.green,
                               size: 15,
                             )
                           : Container(),

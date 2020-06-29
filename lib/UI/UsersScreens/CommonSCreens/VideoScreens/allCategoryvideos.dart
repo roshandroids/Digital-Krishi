@@ -37,7 +37,6 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
             ),
           ],
           borderRadius: BorderRadius.circular(5),
-          border: Border.all(width: .1),
         ),
         child: Column(
           children: <Widget>[
