@@ -329,50 +329,57 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ],
                               ),
                             ),
-                            Container(
-                              margin: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                border: Border.all(width: .5),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0)),
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Color(0xFFf67B26F),
-                                    offset: Offset(1.0, 6.0),
-                                    blurRadius: 20.0,
-                                  ),
-                                  BoxShadow(
-                                    color: Color(0xFFf4ca2cd),
-                                    offset: Offset(1.0, 6.0),
-                                    blurRadius: 20.0,
-                                  ),
-                                ],
-                                gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xFFf4ca2cd),
-                                      Color(0xFFf67B26F)
-                                    ],
-                                    begin: const FractionalOffset(0.2, 0.2),
-                                    end: const FractionalOffset(1.0, 1.0),
-                                    stops: [0.0, 1.0],
-                                    tileMode: TileMode.clamp),
-                              ),
-                              child: MaterialButton(
-                                onPressed: () {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                  _validateAndSubmit();
-                                },
-                                highlightColor: Colors.transparent,
-                                splashColor: Color(0xFFf4ca2cd),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 42.0),
-                                  child: Text(
-                                    "SIGN UP",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25.0,
+                            InkWell(
+                              onTap: () {
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
+                                _validateAndSubmit();
+                              },
+                              child: Container(
+                                margin: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  border: Border.all(width: .5),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0)),
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                      color: Color(0xFFf67B26F),
+                                      offset: Offset(1.0, 6.0),
+                                      blurRadius: 20.0,
+                                    ),
+                                    BoxShadow(
+                                      color: Color(0xFFf4ca2cd),
+                                      offset: Offset(1.0, 6.0),
+                                      blurRadius: 20.0,
+                                    ),
+                                  ],
+                                  gradient: LinearGradient(
+                                      colors: [
+                                        Color(0xFFf4ca2cd),
+                                        Color(0xFFf67B26F)
+                                      ],
+                                      begin: const FractionalOffset(0.2, 0.2),
+                                      end: const FractionalOffset(1.0, 1.0),
+                                      stops: [0.0, 1.0],
+                                      tileMode: TileMode.clamp),
+                                ),
+                                child: MaterialButton(
+                                  onPressed: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(FocusNode());
+                                    _validateAndSubmit();
+                                  },
+                                  highlightColor: Colors.transparent,
+                                  splashColor: Color(0xFFf4ca2cd),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 42.0),
+                                    child: Text(
+                                      "SIGN UP",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25.0,
+                                      ),
                                     ),
                                   ),
                                 ),

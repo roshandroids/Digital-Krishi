@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitalKrishi/UI/PostScreens/newPost.dart';
-import 'package:digitalKrishi/UI/PostScreens/postDetails.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/newPost.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/postDetails.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +55,7 @@ class _FeedsState extends State<Feeds> {
           boxShadow: [
             new BoxShadow(
               color: Color.fromRGBO(0, 0, 0, 0.5),
-              blurRadius: 20.0,
+              blurRadius: 1.0,
             ),
           ]),
       child: Column(
@@ -77,14 +77,18 @@ class _FeedsState extends State<Feeds> {
                   );
                 return Container(
                     decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(width: .5))),
+                        border: Border(
+                            bottom:
+                                BorderSide(width: .2, color: Colors.blueGrey))),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Row(
                           children: <Widget>[
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(5),
+                                  bottomRight: Radius.circular(5)),
                               child: CachedNetworkImage(
                                 height: 60,
                                 width: 60,
@@ -147,10 +151,10 @@ class _FeedsState extends State<Feeds> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: Colors.black38),
-                  borderRadius: BorderRadius.circular(10)),
+                  border: Border.all(width: .5, color: Colors.blueGrey),
+                  borderRadius: BorderRadius.circular(5)),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(5),
                 child: CachedNetworkImage(
                   imageUrl: document['PostImage'],
                   width: MediaQuery.of(context).size.width,
@@ -196,6 +200,10 @@ class _FeedsState extends State<Feeds> {
                 ),
               ),
             ),
+          ),
+          Divider(
+            thickness: .5,
+            color: Colors.blueGrey,
           ),
           Container(
             padding: EdgeInsets.only(top: 5),
@@ -417,6 +425,7 @@ class _FeedsState extends State<Feeds> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
@@ -426,7 +435,7 @@ class _FeedsState extends State<Feeds> {
               pinned: false,
               snap: true,
               stretch: true,
-              backgroundColor: Colors.black12,
+              backgroundColor: Colors.white,
               flexibleSpace: FlexibleSpaceBar(
                 background: FlexibleSpaceBar(
                   centerTitle: true,
@@ -461,13 +470,22 @@ class _FeedsState extends State<Feeds> {
                               margin: EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                   color: Colors.white,
-                                  border: Border.all(width: 0),
+                                  boxShadow: [
+                                    new BoxShadow(
+                                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                                      blurRadius: 5.0,
+                                    ),
+                                  ],
+                                  border: Border.all(
+                                      width: 0.1, color: Colors.blueGrey),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(5),
+                                        bottomLeft: Radius.circular(5)),
                                     child: CachedNetworkImage(
                                       height: 70,
                                       width: 70,
@@ -520,7 +538,6 @@ class _FeedsState extends State<Feeds> {
         body: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          color: Colors.black12,
           child: Column(
             children: <Widget>[
               Expanded(

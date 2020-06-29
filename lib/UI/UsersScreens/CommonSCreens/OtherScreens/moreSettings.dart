@@ -3,13 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/customListTile.dart';
 import 'package:digitalKrishi/CustomComponents/popupMenu.dart';
 import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
-import 'package:digitalKrishi/UI/OtherScreens/allCategoryvideos.dart';
-import 'package:digitalKrishi/UI/OtherScreens/calculate.dart';
-import 'package:digitalKrishi/UI/OtherScreens/listNewsPortal.dart';
-import 'package:digitalKrishi/UI/OtherScreens/updateProfile.dart';
-import 'package:digitalKrishi/UI/UserScreens/marketRate.dart';
-import 'package:digitalKrishi/UI/UserScreens/nearByMarket.dart';
-import 'package:digitalKrishi/UI/UserScreens/weatherUpdate.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/listNewsPortal.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/calculate.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/marketRate.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/nearByMarket.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/updateProfile.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/weatherUpdate.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/allCategoryvideos.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -205,6 +205,7 @@ class _MoreSettingsState extends State<MoreSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[

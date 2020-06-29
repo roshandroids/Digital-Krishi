@@ -176,18 +176,31 @@ class _ReadnewsState extends State<ReadNews> {
                 ),
               )
             : Scaffold(
+                backgroundColor: Colors.white,
                 appBar: AppBar(
-                  backgroundColor: Colors.white,
-                  elevation: 0,
+                  flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: <Color>[
+                      Color(0xff1D976C),
+                      Color(0xff11998e),
+                      Color(0xff1D976C),
+                    ])),
+                  ),
                   leading: IconButton(
                       icon: Icon(
                         Icons.chevron_left,
                         size: 30,
-                        color: Colors.black,
                       ),
                       onPressed: () {
                         Navigator.of(context).pop();
                       }),
+                  centerTitle: true,
+                  title: Text(
+                    "Read News",
+                    style: TextStyle(
+                      color: Color(0xff203152),
+                    ),
+                  ),
                 ),
                 body: Offline(),
               );

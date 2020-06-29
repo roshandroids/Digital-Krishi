@@ -1,4 +1,5 @@
-import 'package:digitalKrishi/CustomComponents/offline.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -14,27 +15,95 @@ final Set<JavascriptChannel> jsChannels = [
       }),
 ].toSet();
 
-class Calculate extends StatefulWidget {
+class MarketRate extends StatefulWidget {
   final String url;
-  final String title;
 
-  Calculate({@required this.url, @required this.title});
+  MarketRate({
+    @required this.url,
+  });
   @override
-  _CalculateState createState() => _CalculateState();
+  _MarketRateState createState() => _MarketRateState();
 }
 
-class _CalculateState extends State<Calculate> {
+class _MarketRateState extends State<MarketRate> {
   final flutterWebViewPlugin = FlutterWebviewPlugin();
+
+  // On urlChanged stream
+  StreamSubscription<WebViewStateChanged> _onStateChanged;
+
+  StreamSubscription<WebViewHttpError> _onHttpError;
+
+  StreamSubscription<double> _onProgressChanged;
+
+  StreamSubscription<double> _onScrollYChanged;
+
+  StreamSubscription<double> _onScrollXChanged;
+
+  final _history = [];
 
   @override
   void initState() {
     super.initState();
 
     flutterWebViewPlugin.close();
+
+    _onProgressChanged =
+        flutterWebViewPlugin.onProgressChanged.listen((double progress) {
+      if (mounted) {
+        setState(() {
+          _history.add('onProgressChanged: $progress');
+        });
+      }
+    });
+
+    _onScrollYChanged =
+        flutterWebViewPlugin.onScrollYChanged.listen((double y) {
+      if (mounted) {
+        setState(() {
+          _history.add('Scroll in Y Direction: $y');
+        });
+      }
+    });
+
+    _onScrollXChanged =
+        flutterWebViewPlugin.onScrollXChanged.listen((double x) {
+      if (mounted) {
+        setState(() {
+          _history.add('Scroll in X Direction: $x');
+        });
+      }
+    });
+
+    _onStateChanged =
+        flutterWebViewPlugin.onStateChanged.listen((WebViewStateChanged state) {
+      if (mounted) {
+        setState(() {
+          _history.add('onStateChanged: ${state.type} ${state.url}');
+        });
+      }
+    });
+
+    _onHttpError =
+        flutterWebViewPlugin.onHttpError.listen((WebViewHttpError error) {
+      if (mounted) {
+        setState(() {
+          _history.add('onHttpError: ${error.code} ${error.url}');
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
+    // Every listener should be canceled, the same should be done with this stream.
+    // _onDestroy.cancel();
+
+    _onStateChanged.cancel();
+    _onHttpError.cancel();
+    _onProgressChanged.cancel();
+    _onScrollXChanged.cancel();
+    _onScrollYChanged.cancel();
+
     flutterWebViewPlugin.dispose();
 
     super.dispose();
@@ -60,7 +129,7 @@ class _CalculateState extends State<Calculate> {
                   mediaPlaybackRequiresUserGesture: false,
                   appBar: AppBar(
                     centerTitle: true,
-                    title: Text(widget.title),
+                    title: Text("Latest Price List"),
                     flexibleSpace: Container(
                       decoration: BoxDecoration(
                           gradient: LinearGradient(colors: <Color>[
@@ -104,6 +173,7 @@ class _CalculateState extends State<Calculate> {
                 ),
               )
             : Scaffold(
+                backgroundColor: Colors.white,
                 appBar: AppBar(
                   centerTitle: true,
                   flexibleSpace: Container(
@@ -129,7 +199,23 @@ class _CalculateState extends State<Calculate> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Offline(),
+                      Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width / 1.1,
+                        child: Column(
+                          children: [
+                            SpinKitWave(
+                              color: Colors.red,
+                              type: SpinKitWaveType.start,
+                              size: 50.0,
+                            ),
+                            Text(
+                              "OOPS, Looks Like your Internet is not working!",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),

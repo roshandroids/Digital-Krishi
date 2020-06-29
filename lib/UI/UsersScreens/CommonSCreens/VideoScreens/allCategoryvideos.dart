@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitalKrishi/UI/OtherScreens/listvideos.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/listvideos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:page_transition/page_transition.dart';
@@ -29,8 +29,16 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
       child: Container(
         margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
-            border: Border.all(width: .5),
-            borderRadius: BorderRadius.circular(10)),
+          color: Colors.white,
+          boxShadow: [
+            new BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.5),
+              blurRadius: 1.0,
+            ),
+          ],
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(width: .1),
+        ),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -51,7 +59,9 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
               child: Stack(
                 children: <Widget>[
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(5),
+                        bottomRight: Radius.circular(5)),
                     child: CachedNetworkImage(
                         fit: BoxFit.cover,
                         placeholder: (context, url) => SpinKitWave(
@@ -102,6 +112,7 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           centerTitle: true,
           title: Text("All Videos"),

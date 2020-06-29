@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:digitalKrishi/CustomComponents/offline.dart';
-import 'package:digitalKrishi/UI/PostScreens/fullPhoto.dart';
+import 'package:digitalKrishi/CustomComponents/fullPhoto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,8 @@ class ChatScreenState extends State<ChatScreen> {
 
   var listMessage;
   String groupChatId;
-
+  File image;
+  final picker = ImagePicker();
   File imageFile;
   bool isLoading;
   bool isShowSticker;
@@ -98,11 +99,12 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Future getImage() async {
-    imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+    PickedFile image = await picker.getImage(source: ImageSource.gallery);
 
     if (imageFile != null) {
       setState(() {
         isLoading = true;
+        imageFile = File(image.path);
       });
       uploadFile();
     }
@@ -137,9 +139,6 @@ class ChatScreenState extends State<ChatScreen> {
           .document(groupChatId)
           .collection(groupChatId)
           .document(DateTime.now().millisecondsSinceEpoch.toString());
-
-      Firestore.instance.collection('messages').document(groupChatId).setData(
-          {"updated": DateTime.now().millisecondsSinceEpoch.toString()});
 
       Firestore.instance.runTransaction((transaction) async {
         await transaction.set(
@@ -405,6 +404,7 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(

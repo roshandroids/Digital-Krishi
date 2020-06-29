@@ -2,35 +2,37 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitalKrishi/CustomComponents/offline.dart';
-import 'package:digitalKrishi/UI/PostScreens/fullPhoto.dart';
-import 'package:digitalKrishi/UI/PostScreens/postDetails.dart';
+import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/ExpertScreens/expertMainScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/FarmerScreens/farmerMainScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path/path.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
-class UpdateProfile extends StatefulWidget {
-  final String userType;
+class ProfileSetup extends StatefulWidget {
   final String userId;
-  UpdateProfile({@required this.userType, @required this.userId});
+  final String userType;
+  final String imageUrl;
+
+  ProfileSetup(
+      {@required this.userId,
+      @required this.userType,
+      @required this.imageUrl});
   @override
-  _UpdateProfileState createState() => _UpdateProfileState();
+  _ProfileSetupState createState() => _ProfileSetupState();
 }
 
-class _UpdateProfileState extends State<UpdateProfile> {
+class _ProfileSetupState extends State<ProfileSetup> {
   TextEditingController fullNameController;
   TextEditingController emailController;
-  TextEditingController contactController;
-  TextEditingController addressController;
+  TextEditingController contactController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
   TextEditingController userTypeController;
   TextEditingController isVerifiedController;
 
@@ -276,6 +278,16 @@ class _UpdateProfileState extends State<UpdateProfile> {
               textColor: Colors.red,
               backgroundColor: Colors.black);
         });
+        Navigator.pushReplacement(
+          context,
+          PageTransition(
+            type: PageTransitionType.fade,
+            duration: Duration(milliseconds: 300),
+            child: FarmerMainScreen(
+              userType: widget.userType,
+            ),
+          ),
+        );
       }).catchError((err) {
         setState(() {
           isLoading = false;
@@ -320,6 +332,18 @@ class _UpdateProfileState extends State<UpdateProfile> {
               textColor: Colors.red,
               backgroundColor: Colors.black);
         });
+        Navigator.pushReplacement(
+          context,
+          PageTransition(
+            type: PageTransitionType.fade,
+            duration: Duration(milliseconds: 300),
+            child: ExpertMainScreen(
+              userType: widget.userType,
+              usrId: widget.userId,
+              url: photoUrl,
+            ),
+          ),
+        );
       }).catchError((err) {
         setState(() {
           isLoading = false;
@@ -331,6 +355,45 @@ class _UpdateProfileState extends State<UpdateProfile> {
     }
   }
 
+  void logOut(context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      PageTransition(
+        type: PageTransitionType.fade,
+        duration: Duration(milliseconds: 300),
+        child: SplashScreen(),
+      ),
+    );
+  }
+
+  void logoutAlert(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            child: Wrap(
+              children: <Widget>[
+                ListTile(
+                    leading: FaIcon(FontAwesomeIcons.signOutAlt),
+                    title: Text('Yes, log Out'),
+                    onTap: () {
+                      logOut(context);
+                      Navigator.of(context).pop();
+                    }),
+                ListTile(
+                  leading: FaIcon(FontAwesomeIcons.ban),
+                  title: Text('No, Stay logged In'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget _buildProfileListItem(BuildContext context, snapshot) {
@@ -338,10 +401,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
           TextEditingController(text: snapshot.data.data['fullName']);
       emailController =
           TextEditingController(text: snapshot.data.data['email']);
-      contactController =
-          TextEditingController(text: snapshot.data.data['contact']);
-      addressController =
-          TextEditingController(text: snapshot.data.data['address']);
+
       isVerifiedController =
           TextEditingController(text: snapshot.data.data['isVerified']);
       userTypeController =
@@ -402,33 +462,19 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                         BorderRadius.all(Radius.circular(20.0)),
                                     clipBehavior: Clip.hardEdge,
                                   ),
-                            OfflineBuilder(
-                              connectivityBuilder: (
-                                BuildContext context,
-                                ConnectivityResult connectivity,
-                                Widget child,
-                              ) {
-                                bool connected =
-                                    connectivity != ConnectivityResult.none;
-                                return connected
-                                    ? Positioned(
-                                        left: 0,
-                                        right: 0,
-                                        bottom: -10,
-                                        child: IconButton(
-                                          icon: Icon(
-                                            Icons.camera_alt,
-                                            color: Colors.blueAccent,
-                                          ),
-                                          onPressed: () =>
-                                              chosePicture(context),
-                                          highlightColor: Color(0xffaeaeae),
-                                          iconSize: 30.0,
-                                        ),
-                                      )
-                                    : Offline();
-                              },
-                              child: Container(),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: -10,
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () => chosePicture(context),
+                                highlightColor: Color(0xffaeaeae),
+                                iconSize: 30.0,
+                              ),
                             ),
                           ],
                         ),
@@ -650,7 +696,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         data: Theme.of(context)
                             .copyWith(primaryColor: Color(0xff203152)),
                         child: TextFormField(
-                          enabled: false,
                           decoration: InputDecoration(
                             labelText: "Is Verified",
                             labelStyle: TextStyle(
@@ -679,97 +724,129 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       margin: EdgeInsets.only(left: 30.0, right: 30.0),
                     )
                   : Container(),
-
+              SizedBox(
+                height: 20,
+                child: Text("All field must be filled"),
+              ),
               Stack(
                 children: <Widget>[
                   (widget.userType != "Farmer")
-                      ? InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                PageTransition(
-                                    type: PageTransitionType.fade,
-                                    alignment: Alignment.bottomLeft,
-                                    duration: Duration(milliseconds: 250),
-                                    child: FullPhoto(url: docUrl)));
-                          },
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 25),
-                            height: MediaQuery.of(context).size.height / 4,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 4, color: Colors.grey),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: (docUrl != null)
-                                ? CachedNetworkImage(imageUrl: docUrl)
-                                : (_image != null)
-                                    ? Image.file(
-                                        _image,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Container(),
-                          ),
-                        )
+                      ? (!isUploadingDocument)
+                          ? Container(
+                              margin: EdgeInsets.symmetric(horizontal: 25),
+                              height: MediaQuery.of(context).size.height / 4,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 4, color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: (docUrl != null)
+                                  ? CachedNetworkImage(imageUrl: docUrl)
+                                  : (_image != null)
+                                      ? Image.file(
+                                          _image,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Container(),
+                            )
+                          : Container(
+                              margin: EdgeInsets.symmetric(horizontal: 25),
+                              height: MediaQuery.of(context).size.height / 4,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border.all(width: 1),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SpinKitWave(
+                                    color: Colors.blue,
+                                    size: 50.0,
+                                  ),
+                                  Text("Uploading..")
+                                ],
+                              ),
+                            )
                       : Container(),
+                  InkWell(
+                    onTap: getDocumentImage,
+                    child: Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.symmetric(horizontal: 25),
+                      height: MediaQuery.of(context).size.height / 4,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(.5),
+                          border: Border.all(width: 1, color: Colors.black),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          FaIcon(
+                            FontAwesomeIcons.cameraRetro,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          Text(
+                            "Tap to pick image",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],
             crossAxisAlignment: CrossAxisAlignment.center,
           ),
-          OfflineBuilder(
-            connectivityBuilder: (
-              BuildContext context,
-              ConnectivityResult connectivity,
-              Widget child,
-            ) {
-              bool connected = connectivity != ConnectivityResult.none;
-              return connected
-                  ? (widget.userType != "Farmer")
-                      ? InkWell(
-                          onTap: () => handleUpdateDataExpert(context),
-                          child: Container(
-                            margin: EdgeInsets.only(top: 20),
-                            width: MediaQuery.of(context).size.width / 1.5,
-                            height: 50,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.black26,
-                              border: Border.all(width: 1),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                            ),
-                            child: Text("Update Information".toUpperCase()),
-                          ),
-                        )
-                      : InkWell(
-                          onTap: () => handleUpdateDataUser(context),
-                          child: Container(
-                            margin: EdgeInsets.only(top: 20),
-                            width: MediaQuery.of(context).size.width / 1.5,
-                            height: 50,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.black26,
-                              border: Border.all(width: 1),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                            ),
-                            child: Text("Update Information".toUpperCase()),
-                          ),
-                        )
-                  : Offline();
-            },
-            child: Container(),
-          ),
+
           // Button
+          (widget.userType != "Farmer")
+              ? InkWell(
+                  onTap: () => handleUpdateDataExpert(context),
+                  child: Container(
+                    margin: EdgeInsets.only(top: 20),
+                    width: MediaQuery.of(context).size.width / 1.5,
+                    height: 50,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.black26,
+                      border: Border.all(width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    child: Text("Proceed to Verification".toUpperCase()),
+                  ),
+                )
+              : InkWell(
+                  onTap: () => handleUpdateDataUser(context),
+                  child: Container(
+                    margin: EdgeInsets.only(top: 20),
+                    width: MediaQuery.of(context).size.width / 1.5,
+                    height: 50,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.black26,
+                      border: Border.all(width: 1),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    child: Text("Complete And Proceed".toUpperCase()),
+                  ),
+                ),
         ],
       );
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -779,20 +856,20 @@ class _UpdateProfileState extends State<UpdateProfile> {
             Color(0xff1D976C),
           ])),
         ),
-        leading: IconButton(
-            icon: Icon(
-              Icons.chevron_left,
-              size: 30,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
         title: Text(
-          'Profile Update',
+          'Profile Setup',
           style:
               TextStyle(color: Color(0xff203152), fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(
+                Icons.exit_to_app,
+                size: 30,
+              ),
+              onPressed: () => logoutAlert(context))
+        ],
       ),
       body: GestureDetector(
         onTap: () {
@@ -804,6 +881,25 @@ class _UpdateProfileState extends State<UpdateProfile> {
               physics: BouncingScrollPhysics(),
               child: Column(
                 children: <Widget>[
+                  (widget.userType != "Farmer")
+                      ? Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            boxShadow: [
+                              new BoxShadow(
+                                color: Color.fromRGBO(0, 0, 0, 0.1),
+                                blurRadius: 10.0,
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            "You have created your account as Farming Expert, Now you have to update your profile along with verification document which will then be verified by our admin.",
+                            style: TextStyle(color: Colors.red, fontSize: 16),
+                          ),
+                        )
+                      : Container(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: StreamBuilder(

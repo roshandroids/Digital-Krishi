@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitalKrishi/UI/ChatScreens/chat.dart';
-import 'package:digitalKrishi/UI/PostScreens/fullPhoto.dart';
+import 'package:digitalKrishi/CustomComponents/fullPhoto.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/ChatScreens/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -44,6 +44,7 @@ class _ExpertDetailsState extends State<ExpertDetails> {
   Widget build(BuildContext context) {
     String _phone = widget.contact;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
             icon: Icon(

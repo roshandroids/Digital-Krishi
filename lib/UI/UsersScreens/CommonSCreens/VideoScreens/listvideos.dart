@@ -1,7 +1,6 @@
 import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:digitalKrishi/UI/OtherScreens/playVideo.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/playVideo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shimmer/shimmer.dart';
@@ -51,6 +50,7 @@ class _ListVideosState extends State<ListVideos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -73,7 +73,6 @@ class _ListVideosState extends State<ListVideos> {
         title: Text(widget.category),
       ),
       body: Container(
-        margin: EdgeInsets.all(10),
         child: ListView.builder(
             physics: BouncingScrollPhysics(),
             scrollDirection: Axis.vertical,
@@ -92,9 +91,17 @@ class _ListVideosState extends State<ListVideos> {
                               )));
                     },
                     child: Container(
+                      margin: EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                          border: Border.all(width: .5),
-                          borderRadius: BorderRadius.circular(10)),
+                          color: Colors.white,
+                          border: Border.all(width: .1),
+                          boxShadow: [
+                            new BoxShadow(
+                              color: Color.fromRGBO(0, 0, 0, 0.5),
+                              blurRadius: 1.0,
+                            ),
+                          ],
+                          borderRadius: BorderRadius.circular(5)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -119,13 +126,15 @@ class _ListVideosState extends State<ListVideos> {
                                   return Text(
                                     snapshot.data,
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
                                   );
                                 }),
                           ),
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(5),
+                                bottomRight: Radius.circular(5)),
                             child: CachedNetworkImage(
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => SpinKitWave(

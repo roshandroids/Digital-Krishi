@@ -1,25 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitalKrishi/UI/ExpertScreens/expertDetails.dart';
-import 'package:digitalKrishi/UI/OtherScreens/allCategoryvideos.dart';
-import 'package:digitalKrishi/UI/OtherScreens/listNewsPortal.dart';
-import 'package:digitalKrishi/UI/OtherScreens/listvideos.dart';
-import 'package:digitalKrishi/UI/OtherScreens/readNews.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/listNewsPortal.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/readNews.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/allCategoryvideos.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/listvideos.dart';
+import 'package:digitalKrishi/UI/UsersScreens/ExpertScreens/expertDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class UserHomeScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   final String userType;
-  UserHomeScreen({@required this.userType});
+  HomeScreen({@required this.userType});
   @override
-  _UserHomeScreenState createState() => _UserHomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _UserHomeScreenState extends State<UserHomeScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   Widget _buildListNews(BuildContext context, DocumentSnapshot document) {
     return InkWell(
       onTap: () {
@@ -33,19 +33,22 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       },
       child: Container(
         width: MediaQuery.of(context).size.width / 2.18,
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+        margin: EdgeInsets.only(top: 5, bottom: 10, left: 5, right: 5),
         decoration: BoxDecoration(boxShadow: [
-          new BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.5),
-            blurRadius: 20.0,
+          BoxShadow(
+            color: Color.fromRGBO(0, 0, 0, .5),
+            blurRadius: 1.0,
           ),
-        ], color: Colors.white, borderRadius: BorderRadius.circular(10)),
+        ], color: Colors.white, borderRadius: BorderRadius.circular(5)),
         child: Column(
           children: <Widget>[
+            SizedBox(
+              width: 5,
+            ),
             Expanded(
               flex: 3,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(5),
                 child: CachedNetworkImage(
                   imageUrl: document['siteLogo'],
                   fit: BoxFit.contain,
@@ -63,6 +66,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 document['siteName'],
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
+            ),
+            SizedBox(
+              width: 5,
             ),
           ],
         ),
@@ -93,12 +99,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               boxShadow: [
                 new BoxShadow(
                   color: Color.fromRGBO(0, 0, 0, 0.5),
-                  blurRadius: 20.0,
+                  blurRadius: 1.0,
                 ),
               ],
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(5),
             ),
-            padding: EdgeInsets.only(bottom: 5),
+            margin: EdgeInsets.only(bottom: 10),
             width: MediaQuery.of(context).size.width / 2.1,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -108,8 +114,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   flex: 5,
                   child: ClipRRect(
                     borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10)),
+                        topLeft: Radius.circular(5),
+                        topRight: Radius.circular(5)),
                     child: Container(
                       decoration: BoxDecoration(
                           image: DecorationImage(
@@ -118,8 +124,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                   "https://i3.ytimg.com/vi/${YoutubePlayer.convertUrlToId(document['videoUrl'][0])}/sddefault.jpg"))),
                       child: Container(
                         decoration: BoxDecoration(
-                            color: Colors.black38,
-                            borderRadius: BorderRadius.circular(10)),
+                          color: Colors.black38,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10)),
+                        ),
                         child: Center(
                           child: ((document['videoUrl'].length - 1) >= 1)
                               ? Text(
@@ -188,11 +197,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           margin: EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 10),
           decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: BorderRadius.circular(5.0),
               boxShadow: [
                 new BoxShadow(
                   color: Color.fromRGBO(0, 0, 0, 0.5),
-                  blurRadius: 20.0,
+                  blurRadius: 1.0,
                 ),
               ]),
           child: Column(
@@ -202,8 +211,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 child: Container(
                   child: ClipRRect(
                     borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10)),
+                        topLeft: Radius.circular(5),
+                        topRight: Radius.circular(5)),
                     child: CachedNetworkImage(
                       imageUrl: document['photoUrl'],
                       width: MediaQuery.of(context).size.width,
@@ -270,6 +279,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: NestedScrollView(
         // physics: BouncingScrollPhysics(),
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -340,7 +350,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           ];
         },
         body: Container(
-          color: Colors.black12,
+          color: Colors.white,
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
@@ -350,8 +360,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 Container(
                   margin: EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                      border: Border.all(width: .5, color: Colors.black12),
-                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromRGBO(0, 0, 0, .4),
+                          blurRadius: 1.0,
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(5),
                       color: Colors.white),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,7 +390,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                   child: Text(
                                     "News Portals",
                                     style: TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w600),
                                   ),
                                 ),
@@ -445,8 +460,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 Container(
                   margin: EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                      border: Border.all(width: .5, color: Colors.black12),
-                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromRGBO(0, 0, 0, .5),
+                          blurRadius: 1.0,
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(5),
                       color: Colors.white),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -470,7 +490,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                   child: Text(
                                     "Agriculture Videos",
                                     style: TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w600),
                                   ),
                                 ),
@@ -508,7 +528,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     child: Text(
                                       "Videos not available !",
                                       style: TextStyle(
-                                          fontSize: 20,
+                                          fontSize: 16,
                                           fontWeight: FontWeight.w700),
                                     ),
                                   ),
@@ -533,9 +553,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     ? Container(
                         margin: EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                            border:
-                                Border.all(width: .5, color: Colors.black12),
-                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color.fromRGBO(0, 0, 0, .5),
+                                blurRadius: 1.0,
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(5),
                             color: Colors.white),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -563,7 +587,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                         child: Text(
                                           "Farming Experties",
                                           style: TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 16,
                                               fontWeight: FontWeight.w600),
                                         ),
                                       ),

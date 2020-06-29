@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitalKrishi/UI/AdminScreens/adminMainScreen.dart';
-import 'package:digitalKrishi/UI/ExpertScreens/expertMainScreen.dart';
-import 'package:digitalKrishi/UI/OtherScreens/pendingVerification.dart';
-import 'package:digitalKrishi/UI/OtherScreens/profileSetup.dart';
-import 'package:digitalKrishi/UI/UserScreens/userMainScreen.dart';
+import 'package:digitalKrishi/UI/AuthScreens/pendingVerification.dart';
+import 'package:digitalKrishi/UI/AuthScreens/profileSetup.dart';
+import 'package:digitalKrishi/UI/UsersScreens/AdminScreens/adminMainScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/ExpertScreens/expertMainScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/FarmerScreens/farmerMainScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +92,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 PageTransition(
                   type: PageTransitionType.fade,
                   duration: Duration(milliseconds: 300),
-                  child: UserMainScreen(
+                  child: FarmerMainScreen(
                     userType: loggedInUserType,
                   ),
                 ),

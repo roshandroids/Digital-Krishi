@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
         statusBarIconBrightness: Brightness.light));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      color: Colors.white,
       theme: ThemeData(
         fontFamily: 'Poppins',
         visualDensity: VisualDensity.adaptivePlatformDensity,

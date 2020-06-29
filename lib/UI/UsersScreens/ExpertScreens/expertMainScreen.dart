@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/exitAppAlert.dart';
-import 'package:digitalKrishi/UI/ChatScreens/usersList.dart';
-import 'package:digitalKrishi/UI/OtherScreens/feeds.dart';
-import 'package:digitalKrishi/UI/UserScreens/homeScreen.dart';
-import 'package:digitalKrishi/UI/UserScreens/moreSettings.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/ChatScreens/usersList.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/feeds.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/homeScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/moreSettings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -133,11 +133,12 @@ class _ExpertMainScreenState extends State<ExpertMainScreen>
         },
         child: SafeArea(
           child: Scaffold(
+            backgroundColor: Colors.white,
             body: TabBarView(
               physics: BouncingScrollPhysics(),
               controller: _tabController,
               children: <Widget>[
-                UserHomeScreen(userType: widget.userType),
+                HomeScreen(userType: widget.userType),
                 Feeds(),
                 UsersList(),
                 MoreSettings(

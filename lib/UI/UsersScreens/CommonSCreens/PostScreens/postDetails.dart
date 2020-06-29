@@ -98,6 +98,8 @@ class _PostDetailsState extends State<PostDetails> {
       if (commentController.text.isEmpty) {
         Fluttertoast.showToast(
             msg: "Write Something", backgroundColor: Colors.red);
+        FocusScope.of(context).requestFocus(new FocusNode());
+        Navigator.of(context).pop();
       } else {
         setState(() {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -144,7 +146,8 @@ class _PostDetailsState extends State<PostDetails> {
                         child: (!isPosting)
                             ? TextFormField(
                                 decoration: InputDecoration(
-                                    hintText: "Enter your text"),
+                                    filled: true,
+                                    hintText: "Write Something..."),
                                 controller: commentController,
                                 textInputAction: TextInputAction.send,
                                 onEditingComplete: () => postComment(),
@@ -171,8 +174,8 @@ class _PostDetailsState extends State<PostDetails> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
         leading: IconButton(
             icon: Icon(
               Icons.chevron_left,
@@ -213,14 +216,15 @@ class _PostDetailsState extends State<PostDetails> {
                       margin:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.0),
-                          boxShadow: [
-                            new BoxShadow(
-                              color: Color.fromRGBO(0, 0, 0, 0.5),
-                              blurRadius: 20.0,
-                            ),
-                          ]),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(5.0),
+                        boxShadow: [
+                          new BoxShadow(
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                            blurRadius: 20.0,
+                          ),
+                        ],
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -246,8 +250,10 @@ class _PostDetailsState extends State<PostDetails> {
                                       Row(
                                         children: <Widget>[
                                           ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(5),
+                                                bottomRight:
+                                                    Radius.circular(5)),
                                             child: CachedNetworkImage(
                                               height: 60,
                                               width: 60,
@@ -333,10 +339,7 @@ class _PostDetailsState extends State<PostDetails> {
                                 margin: EdgeInsets.only(left: 2, right: 2),
                                 height: 250,
                                 width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 1, color: Colors.black38),
-                                    borderRadius: BorderRadius.circular(0)),
+                                decoration: BoxDecoration(color: Colors.white),
                                 child: CachedNetworkImage(
                                   imageUrl: widget.postImage,
                                   width: MediaQuery.of(context).size.width,

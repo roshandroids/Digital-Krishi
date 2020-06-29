@@ -22,6 +22,7 @@ class _AuthMainScreenState extends State<AuthMainScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: WillPopScope(
         onWillPop: () => ExitAppAlert().onBackPress(context: context),
         child: GestureDetector(

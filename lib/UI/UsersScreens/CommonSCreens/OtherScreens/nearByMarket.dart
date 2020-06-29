@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:digitalKrishi/Model/shop_model.dart';
-import 'package:digitalKrishi/UI/OtherScreens/placeDetails.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/placeDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_offline/flutter_offline.dart';
@@ -290,6 +290,7 @@ class _NearByMarketState extends State<NearByMarket> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
         title: Text("Vegetable Markets"),

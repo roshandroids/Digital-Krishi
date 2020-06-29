@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/loadingIndicator.dart';
-import 'package:digitalKrishi/UI/AdminScreens/adminMainScreen.dart';
 import 'package:digitalKrishi/UI/AuthScreens/authMainScreen.dart';
 import 'package:digitalKrishi/UI/AuthScreens/emailVerificationPending.dart';
-import 'package:digitalKrishi/UI/ExpertScreens/expertMainScreen.dart';
-import 'package:digitalKrishi/UI/OtherScreens/pendingVerification.dart';
-import 'package:digitalKrishi/UI/OtherScreens/profileSetup.dart';
-import 'package:digitalKrishi/UI/UserScreens/userMainScreen.dart';
+import 'package:digitalKrishi/UI/AuthScreens/pendingVerification.dart';
+import 'package:digitalKrishi/UI/AuthScreens/profileSetup.dart';
+import 'package:digitalKrishi/UI/UsersScreens/AdminScreens/adminMainScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/ExpertScreens/expertMainScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/FarmerScreens/farmerMainScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -152,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 PageTransition(
                   type: PageTransitionType.fade,
                   duration: Duration(milliseconds: 300),
-                  child: UserMainScreen(
+                  child: FarmerMainScreen(
                     userType: loggedInUserType,
                   ),
                 ),
@@ -449,51 +449,59 @@ class _LoginScreenState extends State<LoginScreen> {
                                     thickness: 1,
                                     color: Colors.grey[600],
                                   ),
-                                  Container(
-                                    margin: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(width: .5),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0)),
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                          color: Color(0xFFf67B26F),
-                                          offset: Offset(1.0, 6.0),
-                                          blurRadius: 20.0,
-                                        ),
-                                        BoxShadow(
-                                          color: Color(0xFFf4ca2cd),
-                                          offset: Offset(1.0, 6.0),
-                                          blurRadius: 20.0,
-                                        ),
-                                      ],
-                                      gradient: LinearGradient(
-                                          colors: [
-                                            Color(0xFFf4ca2cd),
-                                            Color(0xFFf67B26F)
-                                          ],
-                                          begin:
-                                              const FractionalOffset(0.2, 0.2),
-                                          end: const FractionalOffset(1.0, 1.0),
-                                          stops: [0.0, 1.0],
-                                          tileMode: TileMode.clamp),
-                                    ),
-                                    child: MaterialButton(
-                                      onPressed: () {
-                                        FocusScope.of(context)
-                                            .requestFocus(FocusNode());
-                                        _validateAndSubmit();
-                                      },
-                                      highlightColor: Colors.transparent,
-                                      splashColor: Color(0xFFf4ca2cd),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10.0, horizontal: 42.0),
-                                        child: Text(
-                                          "LOGIN",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 25.0,
+                                  InkWell(
+                                    onTap: () {
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                      _validateAndSubmit();
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(width: .5),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5.0)),
+                                        boxShadow: <BoxShadow>[
+                                          BoxShadow(
+                                            color: Color(0xFFf67B26F),
+                                            offset: Offset(1.0, 6.0),
+                                            blurRadius: 20.0,
+                                          ),
+                                          BoxShadow(
+                                            color: Color(0xFFf4ca2cd),
+                                            offset: Offset(1.0, 6.0),
+                                            blurRadius: 20.0,
+                                          ),
+                                        ],
+                                        gradient: LinearGradient(
+                                            colors: [
+                                              Color(0xFFf4ca2cd),
+                                              Color(0xFFf67B26F)
+                                            ],
+                                            begin: const FractionalOffset(
+                                                0.2, 0.2),
+                                            end: const FractionalOffset(
+                                                1.0, 1.0),
+                                            stops: [0.0, 1.0],
+                                            tileMode: TileMode.clamp),
+                                      ),
+                                      child: MaterialButton(
+                                        onPressed: () {
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
+                                          _validateAndSubmit();
+                                        },
+                                        highlightColor: Colors.transparent,
+                                        splashColor: Color(0xFFf4ca2cd),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10.0, horizontal: 42.0),
+                                          child: Text(
+                                            "LOGIN",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 25.0,
+                                            ),
                                           ),
                                         ),
                                       ),

@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:digitalKrishi/UI/ChatScreens/chat.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/ChatScreens/chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -49,8 +49,8 @@ class _UsersListState extends State<UsersList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
-        color: Colors.black.withOpacity(.1),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: Column(
@@ -212,10 +212,16 @@ class _UsersListState extends State<UsersList> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey[500],
+                    boxShadow: [
+                      new BoxShadow(
+                        color: Color.fromRGBO(0, 0, 0, 1),
+                        blurRadius: 1.0,
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(5),
+                    color: Color.fromARGB(0xff, 221, 235, 230),
                   ),
-                  padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
+                  padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
                   margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
                   child: Row(
                     children: <Widget>[
@@ -253,15 +259,9 @@ class _UsersListState extends State<UsersList> {
                             children: [
                               Text(
                                 document['userType'],
-                                style: TextStyle(),
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w600),
                               ),
-                              (document['isVerified'] == 'Verified')
-                                  ? Icon(
-                                      Icons.check_circle_outline,
-                                      size: 15,
-                                      color: Colors.red,
-                                    )
-                                  : Container(),
                             ],
                           ),
                         ],
@@ -340,9 +340,16 @@ class _UsersListState extends State<UsersList> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey[500]),
-                  padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
+                    boxShadow: [
+                      new BoxShadow(
+                        color: Color.fromRGBO(0, 0, 0, 1),
+                        blurRadius: 1.0,
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(5),
+                    color: Color.fromARGB(0xff, 221, 235, 230),
+                  ),
+                  padding: EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
                   margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
                   child: Row(
                     children: <Widget>[
@@ -380,15 +387,14 @@ class _UsersListState extends State<UsersList> {
                             children: [
                               Text(
                                 document['userType'],
-                                style: TextStyle(),
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w600),
                               ),
-                              (document['isVerified'] == 'Verified')
-                                  ? Icon(
-                                      Icons.check_circle_outline,
-                                      size: 15,
-                                      color: Colors.red,
-                                    )
-                                  : Container(),
+                              Icon(
+                                Icons.check_circle_outline,
+                                size: 15,
+                                color: Colors.red,
+                              )
                             ],
                           ),
                         ],

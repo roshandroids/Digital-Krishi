@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/exitAppAlert.dart';
-import 'package:digitalKrishi/UI/ChatScreens/usersList.dart';
-import 'package:digitalKrishi/UI/OtherScreens/feeds.dart';
-import 'package:digitalKrishi/UI/UserScreens/moreSettings.dart';
-import 'package:digitalKrishi/UI/UserScreens/homeScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/ChatScreens/usersList.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/feeds.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/homeScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/moreSettings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -13,14 +13,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class UserMainScreen extends StatefulWidget {
+class FarmerMainScreen extends StatefulWidget {
   final String userType;
-  UserMainScreen({@required this.userType});
+  FarmerMainScreen({@required this.userType});
   @override
-  _UserMainScreenState createState() => _UserMainScreenState();
+  _FarmerMainScreenState createState() => _FarmerMainScreenState();
 }
 
-class _UserMainScreenState extends State<UserMainScreen>
+class _FarmerMainScreenState extends State<FarmerMainScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
@@ -127,11 +127,12 @@ class _UserMainScreenState extends State<UserMainScreen>
         },
         child: SafeArea(
           child: Scaffold(
+            backgroundColor: Colors.white,
             body: TabBarView(
               physics: BouncingScrollPhysics(),
               controller: _tabController,
               children: <Widget>[
-                UserHomeScreen(
+                HomeScreen(
                   userType: widget.userType,
                 ),
                 Feeds(),
@@ -150,6 +151,10 @@ class _UserMainScreenState extends State<UserMainScreen>
                 indicatorWeight: 2.0,
                 indicatorColor: Color.fromARGB(0xff, 25, 125, 35),
                 unselectedLabelColor: Colors.blueGrey,
+                labelStyle:
+                    TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                unselectedLabelStyle:
+                    TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 tabs: <Widget>[
                   Tab(
                     icon: FaIcon(FontAwesomeIcons.home),
