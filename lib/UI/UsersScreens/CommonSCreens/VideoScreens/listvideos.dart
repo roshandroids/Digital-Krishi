@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/allCategoryvideos.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/playVideo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -148,29 +149,79 @@ class _ListVideosState extends State<ListVideos> {
                                       }),
                                 ),
                               ),
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                    size: 30,
-                                  ),
-                                  onPressed: () async {
-                                    Firestore.instance
-                                        .collection('videos')
-                                        .document(widget.documentId)
-                                        .updateData({
-                                      "videoUrl": FieldValue.arrayRemove(
-                                          [widget.videoUrl[index]]),
-                                    });
-                                    Navigator.of(context).pop();
-                                    Fluttertoast.showToast(
-                                        msg: "Deleted Successfully",
-                                        backgroundColor: Colors.white,
-                                        textColor: Colors.green);
-                                  })
+                              (widget.userType == "Admin")
+                                  ? IconButton(
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                        size: 30,
+                                      ),
+                                      onPressed: () async {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            builder: (BuildContext bc) {
+                                              return Container(
+                                                child: Wrap(
+                                                  children: <Widget>[
+                                                    ListTile(
+                                                        leading: Icon(
+                                                          Icons.warning,
+                                                          color: Colors.red,
+                                                        ),
+                                                        title: Text(
+                                                            'Delete This Video'),
+                                                        onTap: () async {
+                                                          await Firestore
+                                                              .instance
+                                                              .collection(
+                                                                  'videos')
+                                                              .document(widget
+                                                                  .documentId)
+                                                              .updateData({
+                                                            "videoUrl": FieldValue
+                                                                .arrayRemove([
+                                                              widget.videoUrl[
+                                                                  index]
+                                                            ]),
+                                                          });
+                                                          Navigator
+                                                              .pushReplacement(
+                                                                  context,
+                                                                  PageTransition(
+                                                                      type: PageTransitionType
+                                                                          .fade,
+                                                                      child:
+                                                                          AllCategoryVideos(
+                                                                        userType:
+                                                                            widget.userType,
+                                                                      )));
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Deleted Successfully",
+                                                              backgroundColor:
+                                                                  Colors.white,
+                                                              textColor:
+                                                                  Colors.green);
+                                                        }),
+                                                    ListTile(
+                                                      leading: Icon(
+                                                        Icons.close,
+                                                        color: Colors.green,
+                                                      ),
+                                                      title: Text('Cancel'),
+                                                      onTap: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                      })
+                                  : Container(),
                             ],
                           ),
-                          Text(index.toString()),
                           ClipRRect(
                             borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(5),

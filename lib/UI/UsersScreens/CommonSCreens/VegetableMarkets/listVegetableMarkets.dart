@@ -1,10 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/offline.dart';
-import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/addNewsPortal.dart';
-import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/addMarket.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/locationPicker.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/placeDetails.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -90,7 +89,14 @@ class _ListVegetableMarketsState extends State<ListVegetableMarkets>
                                                 title: Text('Delete This Post'),
                                                 onTap: () async {
                                                   Navigator.of(context).pop();
-
+                                                  await FirebaseStorage.instance
+                                                      .getReferenceFromUrl(
+                                                          document['thumbNail'])
+                                                      .then((value) =>
+                                                          value.delete())
+                                                      .catchError((onError) {
+                                                    print(onError);
+                                                  });
                                                   await Firestore.instance
                                                       .collection('shops')
                                                       .document(

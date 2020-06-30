@@ -229,36 +229,42 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      children: [
-                        Text(
-                          document['fullName'],
-                          overflow: TextOverflow.fade,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              document['fullName'],
+                              overflow: TextOverflow.fade,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
                           ),
+                          (document['isVerified'] == "Verified")
+                              ? Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                  size: 10,
+                                )
+                              : Container(),
+                        ],
+                      ),
+                      Expanded(
+                        child: Text(
+                          document['email'],
+                          overflow: TextOverflow.fade,
+                          style: TextStyle(color: Colors.black),
                         ),
-                        (document['isVerified'] == "Verified")
-                            ? Icon(
-                                Icons.check_circle,
-                                color: Colors.green,
-                                size: 15,
-                              )
-                            : Container(),
-                      ],
-                    ),
-                    Text(
-                      document['email'],
-                      overflow: TextOverflow.fade,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               )
             ],
@@ -410,7 +416,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         PageTransitionType.rightToLeftWithFade,
                                     alignment: Alignment.bottomLeft,
                                     duration: Duration(milliseconds: 100),
-                                    child: ListNewsPortal(),
+                                    child: ListNewsPortal(
+                                      userType: widget.userType,
+                                    ),
                                   ),
                                 );
                               },

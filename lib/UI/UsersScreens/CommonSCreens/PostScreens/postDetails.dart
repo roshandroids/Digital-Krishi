@@ -205,12 +205,12 @@ class _PostDetailsState extends State<PostDetails> {
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.white,
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          color: Colors.white,
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               children: <Widget>[
                 Container(
@@ -300,8 +300,10 @@ class _PostDetailsState extends State<PostDetails> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: <Widget>[
-                                          Text(timeago.format(
-                                              widget.postedAt.toDate())),
+                                          Expanded(
+                                            child: Text(timeago.format(
+                                                widget.postedAt.toDate())),
+                                          ),
                                           (loggedInUserType == "Admin")
                                               ? Container()
                                               : IconButton(

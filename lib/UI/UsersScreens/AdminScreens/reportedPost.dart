@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/postDetails.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -12,7 +13,8 @@ import 'package:shimmer/shimmer.dart';
 
 class ReportedPosts extends StatefulWidget {
   final String uId;
-  ReportedPosts({@required this.uId});
+  final String userType;
+  ReportedPosts({@required this.uId, @required this.userType});
   @override
   _ReportedPostsState createState() => _ReportedPostsState();
 }
@@ -89,6 +91,7 @@ class _ReportedPostsState extends State<ReportedPosts> {
 
   Widget _buildListItemPosts(
       BuildContext context, DocumentSnapshot document, String collectionName) {
+    String reportId = document.documentID;
     return StreamBuilder(
         stream: Firestore.instance
             .collection('posts')
@@ -96,12 +99,14 @@ class _ReportedPostsState extends State<ReportedPosts> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            return LinearProgressIndicator(
-              backgroundColor: Colors.green,
+            return SpinKitWave(
+              size: 30,
+              color: Colors.green,
             );
           if (snapshot.data.data == null)
-            return CircularProgressIndicator(
-              backgroundColor: Colors.green,
+            return SpinKitWave(
+              size: 30,
+              color: Colors.green,
             );
           return InkWell(
               child: Container(
@@ -435,126 +440,157 @@ class _ReportedPostsState extends State<ReportedPosts> {
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: StreamBuilder(
-                            stream: Firestore.instance
-                                .collection('users')
-                                .document(snapshot.data.data['PostedBy'])
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (!snapshot.hasData) {
-                                return LinearProgressIndicator(
-                                  backgroundColor: Colors.green,
-                                );
-                              } else if (snapshot.data.data == null) {
-                                return CircularProgressIndicator(
-                                  backgroundColor: Colors.green,
-                                );
-                              } else if (snapshot.data.data['userType'] ==
-                                  "Admin") {
-                                return InkWell(
-                                  onTap: () async {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (BuildContext bc) {
-                                          return OfflineBuilder(
-                                            connectivityBuilder: (
-                                              BuildContext context,
-                                              ConnectivityResult connectivity,
-                                              Widget child,
-                                            ) {
-                                              bool connected = connectivity !=
-                                                  ConnectivityResult.none;
-                                              return connected
-                                                  ? Container(
-                                                      color: Colors.black
-                                                          .withOpacity(.1),
-                                                      child: Wrap(
-                                                        children: <Widget>[
-                                                          ListTile(
-                                                              leading: Icon(
-                                                                Icons.warning,
-                                                                color:
-                                                                    Colors.red,
-                                                              ),
-                                                              title: Text(
-                                                                  'Remove This Post'),
-                                                              onTap: () async {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                                await Firestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        'users')
-                                                                    .document(
-                                                                        widget
-                                                                            .uId)
-                                                                    .collection(
-                                                                        'savedPosts')
-                                                                    .document(
-                                                                        document[
-                                                                            'postId'])
-                                                                    .delete();
-
-                                                                Fluttertoast.showToast(
-                                                                    msg:
-                                                                        "Removed Successfully",
-                                                                    toastLength:
-                                                                        Toast
-                                                                            .LENGTH_LONG,
-                                                                    backgroundColor:
-                                                                        Colors
-                                                                            .green,
-                                                                    textColor:
-                                                                        Colors
-                                                                            .white);
-                                                              }),
-                                                          Divider(
-                                                            color:
-                                                                Colors.blueGrey,
-                                                            thickness: 1,
-                                                            indent: 20,
-                                                            endIndent: 10,
-                                                          ),
-                                                          ListTile(
+                      (widget.userType == "Admin")
+                          ? Expanded(
+                              child: InkWell(
+                                onTap: () async {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext bc) {
+                                        return OfflineBuilder(
+                                          connectivityBuilder: (
+                                            BuildContext context,
+                                            ConnectivityResult connectivity,
+                                            Widget child,
+                                          ) {
+                                            bool connected = connectivity !=
+                                                ConnectivityResult.none;
+                                            return connected
+                                                ? Container(
+                                                    color: Colors.black
+                                                        .withOpacity(.1),
+                                                    child: Wrap(
+                                                      children: <Widget>[
+                                                        ListTile(
                                                             leading: Icon(
-                                                              Icons.cancel,
-                                                              color:
-                                                                  Colors.blue,
+                                                              Icons.warning,
+                                                              color: Colors.red,
                                                             ),
-                                                            title:
-                                                                Text('Cancel'),
-                                                            onTap: () {
+                                                            title: Text(
+                                                                'Remove From Reported'),
+                                                            onTap: () async {
                                                               Navigator.of(
                                                                       context)
                                                                   .pop();
-                                                            },
+
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'reports')
+                                                                  .document(
+                                                                      reportId)
+                                                                  .delete();
+
+                                                              Fluttertoast.showToast(
+                                                                  msg:
+                                                                      "Removed Successfully",
+                                                                  toastLength: Toast
+                                                                      .LENGTH_LONG,
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  textColor:
+                                                                      Colors
+                                                                          .white);
+                                                            }),
+                                                        Divider(
+                                                          color:
+                                                              Colors.blueGrey,
+                                                          thickness: 1,
+                                                          indent: 20,
+                                                          endIndent: 10,
+                                                        ),
+                                                        ListTile(
+                                                            leading: Icon(
+                                                              Icons.delete,
+                                                              color: Colors.red,
+                                                            ),
+                                                            title: Text(
+                                                                'Delete This Post'),
+                                                            onTap: () async {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                              await FirebaseStorage
+                                                                  .instance
+                                                                  .getReferenceFromUrl(
+                                                                      document[
+                                                                          'PostImage'])
+                                                                  .then((value) =>
+                                                                      value
+                                                                          .delete())
+                                                                  .catchError(
+                                                                      (onError) {
+                                                                print(onError);
+                                                              });
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'posts')
+                                                                  .document(
+                                                                      document[
+                                                                          'postId'])
+                                                                  .delete();
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'reports')
+                                                                  .document(
+                                                                      reportId)
+                                                                  .delete();
+
+                                                              Fluttertoast.showToast(
+                                                                  msg:
+                                                                      "Deleted Successfully",
+                                                                  toastLength: Toast
+                                                                      .LENGTH_LONG,
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .green,
+                                                                  textColor:
+                                                                      Colors
+                                                                          .white);
+                                                            }),
+                                                        Divider(
+                                                          color:
+                                                              Colors.blueGrey,
+                                                          thickness: 1,
+                                                          indent: 20,
+                                                          endIndent: 10,
+                                                        ),
+                                                        ListTile(
+                                                          leading: Icon(
+                                                            Icons.cancel,
+                                                            color: Colors.blue,
                                                           ),
-                                                        ],
-                                                      ),
-                                                    )
-                                                  : Container(
-                                                      height: 100,
-                                                      child: Offline(),
-                                                    );
-                                            },
-                                            child: Container(),
-                                          );
-                                        });
-                                  },
-                                  child: Container(
-                                      margin: EdgeInsets.all(8),
-                                      child: Image.asset(
-                                        'lib/Assets/Images/delete.png',
-                                        height: 30,
-                                      )),
-                                );
-                              } else {
-                                return Container();
-                              }
-                            }),
-                      ),
+                                                          title: Text('Cancel'),
+                                                          onTap: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    height: 100,
+                                                    child: Offline(),
+                                                  );
+                                          },
+                                          child: Container(),
+                                        );
+                                      });
+                                },
+                                child: Container(
+                                    margin: EdgeInsets.all(8),
+                                    child: Image.asset(
+                                      'lib/Assets/Images/delete.png',
+                                      height: 30,
+                                    )),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                 )

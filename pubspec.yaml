@@ -57,8 +57,6 @@ dependencies:
   flare_flutter: ^2.0.3
   page_transition: ^1.1.5
   argon_buttons_flutter: ^1.0.2
-  numberpicker: ^1.2.0
-  google_maps_place_picker: ^0.9.4
 
 dev_dependencies:
   flutter_test:

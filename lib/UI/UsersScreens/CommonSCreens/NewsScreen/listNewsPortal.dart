@@ -2,11 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/addNewsPortal.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/readNews.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ListNewsPortal extends StatefulWidget {
+  final String userType;
+  ListNewsPortal({@required this.userType});
   @override
   _ListNewsPortalState createState() => _ListNewsPortalState();
 }
@@ -41,9 +44,62 @@ class _ListNewsPortalState extends State<ListNewsPortal>
               ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
-            Text(
-              document['siteName'],
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Text(
+                  document['siteName'],
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                  ),
+                  onPressed: () {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext bc) {
+                          return Container(
+                            child: Wrap(
+                              children: <Widget>[
+                                ListTile(
+                                    leading: Icon(
+                                      Icons.warning,
+                                      color: Colors.red,
+                                    ),
+                                    title: Text('Delete This Portal'),
+                                    onTap: () async {
+                                      Navigator.of(context).pop();
+                                      await FirebaseStorage.instance
+                                          .getReferenceFromUrl(
+                                              document['siteLogo'])
+                                          .then((value) => value.delete())
+                                          .catchError((onError) {
+                                        print(onError);
+                                      });
+                                      await Firestore.instance
+                                          .collection('newsPortal')
+                                          .document(document.documentID)
+                                          .delete();
+                                    }),
+                                ListTile(
+                                  leading: Icon(
+                                    Icons.close,
+                                    color: Colors.green,
+                                  ),
+                                  title: Text('Cancel'),
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -120,25 +176,28 @@ class _ListNewsPortalState extends State<ListNewsPortal>
           ],
         ),
       ),
-      floatingActionButton: InkWell(
-        onTap: () {
-          Navigator.push(
-              context,
-              PageTransition(
-                  type: PageTransitionType.fade, child: AddNewsPortal()));
-        },
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              color: Colors.blue, borderRadius: BorderRadius.circular(30)),
-          height: 60.0,
-          width: 60.0,
-          child: Icon(
-            Icons.add,
-            size: 30,
-          ),
-        ),
-      ),
+      floatingActionButton: (widget.userType == "Admin")
+          ? InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType.fade, child: AddNewsPortal()));
+              },
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(30)),
+                height: 60.0,
+                width: 60.0,
+                child: Icon(
+                  Icons.add,
+                  size: 30,
+                ),
+              ),
+            )
+          : Container(),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:digitalKrishi/CustomComponents/offline.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,7 +9,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 
 class AddNewsPortal extends StatefulWidget {
   @override
@@ -40,10 +38,8 @@ class _AddNewsPortalState extends State<AddNewsPortal> {
 
       try {
         String fileName = basename(_image.path);
-        StorageReference firebaseStorageRef = FirebaseStorage.instance
-            .ref()
-            .child('post_pictures')
-            .child(fileName);
+        StorageReference firebaseStorageRef =
+            FirebaseStorage.instance.ref().child('news_portal').child(fileName);
         StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
         var downUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
         var url = downUrl.toString();

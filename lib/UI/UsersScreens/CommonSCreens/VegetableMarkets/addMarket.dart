@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:digitalKrishi/CustomComponents/offline.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -13,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddMarketDetails extends StatefulWidget {
+  final LatLng locationCoords;
+  AddMarketDetails({@required this.locationCoords});
   @override
   _AddMarketDetailsState createState() => _AddMarketDetailsState();
 }
@@ -23,8 +24,7 @@ class _AddMarketDetailsState extends State<AddMarketDetails> {
 
   TextEditingController marketName = TextEditingController();
   TextEditingController marketDescription = TextEditingController();
-  LatLng locationCoords;
-
+  TextEditingController location;
   final databaseReference = Firestore.instance;
   String imgUrl;
   File _image;
@@ -41,10 +41,8 @@ class _AddMarketDetailsState extends State<AddMarketDetails> {
 
       try {
         String fileName = basename(_image.path);
-        StorageReference firebaseStorageRef = FirebaseStorage.instance
-            .ref()
-            .child('post_pictures')
-            .child(fileName);
+        StorageReference firebaseStorageRef =
+            FirebaseStorage.instance.ref().child('shop_images').child(fileName);
         StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
         var downUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
         var url = downUrl.toString();
@@ -58,8 +56,8 @@ class _AddMarketDetailsState extends State<AddMarketDetails> {
             'description': marketDescription.text.trim(),
             'thumbNail': imgUrl,
             'markerId': 1,
-            'locationCoords':
-                GeoPoint(locationCoords.latitude, locationCoords.longitude),
+            'locationCoords': GeoPoint(widget.locationCoords.latitude,
+                widget.locationCoords.longitude),
           },
         );
         setState(() {
@@ -67,6 +65,7 @@ class _AddMarketDetailsState extends State<AddMarketDetails> {
           Fluttertoast.showToast(msg: 'Uploaded Successfully');
           marketName.clear();
           marketDescription.clear();
+          location.clear();
           _image = null;
         });
       } catch (e) {
@@ -94,6 +93,11 @@ class _AddMarketDetailsState extends State<AddMarketDetails> {
 
   @override
   Widget build(BuildContext context) {
+    location = TextEditingController(
+        text: "Latitude : " +
+            "${double.parse(widget.locationCoords.latitude.toStringAsFixed(5))}" +
+            "\nlongitude : "
+                "${double.parse(widget.locationCoords.longitude.toStringAsFixed(5))}");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -136,6 +140,16 @@ class _AddMarketDetailsState extends State<AddMarketDetails> {
                     children: <Widget>[
                       SizedBox(height: 10),
                       TextFormField(
+                        enabled: false,
+                        controller: location,
+                        decoration: InputDecoration(
+                          labelText: "Location Coordinates",
+                          hintText: "Location Coordinates",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      TextFormField(
                         controller: marketName,
                         onSaved: (postTitle) => postTitle = postTitle.trim(),
                         decoration: InputDecoration(
@@ -150,15 +164,16 @@ class _AddMarketDetailsState extends State<AddMarketDetails> {
                         onSaved: (postDescription) =>
                             postDescription = postDescription.trim(),
                         textInputAction: TextInputAction.done,
+                        maxLines: 5,
                         decoration: InputDecoration(
-                          labelText: "News Portal URL",
-                          hintText: "News Portal URL",
+                          labelText: "Market description",
+                          hintText: "Market description",
                           border: OutlineInputBorder(),
                         ),
                       ),
                       SizedBox(height: 15),
                       Text(
-                        "Select News Portal Logo",
+                        "Select  Shop Image",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w600),
                       ),
@@ -201,7 +216,7 @@ class _AddMarketDetailsState extends State<AddMarketDetails> {
                                       color: Colors.white,
                                     ),
                                     Text(
-                                      "Tap to get image",
+                                      "Tap to pick image",
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ],

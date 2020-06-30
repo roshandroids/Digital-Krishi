@@ -167,25 +167,28 @@ class _AllCategoryVideosState extends State<AllCategoryVideos> {
               );
             }),
       ),
-      floatingActionButton: InkWell(
-        onTap: () {
-          Navigator.push(
-              context,
-              PageTransition(
-                  type: PageTransitionType.fade, child: AddVideos()));
-        },
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              color: Colors.blue, borderRadius: BorderRadius.circular(30)),
-          height: 60.0,
-          width: 60.0,
-          child: Icon(
-            Icons.add,
-            size: 30,
-          ),
-        ),
-      ),
+      floatingActionButton: (widget.userType == "Admin")
+          ? InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType.fade, child: AddVideos()));
+              },
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(30)),
+                height: 60.0,
+                width: 60.0,
+                child: Icon(
+                  Icons.add,
+                  size: 30,
+                ),
+              ),
+            )
+          : Container(),
     );
   }
 }

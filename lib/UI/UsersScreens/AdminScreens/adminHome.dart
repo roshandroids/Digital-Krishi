@@ -246,6 +246,7 @@ class _AdminHomeState extends State<AdminHome> {
                       PageTransition(
                         type: PageTransitionType.fade,
                         child: ReportedPosts(
+                          userType: widget.userType,
                           uId: widget.uId,
                         ),
                       ),
@@ -281,7 +282,9 @@ class _AdminHomeState extends State<AdminHome> {
                         context,
                         PageTransition(
                             type: PageTransitionType.fade,
-                            child: ListNewsPortal()));
+                            child: ListNewsPortal(
+                              userType: widget.userType,
+                            )));
                   },
                   child: CustomCard(
                     icon: "newspaper",

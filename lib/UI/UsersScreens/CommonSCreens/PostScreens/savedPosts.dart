@@ -46,12 +46,44 @@ class _SavedPostsState extends State<SavedPosts> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            return LinearProgressIndicator(
-              backgroundColor: Colors.green,
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SpinKitDoubleBounce(
+                    color: Colors.blue,
+                    size: 50,
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "You have't saved any posts yet",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ],
+              ),
             );
           if (snapshot.data.data == null)
-            return CircularProgressIndicator(
-              backgroundColor: Colors.green,
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SpinKitDoubleBounce(
+                    color: Colors.blue,
+                    size: 50,
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "You have't saved any posts yet",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ],
+              ),
             );
           return InkWell(
               child: Container(

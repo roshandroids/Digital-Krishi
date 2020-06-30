@@ -9,6 +9,7 @@ import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/marketR
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/updateProfile.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/weatherUpdate.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/savedPosts.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/myPosts.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/nearByMarket.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/allCategoryvideos.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -292,6 +293,23 @@ class _MoreSettingsState extends State<MoreSettings>
                             type: PageTransitionType.rightToLeftWithFade,
                             alignment: Alignment.bottomLeft,
                             duration: Duration(milliseconds: 100),
+                            child: MyPosts(
+                              userId: widget.userId,
+                            )));
+                  },
+                  child: ListWidget(
+                    icon: "post",
+                    title: "My Posts",
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            alignment: Alignment.bottomLeft,
+                            duration: Duration(milliseconds: 100),
                             child: SavedPosts(
                               userId: widget.userId,
                             )));
@@ -342,7 +360,9 @@ class _MoreSettingsState extends State<MoreSettings>
                             type: PageTransitionType.rightToLeftWithFade,
                             alignment: Alignment.bottomLeft,
                             duration: Duration(milliseconds: 100),
-                            child: ListNewsPortal()));
+                            child: ListNewsPortal(
+                              userType: widget.userType,
+                            )));
                   },
                   child: ListWidget(
                     icon: "newspaper",

@@ -190,134 +190,122 @@ class _NewPostState extends State<NewPost> {
         child: Stack(
           children: <Widget>[
             SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Form(
-                  key: _formKey,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(height: 10),
-                        TextFormField(
-                          controller: postTitle,
-                          onSaved: (postTitle) => postTitle = postTitle.trim(),
-                          decoration: InputDecoration(
-                            labelText: "Post Title",
-                            hintText: "Post Title",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        SizedBox(height: 15),
-                        TextFormField(
-                          controller: postDescription,
-                          onSaved: (postDescription) =>
-                              postDescription = postDescription.trim(),
-                          textInputAction: TextInputAction.done,
-                          maxLength: 250,
-                          maxLines: 10,
-                          decoration: InputDecoration(
-                            labelText: "Post Description",
-                            hintText: "Post Description",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        SizedBox(height: 15),
-                        InkWell(
-                          onTap: () {
-                            _choosePictureOption(context);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 1, color: Colors.grey),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Stack(
-                              children: <Widget>[
-                                (_image != null)
-                                    ? Container(
-                                        height: 150,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2.5,
-                                        child: Image.file(
-                                          _image,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : Container(
-                                        height: 150,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2.5,
-                                      ),
-                                Container(
-                                  alignment: Alignment.center,
-                                  height: 150,
-                                  color: Colors.black54,
-                                  width:
-                                      MediaQuery.of(context).size.width / 2.5,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      FaIcon(
-                                        FontAwesomeIcons.cameraRetro,
-                                        color: Colors.white,
-                                      ),
-                                      Text(
-                                        "Tap to get image",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        OfflineBuilder(
-                          connectivityBuilder: (
-                            BuildContext context,
-                            ConnectivityResult connectivity,
-                            Widget child,
-                          ) {
-                            bool connected =
-                                connectivity != ConnectivityResult.none;
-                            return connected
-                                ? InkWell(
-                                    onTap: () {
-                                      FocusScope.of(context)
-                                          .requestFocus(new FocusNode());
-                                      _post(context);
-                                    },
-                                    child: Container(
-                                        height: 50,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        decoration: BoxDecoration(
-                                            color: Colors.orange,
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: Center(
-                                            child: Text(
-                                          'Post',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20.0),
-                                        ))),
-                                  )
-                                : Offline();
-                          },
-                          child: Container(),
-                        ),
-                      ],
+              padding: const EdgeInsets.all(8.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: postTitle,
+                      onSaved: (postTitle) => postTitle = postTitle.trim(),
+                      decoration: InputDecoration(
+                        labelText: "Post Title",
+                        hintText: "Post Title",
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                  ),
+                    SizedBox(height: 15),
+                    TextFormField(
+                      controller: postDescription,
+                      onSaved: (postDescription) =>
+                          postDescription = postDescription.trim(),
+                      textInputAction: TextInputAction.done,
+                      maxLength: 250,
+                      maxLines: 10,
+                      decoration: InputDecoration(
+                        labelText: "Post Description",
+                        hintText: "Post Description",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    InkWell(
+                      onTap: () {
+                        _choosePictureOption(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(width: 1, color: Colors.grey),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Stack(
+                          children: <Widget>[
+                            (_image != null)
+                                ? Container(
+                                    height: 150,
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
+                                    child: Image.file(
+                                      _image,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Container(
+                                    height: 150,
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
+                                  ),
+                            Container(
+                              alignment: Alignment.center,
+                              height: 150,
+                              color: Colors.black54,
+                              width: MediaQuery.of(context).size.width / 2.5,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  FaIcon(
+                                    FontAwesomeIcons.cameraRetro,
+                                    color: Colors.white,
+                                  ),
+                                  Text(
+                                    "Tap to get image",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    OfflineBuilder(
+                      connectivityBuilder: (
+                        BuildContext context,
+                        ConnectivityResult connectivity,
+                        Widget child,
+                      ) {
+                        bool connected =
+                            connectivity != ConnectivityResult.none;
+                        return connected
+                            ? InkWell(
+                                onTap: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(new FocusNode());
+                                  _post(context);
+                                },
+                                child: Container(
+                                    height: 50,
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                        color: Colors.orange,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Center(
+                                        child: Text(
+                                      'Post',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20.0),
+                                    ))),
+                              )
+                            : Offline();
+                      },
+                      child: Container(),
+                    ),
+                  ],
                 ),
               ),
             ),
