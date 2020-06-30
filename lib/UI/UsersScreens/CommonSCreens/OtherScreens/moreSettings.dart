@@ -6,9 +6,10 @@ import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/listNewsPortal.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/calculate.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/marketRate.dart';
-import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/nearByMarket.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/updateProfile.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/weatherUpdate.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/savedPosts.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/nearByMarket.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/allCategoryvideos.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,29 +19,19 @@ import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MoreSettings extends StatefulWidget {
-  final userType;
-  MoreSettings({@required this.userType});
+  final String userType;
+  final String userId;
+  MoreSettings({@required this.userType, @required this.userId});
   @override
   _MoreSettingsState createState() => _MoreSettingsState();
 }
 
-class _MoreSettingsState extends State<MoreSettings> {
-  String userId;
+class _MoreSettingsState extends State<MoreSettings>
+    with SingleTickerProviderStateMixin {
   List<Choice> choices = const <Choice>[
     const Choice(title: 'My Profile', icon: Icons.account_box),
     const Choice(title: 'Log out', icon: Icons.exit_to_app),
   ];
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.currentUser().then((firebaseUser) async {
-      if (firebaseUser != null) {
-        setState(() {
-          userId = firebaseUser.uid;
-        });
-      }
-    });
-  }
 
   void logOut() async {
     await FirebaseAuth.instance.signOut();
@@ -60,7 +51,7 @@ class _MoreSettingsState extends State<MoreSettings> {
     } else {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => UpdateProfile(
-                userId: userId,
+                userId: widget.userId,
                 userType: widget.userType,
               )));
     }
@@ -257,7 +248,7 @@ class _MoreSettingsState extends State<MoreSettings> {
                 background: StreamBuilder(
                   stream: Firestore.instance
                       .collection('users')
-                      .document(userId)
+                      .document(widget.userId)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData)
@@ -290,9 +281,26 @@ class _MoreSettingsState extends State<MoreSettings> {
         body: Container(
           height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: ClampingScrollPhysics(),
             child: Column(
               children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            alignment: Alignment.bottomLeft,
+                            duration: Duration(milliseconds: 100),
+                            child: SavedPosts(
+                              userId: widget.userId,
+                            )));
+                  },
+                  child: ListWidget(
+                    icon: "saved",
+                    title: "Saved Posts",
+                  ),
+                ),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -364,7 +372,9 @@ class _MoreSettingsState extends State<MoreSettings> {
                             type: PageTransitionType.rightToLeftWithFade,
                             alignment: Alignment.bottomLeft,
                             duration: Duration(milliseconds: 100),
-                            child: AllCategoryVideos()));
+                            child: AllCategoryVideos(
+                              userType: widget.userType,
+                            )));
                   },
                   child: ListWidget(
                     icon: "video",

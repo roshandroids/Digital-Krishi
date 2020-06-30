@@ -67,16 +67,18 @@ class _AuthMainScreenState extends State<AuthMainScreen>
                     onPageChanged: (i) {
                       if (i == 0) {
                         FocusScope.of(context).requestFocus(FocusNode());
-                        setState(() {
-                          right = Colors.white;
-                          left = Colors.black;
-                        });
+                        if (mounted)
+                          setState(() {
+                            right = Colors.white;
+                            left = Colors.black;
+                          });
                       } else if (i == 1) {
                         FocusScope.of(context).requestFocus(FocusNode());
-                        setState(() {
-                          right = Colors.black;
-                          left = Colors.white;
-                        });
+                        if (mounted)
+                          setState(() {
+                            right = Colors.black;
+                            left = Colors.white;
+                          });
                       }
                     },
                     children: <Widget>[

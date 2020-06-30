@@ -17,7 +17,7 @@ class ExitAppAlert {
         isCloseButton: false,
         isOverlayTapDismiss: true,
         animationType: AnimationType.fromRight,
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.white,
         descStyle: TextStyle(
           color: Colors.black,
         ),
@@ -30,7 +30,7 @@ class ExitAppAlert {
       desc: "Are you sure you want to exit?",
       buttons: [
         DialogButton(
-          color: Colors.white,
+          color: Colors.black12,
           child: Text(
             "No",
             style: TextStyle(
@@ -42,7 +42,7 @@ class ExitAppAlert {
           width: 120,
         ),
         DialogButton(
-          color: Colors.redAccent,
+          color: Colors.black26,
           child: Text(
             "Yes",
             style: TextStyle(

@@ -46,20 +46,22 @@ class _ExpertDetailsState extends State<ExpertDetails> {
   String userEmail;
   bool isLoading = false;
   void verifyUser() async {
-    setState(() {
-      isLoading = true;
-    });
+    if (mounted)
+      setState(() {
+        isLoading = true;
+      });
     await Firestore.instance
         .collection('users')
         .document(widget.userId)
         .updateData({'isVerified': "Verified"});
-    setState(() {
-      isLoading = false;
-      Fluttertoast.showToast(
-          msg: "User verified Successfully",
-          textColor: Colors.white,
-          backgroundColor: Colors.green);
-    });
+    if (mounted)
+      setState(() {
+        isLoading = false;
+        Fluttertoast.showToast(
+            msg: "User verified Successfully",
+            textColor: Colors.white,
+            backgroundColor: Colors.green);
+      });
     Navigator.of(context).pop();
   }
 
@@ -282,9 +284,13 @@ class _ExpertDetailsState extends State<ExpertDetails> {
                                           Column(
                                             children: <Widget>[
                                               IconButton(
-                                                onPressed: () => setState(() {
-                                                  _makePhoneCall('tel:$_phone');
-                                                }),
+                                                onPressed: () {
+                                                  if (mounted)
+                                                    setState(() {
+                                                      _makePhoneCall(
+                                                          'tel:$_phone');
+                                                    });
+                                                },
                                                 icon: Image.asset(
                                                     'lib/Assets/Images/ring.gif'),
                                               ),

@@ -39,9 +39,10 @@ class _LoginScreenState extends State<LoginScreen> {
   String imageUrl;
   bool _isLoading = false;
   void _toggleLogin() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
+    if (mounted)
+      setState(() {
+        _obscureText = !_obscureText;
+      });
   }
 
   // Check if form is valid before perform login
@@ -69,10 +70,11 @@ class _LoginScreenState extends State<LoginScreen> {
   // Perform login or signup
   void _validateAndSubmit() async {
     if (_validateAndSave()) {
-      setState(() {
-        _errorMessage = "";
-        _isLoading = true;
-      });
+      if (mounted)
+        setState(() {
+          _errorMessage = "";
+          _isLoading = true;
+        });
       String userId = "";
 
       try {
@@ -83,12 +85,13 @@ class _LoginScreenState extends State<LoginScreen> {
               .document(userId)
               .get()
               .then((DocumentSnapshot ds) {
-            setState(() {
-              loggedInUserType = ds.data['userType'];
-              isFirstTime = ds.data['isFirstTime'];
-              isVerified = ds.data['isVerified'];
-              imageUrl = ds.data['photoUrl'];
-            });
+            if (mounted)
+              setState(() {
+                loggedInUserType = ds.data['userType'];
+                isFirstTime = ds.data['isFirstTime'];
+                isVerified = ds.data['isVerified'];
+                imageUrl = ds.data['photoUrl'];
+              });
           });
 
           Fluttertoast.showToast(
@@ -107,20 +110,22 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
       } catch (e) {
+        if (mounted)
+          setState(() {
+            _isLoading = false;
+
+            _errorMessage = e.message;
+            Fluttertoast.showToast(
+                msg: _errorMessage,
+                toastLength: Toast.LENGTH_SHORT,
+                backgroundColor: Colors.blueGrey,
+                textColor: Colors.white);
+          });
+      }
+      if (mounted)
         setState(() {
           _isLoading = false;
-
-          _errorMessage = e.message;
-          Fluttertoast.showToast(
-              msg: _errorMessage,
-              toastLength: Toast.LENGTH_SHORT,
-              backgroundColor: Colors.blueGrey,
-              textColor: Colors.white);
         });
-      }
-      setState(() {
-        _isLoading = false;
-      });
       try {
         if (userId.length > 0 && userId != null) {
           if (loggedInUserType == "Admin") {
@@ -229,43 +234,46 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _validateAndSubmitReset() async {
     if (_validateAndSaveReset()) {
-      setState(() {
-        _errorMessage = "";
-      });
+      if (mounted)
+        setState(() {
+          _errorMessage = "";
+        });
 
       try {
         sendPasswordResetMail(emailReset);
 
-        setState(
-          () {
+        if (mounted)
+          setState(
+            () {
+              Fluttertoast.showToast(
+                  msg:
+                      "Email sent to,$emailReset follow the link to reset your password",
+                  toastLength: Toast.LENGTH_LONG,
+                  backgroundColor: Colors.blueGrey,
+                  textColor: Colors.white);
+
+              Navigator.pushReplacement(
+                context,
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  duration: Duration(milliseconds: 300),
+                  child: AuthMainScreen(),
+                ),
+              );
+            },
+          );
+      } catch (e) {
+        print('Error: $e');
+        if (mounted)
+          setState(() {
+            _isLoading = false;
+            _errorMessage = e.message;
             Fluttertoast.showToast(
-                msg:
-                    "Email sent to,$emailReset follow the link to reset your password",
+                msg: _errorMessage,
                 toastLength: Toast.LENGTH_LONG,
                 backgroundColor: Colors.blueGrey,
                 textColor: Colors.white);
-
-            Navigator.pushReplacement(
-              context,
-              PageTransition(
-                type: PageTransitionType.fade,
-                duration: Duration(milliseconds: 300),
-                child: AuthMainScreen(),
-              ),
-            );
-          },
-        );
-      } catch (e) {
-        print('Error: $e');
-        setState(() {
-          _isLoading = false;
-          _errorMessage = e.message;
-          Fluttertoast.showToast(
-              msg: _errorMessage,
-              toastLength: Toast.LENGTH_LONG,
-              backgroundColor: Colors.blueGrey,
-              textColor: Colors.white);
-        });
+          });
       }
     }
   }

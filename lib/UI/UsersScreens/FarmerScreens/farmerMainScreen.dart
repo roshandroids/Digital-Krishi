@@ -138,6 +138,7 @@ class _FarmerMainScreenState extends State<FarmerMainScreen>
                 Feeds(),
                 UsersChatList(),
                 MoreSettings(
+                  userId: userId,
                   userType: widget.userType,
                 ),
               ],

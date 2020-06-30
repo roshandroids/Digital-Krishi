@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/playVideo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -10,7 +13,13 @@ import 'package:http/http.dart' as http;
 class ListVideos extends StatefulWidget {
   final String category;
   final List videoUrl;
-  ListVideos({this.videoUrl, this.category});
+  final String userType;
+  final String documentId;
+  ListVideos(
+      {@required this.videoUrl,
+      @required this.category,
+      @required this.userType,
+      @required this.documentId});
   @override
   _ListVideosState createState() => _ListVideosState();
 }
@@ -85,8 +94,11 @@ class _ListVideosState extends State<ListVideos> {
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => PlayVideo(
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                              type: PageTransitionType.fade,
+                              child: PlayVideo(
                                 url: widget.videoUrl[index],
                               )));
                     },
@@ -104,32 +116,61 @@ class _ListVideosState extends State<ListVideos> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: FutureBuilder(
-                                future: getVideo(widget.videoUrl[index]),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Shimmer.fromColors(
-                                      baseColor: Colors.grey,
-                                      highlightColor: Colors.grey[100],
-                                      child: Container(
-                                        height: 10,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2,
-                                        color: Colors.white,
-                                      ),
-                                    );
-                                  }
-                                  return Text(
-                                    snapshot.data,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500),
-                                  );
-                                }),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: FutureBuilder(
+                                      future: getVideo(widget.videoUrl[index]),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return Shimmer.fromColors(
+                                            baseColor: Colors.grey,
+                                            highlightColor: Colors.grey[100],
+                                            child: Container(
+                                              height: 10,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2,
+                                              color: Colors.white,
+                                            ),
+                                          );
+                                        }
+                                        return Text(
+                                          snapshot.data,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500),
+                                        );
+                                      }),
+                                ),
+                              ),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                                  onPressed: () async {
+                                    Firestore.instance
+                                        .collection('videos')
+                                        .document(widget.documentId)
+                                        .updateData({
+                                      "videoUrl": FieldValue.arrayRemove(
+                                          [widget.videoUrl[index]]),
+                                    });
+                                    Navigator.of(context).pop();
+                                    Fluttertoast.showToast(
+                                        msg: "Deleted Successfully",
+                                        backgroundColor: Colors.white,
+                                        textColor: Colors.green);
+                                  })
+                            ],
                           ),
+                          Text(index.toString()),
                           ClipRRect(
                             borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(5),

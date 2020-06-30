@@ -1,7 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalKrishi/CustomComponents/customCard.dart';
 import 'package:digitalKrishi/CustomComponents/popupMenu.dart';
 import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/AdminScreens/reportedPost.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/listNewsPortal.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/listVegetableMarkets.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/allCategoryvideos.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -11,7 +16,8 @@ import 'package:shimmer/shimmer.dart';
 
 class AdminHome extends StatefulWidget {
   final String uId;
-  AdminHome({@required this.uId});
+  final String userType;
+  AdminHome({@required this.uId, @required this.userType});
   @override
   _AdminHomeState createState() => _AdminHomeState();
 }
@@ -134,95 +140,172 @@ class _AdminHomeState extends State<AdminHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              actionsIconTheme: IconThemeData(
-                color: Colors.black,
-              ),
-              expandedHeight: 300.0,
-              floating: true,
-              pinned: false,
-              stretch: true,
-              snap: true,
-              actions: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: PopupMenuButton<Choice>(
-                    onSelected: onItemMenuPress,
-                    itemBuilder: (BuildContext context) {
-                      return choices.map((Choice choice) {
-                        return PopupMenuItem<Choice>(
-                            value: choice,
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  choice.icon,
-                                  color: Colors.black,
-                                  size: 25,
-                                ),
-                                Container(
-                                  width: 10.0,
-                                ),
-                                Text(
-                                  choice.title,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                      fontSize: 16),
-                                ),
-                              ],
-                            ));
-                      }).toList();
+        backgroundColor: Colors.white,
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverAppBar(
+                actionsIconTheme: IconThemeData(
+                  color: Colors.black,
+                ),
+                expandedHeight: 300.0,
+                floating: true,
+                pinned: false,
+                stretch: true,
+                snap: false,
+                backgroundColor: Colors.white,
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.parallax,
+                  background: StreamBuilder(
+                    stream: Firestore.instance
+                        .collection('users')
+                        .document(widget.uId)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData)
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey,
+                          highlightColor: Colors.grey[100],
+                          child: Container(
+                            height: 300,
+                            width: MediaQuery.of(context).size.width,
+                            color: Colors.white,
+                          ),
+                        );
+                      if (snapshot.data.data == null)
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey,
+                          highlightColor: Colors.grey[100],
+                          child: Container(
+                            height: 300,
+                            width: MediaQuery.of(context).size.width,
+                            color: Colors.white,
+                          ),
+                        );
+                      return _buildProfileCard(context, snapshot);
                     },
                   ),
                 ),
-              ],
-              backgroundColor: Colors.white,
-              flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.parallax,
-                background: StreamBuilder(
-                  stream: Firestore.instance
-                      .collection('users')
-                      .document(widget.uId)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData)
-                      return Shimmer.fromColors(
-                        baseColor: Colors.grey,
-                        highlightColor: Colors.grey[100],
-                        child: Container(
-                          height: 300,
-                          width: MediaQuery.of(context).size.width,
-                          color: Colors.white,
-                        ),
-                      );
-                    if (snapshot.data.data == null)
-                      return Shimmer.fromColors(
-                        baseColor: Colors.grey,
-                        highlightColor: Colors.grey[100],
-                        child: Container(
-                          height: 300,
-                          width: MediaQuery.of(context).size.width,
-                          color: Colors.white,
-                        ),
-                      );
-                    return _buildProfileCard(context, snapshot);
-                  },
-                ),
               ),
+            ];
+          },
+          body: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "Upadte The System",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w600),
+                      ),
+                      PopupMenuButton<Choice>(
+                        onSelected: onItemMenuPress,
+                        itemBuilder: (BuildContext context) {
+                          return choices.map((Choice choice) {
+                            return PopupMenuItem<Choice>(
+                                value: choice,
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      choice.icon,
+                                      color: Colors.black,
+                                      size: 25,
+                                    ),
+                                    Container(
+                                      width: 10.0,
+                                    ),
+                                    Text(
+                                      choice.title,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
+                                          fontSize: 16),
+                                    ),
+                                  ],
+                                ));
+                          }).toList();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(
+                  indent: 20,
+                  endIndent: 20,
+                  color: Colors.blueGrey,
+                  thickness: 1,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.fade,
+                        child: ReportedPosts(
+                          uId: widget.uId,
+                        ),
+                      ),
+                    );
+                  },
+                  child: CustomCard(
+                    icon: "report",
+                    subTitle: "View Reported Posts",
+                    title: "Reported",
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.fade,
+                        child: AllCategoryVideos(
+                          userType: widget.userType,
+                        ),
+                      ),
+                    );
+                  },
+                  child: CustomCard(
+                    icon: "upload",
+                    subTitle: "Add Agricultural videos",
+                    title: "Videos",
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.fade,
+                            child: ListNewsPortal()));
+                  },
+                  child: CustomCard(
+                    icon: "newspaper",
+                    subTitle: "Add More News Portals",
+                    title: "News Portals",
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.fade,
+                            child: ListVegetableMarkets()));
+                  },
+                  child: CustomCard(
+                    icon: "addMarker",
+                    subTitle: "Markets",
+                    title: "Add vegetable Market Details",
+                  ),
+                ),
+              ],
             ),
-          ];
-        },
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

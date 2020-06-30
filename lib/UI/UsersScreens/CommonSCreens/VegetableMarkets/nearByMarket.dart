@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/offline.dart';
 import 'package:digitalKrishi/Model/shop_model.dart';
-import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/placeDetails.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/placeDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_offline/flutter_offline.dart';
@@ -226,13 +226,14 @@ class _NearByMarketState extends State<NearByMarket> {
               tilt: 45.0),
         ),
       );
-      setState(() {
-        thumbNail = shops[_pageController.page.toInt()].thumbNail;
-        shopName = shops[_pageController.page.toInt()].shopName;
-        description = shops[_pageController.page.toInt()].description;
+      if (mounted)
+        setState(() {
+          thumbNail = shops[_pageController.page.toInt()].thumbNail;
+          shopName = shops[_pageController.page.toInt()].shopName;
+          description = shops[_pageController.page.toInt()].description;
 
-        location = shops[_pageController.page.toInt()].locationCoords;
-      });
+          location = shops[_pageController.page.toInt()].locationCoords;
+        });
     }
   }
 

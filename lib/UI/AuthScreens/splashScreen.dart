@@ -37,28 +37,31 @@ class _SplashScreenState extends State<SplashScreen> {
 
         if (user != null) {
           if (user.isEmailVerified) {
-            setState(() {
-              emailVerified = true;
-              userId = user.uid;
-            });
+            if (mounted)
+              setState(() {
+                emailVerified = true;
+                userId = user.uid;
+              });
             await Firestore.instance
                 .collection('users')
                 .document(user.uid)
                 .get()
                 .then((DocumentSnapshot ds) {
-              setState(() {
-                userId = user.uid;
-                isFirstTime = ds.data['isFirstTime'];
-                loggedInUserType = ds.data['userType'];
-                url = ds.data['photoUrl'];
-                isVerified = ds.data['isVerified'];
-              });
+              if (mounted)
+                setState(() {
+                  userId = user.uid;
+                  isFirstTime = ds.data['isFirstTime'];
+                  loggedInUserType = ds.data['userType'];
+                  url = ds.data['photoUrl'];
+                  isVerified = ds.data['isVerified'];
+                });
             });
           } else {
-            setState(() {
-              emailVerified = false;
-              userId = user.uid;
-            });
+            if (mounted)
+              setState(() {
+                emailVerified = false;
+                userId = user.uid;
+              });
           }
         }
 

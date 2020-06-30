@@ -89,6 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 PageTransition(
                     type: PageTransitionType.fade,
                     child: ListVideos(
+                      documentId: document.documentID,
+                      userType: widget.userType,
                       category: document['title'],
                       videoUrl: document['videoUrl'],
                     )));
@@ -502,7 +504,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: Icon(Icons.more_vert),
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => AllCategoryVideos()));
+                                    builder: (context) => AllCategoryVideos(
+                                          userType: widget.userType,
+                                        )));
                               },
                             )
                           ],

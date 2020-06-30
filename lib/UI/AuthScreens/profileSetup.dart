@@ -67,10 +67,11 @@ class _ProfileSetupState extends State<ProfileSetup> {
   Future getImage() async {
     PickedFile image = await picker.getImage(source: ImageSource.gallery);
     if (image != null) {
-      setState(() {
-        avatarImageFile = File(image.path);
-        isUploadingProfile = true;
-      });
+      if (mounted)
+        setState(() {
+          avatarImageFile = File(image.path);
+          isUploadingProfile = true;
+        });
     }
     uploadProfilePicture();
   }
@@ -78,10 +79,11 @@ class _ProfileSetupState extends State<ProfileSetup> {
   Future takePicture() async {
     PickedFile image = await picker.getImage(source: ImageSource.camera);
     if (image != null) {
-      setState(() {
-        avatarImageFile = File(image.path);
-        isUploadingProfile = true;
-      });
+      if (mounted)
+        setState(() {
+          avatarImageFile = File(image.path);
+          isUploadingProfile = true;
+        });
     }
     uploadProfilePicture();
   }
@@ -144,32 +146,37 @@ class _ProfileSetupState extends State<ProfileSetup> {
               .updateData({
             'photoUrl': photoUrl,
           }).then((data) async {
-            setState(() {
-              isUploadingProfile = false;
-            });
+            if (mounted)
+              setState(() {
+                isUploadingProfile = false;
+              });
             Fluttertoast.showToast(msg: "Upload success");
           }).catchError((err) {
-            setState(() {
-              isUploadingProfile = false;
-            });
+            if (mounted)
+              setState(() {
+                isUploadingProfile = false;
+              });
             Fluttertoast.showToast(msg: err.toString());
           });
         }, onError: (err) {
-          setState(() {
-            isUploadingProfile = false;
-          });
+          if (mounted)
+            setState(() {
+              isUploadingProfile = false;
+            });
           Fluttertoast.showToast(msg: 'This file is not an image');
         });
       } else {
-        setState(() {
-          isUploadingProfile = false;
-        });
+        if (mounted)
+          setState(() {
+            isUploadingProfile = false;
+          });
         Fluttertoast.showToast(msg: 'This file is not an image');
       }
     }, onError: (err) {
-      setState(() {
-        isUploadingProfile = false;
-      });
+      if (mounted)
+        setState(() {
+          isUploadingProfile = false;
+        });
       Fluttertoast.showToast(msg: err.toString());
     });
   }
@@ -188,10 +195,11 @@ class _ProfileSetupState extends State<ProfileSetup> {
   Future getDocumentImage() async {
     PickedFile image = await picker.getImage(source: ImageSource.gallery);
     if (image != null) {
-      setState(() {
-        _image = File(image.path);
-        isUploadingDocument = true;
-      });
+      if (mounted)
+        setState(() {
+          _image = File(image.path);
+          isUploadingDocument = true;
+        });
     }
     uploadDocument();
   }
@@ -216,32 +224,37 @@ class _ProfileSetupState extends State<ProfileSetup> {
               .collection('users')
               .document(widget.userId)
               .updateData({'verificationDocument': imgUrl}).then((data) async {
-            setState(() {
-              isUploadingDocument = false;
-            });
+            if (mounted)
+              setState(() {
+                isUploadingDocument = false;
+              });
             Fluttertoast.showToast(msg: "Upload success");
           }).catchError((err) {
-            setState(() {
-              isUploadingDocument = false;
-            });
+            if (mounted)
+              setState(() {
+                isUploadingDocument = false;
+              });
             Fluttertoast.showToast(msg: err.toString());
           });
         }, onError: (err) {
-          setState(() {
-            isUploadingDocument = false;
-          });
+          if (mounted)
+            setState(() {
+              isUploadingDocument = false;
+            });
           Fluttertoast.showToast(msg: 'This file is not an image');
         });
       } else {
-        setState(() {
-          isUploadingDocument = false;
-        });
+        if (mounted)
+          setState(() {
+            isUploadingDocument = false;
+          });
         Fluttertoast.showToast(msg: 'This file is not an image');
       }
     }, onError: (err) {
-      setState(() {
-        isUploadingDocument = false;
-      });
+      if (mounted)
+        setState(() {
+          isUploadingDocument = false;
+        });
       Fluttertoast.showToast(msg: err.toString());
     });
   }
@@ -256,9 +269,10 @@ class _ProfileSetupState extends State<ProfileSetup> {
       focusNodeContact.unfocus();
       focusNodeAddress.unfocus();
 
-      setState(() {
-        isLoading = true;
-      });
+      if (mounted)
+        setState(() {
+          isLoading = true;
+        });
 
       Firestore.instance
           .collection('users')
@@ -271,13 +285,14 @@ class _ProfileSetupState extends State<ProfileSetup> {
         'isVerified': isVerifiedController.text.trim(),
         'isFirstTime': 'no',
       }).then((data) async {
-        setState(() {
-          isLoading = false;
-          Fluttertoast.showToast(
-              msg: "Update success",
-              textColor: Colors.red,
-              backgroundColor: Colors.black);
-        });
+        if (mounted)
+          setState(() {
+            isLoading = false;
+            Fluttertoast.showToast(
+                msg: "Update success",
+                textColor: Colors.red,
+                backgroundColor: Colors.black);
+          });
         Navigator.pushReplacement(
           context,
           PageTransition(
@@ -289,10 +304,11 @@ class _ProfileSetupState extends State<ProfileSetup> {
           ),
         );
       }).catchError((err) {
-        setState(() {
-          isLoading = false;
-          Fluttertoast.showToast(msg: err.toString());
-        });
+        if (mounted)
+          setState(() {
+            isLoading = false;
+            Fluttertoast.showToast(msg: err.toString());
+          });
       });
     } else {
       Fluttertoast.showToast(msg: 'Please Enter all details');
@@ -310,9 +326,10 @@ class _ProfileSetupState extends State<ProfileSetup> {
       focusNodeContact.unfocus();
       focusNodeAddress.unfocus();
 
-      setState(() {
-        isLoading = true;
-      });
+      if (mounted)
+        setState(() {
+          isLoading = true;
+        });
 
       Firestore.instance
           .collection('users')
@@ -325,13 +342,14 @@ class _ProfileSetupState extends State<ProfileSetup> {
         'isVerified': isVerifiedController.text.trim(),
         'isFirstTime': 'no',
       }).then((data) async {
-        setState(() {
-          isLoading = false;
-          Fluttertoast.showToast(
-              msg: "Update success",
-              textColor: Colors.red,
-              backgroundColor: Colors.black);
-        });
+        if (mounted)
+          setState(() {
+            isLoading = false;
+            Fluttertoast.showToast(
+                msg: "Update success",
+                textColor: Colors.red,
+                backgroundColor: Colors.black);
+          });
         Navigator.pushReplacement(
           context,
           PageTransition(
@@ -345,10 +363,11 @@ class _ProfileSetupState extends State<ProfileSetup> {
           ),
         );
       }).catchError((err) {
-        setState(() {
-          isLoading = false;
-          Fluttertoast.showToast(msg: err.toString());
-        });
+        if (mounted)
+          setState(() {
+            isLoading = false;
+            Fluttertoast.showToast(msg: err.toString());
+          });
       });
     } else {
       Fluttertoast.showToast(msg: 'Please Enter all details');

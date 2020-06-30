@@ -29,9 +29,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   void _toggleSignup() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
+    if (mounted)
+      setState(() {
+        _obscureText = !_obscureText;
+      });
   }
 
   void changeTab() {
@@ -60,10 +61,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Perform login or signup
   void _validateAndSubmit() async {
     if (_validateAndSave()) {
-      setState(() {
-        _errorMessage = "";
-        _isLoading = true;
-      });
+      if (mounted)
+        setState(() {
+          _errorMessage = "";
+          _isLoading = true;
+        });
 
       try {
         await signUp(email, password);
@@ -83,9 +85,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           'verificationDocument': 'null'
         });
         await FirebaseAuth.instance.signOut();
-        setState(() {
-          _isLoading = false;
-        });
+        if (mounted)
+          setState(() {
+            _isLoading = false;
+          });
         await Fluttertoast.showToast(
             msg:
                 "Sign Up Success\n Please verify ypur email before logging in\nCheck inbox",
@@ -94,16 +97,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
             textColor: Colors.black);
         changeTab();
       } catch (e) {
-        setState(() {
-          _isLoading = false;
+        if (mounted)
+          setState(() {
+            _isLoading = false;
 
-          _errorMessage = e.message;
-          Fluttertoast.showToast(
-              msg: _errorMessage,
-              toastLength: Toast.LENGTH_SHORT,
-              backgroundColor: Colors.red,
-              textColor: Colors.white);
-        });
+            _errorMessage = e.message;
+            Fluttertoast.showToast(
+                msg: _errorMessage,
+                toastLength: Toast.LENGTH_SHORT,
+                backgroundColor: Colors.red,
+                textColor: Colors.white);
+          });
       }
     }
   }
@@ -251,9 +255,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         EdgeInsets.only(top: 5.0, right: 40.0),
                                     child: GestureDetector(
                                       onTap: () {
-                                        setState(() {
-                                          userType = "Farmer";
-                                        });
+                                        if (mounted)
+                                          setState(() {
+                                            userType = "Farmer";
+                                          });
                                       },
                                       child: Container(
                                           padding: const EdgeInsets.all(10.0),
@@ -290,9 +295,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     padding: EdgeInsets.only(top: 10.0),
                                     child: GestureDetector(
                                       onTap: () {
-                                        setState(() {
-                                          userType = "Expert";
-                                        });
+                                        if (mounted)
+                                          setState(() {
+                                            userType = "Expert";
+                                          });
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(10.0),

@@ -22,11 +22,12 @@ class _UsersChatListState extends State<UsersChatList> {
     FirebaseAuth.instance.currentUser().then(
       (firebaseUser) {
         if (firebaseUser != null) {
-          setState(
-            () {
-              currentUserId = firebaseUser.uid;
-            },
-          );
+          if (mounted)
+            setState(
+              () {
+                currentUserId = firebaseUser.uid;
+              },
+            );
           getUserType();
         }
       },
@@ -39,9 +40,10 @@ class _UsersChatListState extends State<UsersChatList> {
         .document(currentUserId)
         .get()
         .then((DocumentSnapshot ds) {
-      setState(() {
-        loggedInUserType = ds.data['userType'];
-      });
+      if (mounted)
+        setState(() {
+          loggedInUserType = ds.data['userType'];
+        });
     });
   }
 
@@ -73,9 +75,10 @@ class _UsersChatListState extends State<UsersChatList> {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        setState(() {
-                          showExpert = true;
-                        });
+                        if (mounted)
+                          setState(() {
+                            showExpert = true;
+                          });
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -101,9 +104,10 @@ class _UsersChatListState extends State<UsersChatList> {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        setState(() {
-                          showExpert = false;
-                        });
+                        if (mounted)
+                          setState(() {
+                            showExpert = false;
+                          });
                       },
                       child: Container(
                         decoration: BoxDecoration(

@@ -15,14 +15,13 @@ class PostDetails extends StatefulWidget {
   final String postTitle;
   final String postDescription;
   final Timestamp postedAt;
-  final bool isOffline;
+
   final String postedBy;
   final String id;
   final String collectionName;
 
   PostDetails(
       {Key key,
-      this.isOffline,
       this.postImage,
       this.postTitle,
       this.postDescription,
@@ -333,7 +332,7 @@ class _PostDetailsState extends State<PostDetails> {
                                                                         .document(
                                                                             uId)
                                                                         .collection(
-                                                                            "SavedBooks")
+                                                                            "savedPosts")
                                                                         .document(
                                                                             postId)
                                                                         .snapshots(),
@@ -372,8 +371,9 @@ class _PostDetailsState extends State<PostDetails> {
                                                                                 null) {
                                                                               Navigator.of(context).pop();
                                                                               Fluttertoast.showToast(msg: (snapshot.data.data == null) ? "Saved Successfully" : "Already Saved");
-                                                                              await Firestore.instance.collection('users').document(uId).collection('SavedBooks').document(postId).setData({
-                                                                                "BookId": postId
+                                                                              await Firestore.instance.collection('users').document(uId).collection('savedPosts').document(postId).setData({
+                                                                                "postId": postId,
+                                                                                "postedBy": widget.postedBy
                                                                               });
                                                                             } else {
                                                                               Navigator.of(context).pop();
@@ -444,8 +444,8 @@ class _PostDetailsState extends State<PostDetails> {
                                                                                 0;
                                                                             i < snapshot.data.documents.length;
                                                                             i++) {
-                                                                          if (snapshot.data.documents[i]['reportedBy'] ==
-                                                                              uId) {
+                                                                          if (snapshot.data.documents[i]['reportedBy'] == uId &&
+                                                                              snapshot.data.documents[i]['postId'] == postId) {
                                                                             return ListTile(
                                                                               leading: Icon(
                                                                                 Icons.check,

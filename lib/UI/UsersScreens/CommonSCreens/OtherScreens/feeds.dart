@@ -129,6 +129,7 @@ class _FeedsState extends State<Feeds> {
                           child: Align(
                             alignment: Alignment.centerRight,
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 Text(
                                   timeago.format(
@@ -740,7 +741,7 @@ class _FeedsState extends State<Feeds> {
                           ),
                         );
                       return ListView.builder(
-                        physics: BouncingScrollPhysics(),
+                        physics: ClampingScrollPhysics(),
                         scrollDirection: Axis.vertical,
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) => _buildListItemPosts(

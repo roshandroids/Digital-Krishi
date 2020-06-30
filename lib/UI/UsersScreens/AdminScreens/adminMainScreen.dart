@@ -94,6 +94,7 @@ class _AdminMainScreenState extends State<AdminMainScreen>
               controller: _tabController,
               children: <Widget>[
                 AdminHome(
+                  userType: widget.userType,
                   uId: widget.userId,
                 ),
                 Feeds(),
@@ -102,7 +103,7 @@ class _AdminMainScreenState extends State<AdminMainScreen>
                 ),
                 UsersList(
                   userType: widget.userType,
-                )
+                ),
               ],
             ),
             bottomNavigationBar: Container(

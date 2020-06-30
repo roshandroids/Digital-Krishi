@@ -293,9 +293,10 @@ class _UsersListState extends State<UsersList> {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      setState(() {
-                        showExpert = true;
-                      });
+                      if (mounted)
+                        setState(() {
+                          showExpert = true;
+                        });
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -318,9 +319,10 @@ class _UsersListState extends State<UsersList> {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      setState(() {
-                        showExpert = false;
-                      });
+                      if (mounted)
+                        setState(() {
+                          showExpert = false;
+                        });
                     },
                     child: Container(
                       decoration: BoxDecoration(

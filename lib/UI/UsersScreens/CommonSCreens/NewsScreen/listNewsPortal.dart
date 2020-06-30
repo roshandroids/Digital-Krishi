@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/addNewsPortal.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/readNews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -117,6 +118,25 @@ class _ListNewsPortalState extends State<ListNewsPortal>
                   }),
             ),
           ],
+        ),
+      ),
+      floatingActionButton: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              PageTransition(
+                  type: PageTransitionType.fade, child: AddNewsPortal()));
+        },
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              color: Colors.blue, borderRadius: BorderRadius.circular(30)),
+          height: 60.0,
+          width: 60.0,
+          child: Icon(
+            Icons.add,
+            size: 30,
+          ),
         ),
       ),
     );

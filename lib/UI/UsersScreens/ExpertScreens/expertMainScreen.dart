@@ -142,6 +142,7 @@ class _ExpertMainScreenState extends State<ExpertMainScreen>
                 Feeds(),
                 UsersChatList(),
                 MoreSettings(
+                  userId: widget.usrId,
                   userType: widget.userType,
                 ),
               ],

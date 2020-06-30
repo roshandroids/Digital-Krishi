@@ -74,9 +74,10 @@ class ChatScreenState extends State<ChatScreen> {
   void onFocusChange() {
     if (focusNode.hasFocus) {
       // Hide sticker when keyboard appear
-      setState(() {
-        isShowSticker = false;
-      });
+      if (mounted)
+        setState(() {
+          isShowSticker = false;
+        });
     }
   }
 
@@ -95,17 +96,18 @@ class ChatScreenState extends State<ChatScreen> {
         .document(id)
         .updateData({'chattingWith': peerId});
 
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   Future getImage() async {
     PickedFile image = await picker.getImage(source: ImageSource.gallery);
 
     if (imageFile != null) {
-      setState(() {
-        isLoading = true;
-        imageFile = File(image.path);
-      });
+      if (mounted)
+        setState(() {
+          isLoading = true;
+          imageFile = File(image.path);
+        });
       uploadFile();
     }
   }
@@ -118,14 +120,16 @@ class ChatScreenState extends State<ChatScreen> {
     StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
     storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
       imageUrl = downloadUrl;
-      setState(() {
-        isLoading = false;
-        onSendMessage(imageUrl, 1);
-      });
+      if (mounted)
+        setState(() {
+          isLoading = false;
+          onSendMessage(imageUrl, 1);
+        });
     }, onError: (err) {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted)
+        setState(() {
+          isLoading = false;
+        });
       Fluttertoast.showToast(msg: 'This file is not an image');
     });
   }
@@ -387,9 +391,10 @@ class ChatScreenState extends State<ChatScreen> {
 
   Future<bool> onBackPress() {
     if (isShowSticker) {
-      setState(() {
-        isShowSticker = false;
-      });
+      if (mounted)
+        setState(() {
+          isShowSticker = false;
+        });
     } else {
       Firestore.instance
           .collection('users')
