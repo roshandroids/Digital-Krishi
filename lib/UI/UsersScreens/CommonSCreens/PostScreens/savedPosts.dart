@@ -432,8 +432,7 @@ class _SavedPostsState extends State<SavedPosts> {
                                 return CircularProgressIndicator(
                                   backgroundColor: Colors.green,
                                 );
-                              } else if (snapshot.data.data['userType'] ==
-                                  "Admin") {
+                              } else {
                                 return InkWell(
                                   onTap: () async {
                                     showModalBottomSheet(
@@ -531,8 +530,6 @@ class _SavedPostsState extends State<SavedPosts> {
                                         height: 30,
                                       )),
                                 );
-                              } else {
-                                return Container();
                               }
                             }),
                       ),

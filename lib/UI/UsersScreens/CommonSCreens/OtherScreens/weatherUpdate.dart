@@ -11,14 +11,15 @@ class WeatherUpdate extends StatefulWidget {
 }
 
 class _WeatherUpdateState extends State<WeatherUpdate> {
-  String summary;
-  String currentSummary;
-  String icon;
-
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-
   double latitude;
   double longitude;
+  String summary;
+  double precipIntensity;
+  double precipProbability;
+  String precipType;
+  double temperature;
+
   @override
   void initState() {
     super.initState();
@@ -35,10 +36,11 @@ class _WeatherUpdateState extends State<WeatherUpdate> {
           await darksky.getForecast(position.latitude, position.longitude);
       if (mounted) {
         setState(() {
-          summary = forecast.daily.summary;
-          currentSummary = forecast.currently.time.toString();
-
-          icon = forecast.daily.icon;
+          summary = forecast.currently.summary;
+          precipIntensity = forecast.currently.precipIntensity;
+          precipProbability = forecast.currently.precipProbability;
+          precipType = forecast.currently.precipType;
+          temperature = forecast.currently.temperature;
         });
       }
     }).catchError((e) {
@@ -83,22 +85,21 @@ class _WeatherUpdateState extends State<WeatherUpdate> {
               ? Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
-                  child: (summary != null && currentSummary != null)
-                      ? Container(
-                          child: Column(
-                            children: <Widget>[
-                              (Text(
-                                summary,
-                                style: TextStyle(
-                                  fontSize: 20.0,
-                                  color: Color.fromARGB(0xff, 32, 168, 74),
-                                ),
-                              )),
-                              Container(
-                                child: Text(currentSummary),
-                              )
-                            ],
-                          ),
+                  child: (summary != null)
+                      ? Column(
+                          children: <Widget>[
+                            (Text(
+                              summary,
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: Color.fromARGB(0xff, 32, 168, 74),
+                              ),
+                            )),
+                            Text(precipType),
+                            Text(precipIntensity.toString()),
+                            Text(precipProbability.toString()),
+                            Text(temperature.toString()),
+                          ],
                         )
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,

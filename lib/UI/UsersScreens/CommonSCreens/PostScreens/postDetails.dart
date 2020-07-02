@@ -345,13 +345,31 @@ class _PostDetailsState extends State<PostDetails> {
                                                                           .hasData) {
                                                                         return ListTile(
                                                                           leading:
-                                                                              Icon(
-                                                                            Icons.bookmark_border,
-                                                                            color:
-                                                                                Colors.green,
+                                                                              Shimmer.fromColors(
+                                                                            baseColor:
+                                                                                Colors.black,
+                                                                            highlightColor:
+                                                                                Colors.black12,
+                                                                            child:
+                                                                                Container(
+                                                                              color: Colors.black12,
+                                                                              height: 20,
+                                                                              width: 50,
+                                                                            ),
                                                                           ),
                                                                           title:
-                                                                              Text('Save This post'),
+                                                                              Shimmer.fromColors(
+                                                                            baseColor:
+                                                                                Colors.black,
+                                                                            highlightColor:
+                                                                                Colors.black12,
+                                                                            child:
+                                                                                Container(
+                                                                              color: Colors.black12,
+                                                                              height: 20,
+                                                                              width: 50,
+                                                                            ),
+                                                                          ),
                                                                         );
                                                                       } else {
                                                                         return ListTile(
@@ -395,91 +413,127 @@ class _PostDetailsState extends State<PostDetails> {
                                                                   thickness: 1,
                                                                 ),
                                                                 Expanded(
-                                                                  child:
-                                                                      StreamBuilder(
-                                                                    stream: Firestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            "reports")
-                                                                        .snapshots(),
-                                                                    builder:
-                                                                        (context,
-                                                                            snapshot) {
-                                                                      if (!snapshot
-                                                                          .hasData) {
-                                                                        return ListTile(
-                                                                          leading:
-                                                                              Icon(
-                                                                            Icons.report,
-                                                                            color:
-                                                                                Colors.red,
-                                                                          ),
-                                                                          title:
-                                                                              Text('Report This post'),
-                                                                        );
-                                                                      } else if (snapshot
-                                                                              .data
-                                                                              .documents
-                                                                              .length <=
-                                                                          0) {
-                                                                        return ListTile(
-                                                                          leading:
-                                                                              Icon(
-                                                                            Icons.report,
-                                                                            color:
-                                                                                Colors.red,
-                                                                          ),
-                                                                          title:
-                                                                              Text("Report This Post"),
-                                                                          onTap:
-                                                                              () async {
-                                                                            Navigator.of(context).pop();
-                                                                            Fluttertoast.showToast(msg: "Successfully Reported");
-                                                                            await Firestore.instance.collection('reports').document().setData({
-                                                                              "postId": postId,
-                                                                              "reportedBy": uId,
-                                                                            });
+                                                                  child: (widget
+                                                                              .postedBy !=
+                                                                          uId)
+                                                                      ? StreamBuilder(
+                                                                          stream: Firestore
+                                                                              .instance
+                                                                              .collection("reportedPosts")
+                                                                              .document(widget.id)
+                                                                              .collection("reportedBy")
+                                                                              .snapshots(),
+                                                                          builder:
+                                                                              (context, snapshot) {
+                                                                            if (!snapshot.hasData) {
+                                                                              return ListTile(
+                                                                                leading: Shimmer.fromColors(
+                                                                                  baseColor: Colors.black,
+                                                                                  highlightColor: Colors.black12,
+                                                                                  child: Container(
+                                                                                    color: Colors.black12,
+                                                                                    height: 20,
+                                                                                    width: 50,
+                                                                                  ),
+                                                                                ),
+                                                                                title: Shimmer.fromColors(
+                                                                                  baseColor: Colors.black,
+                                                                                  highlightColor: Colors.black12,
+                                                                                  child: Container(
+                                                                                    color: Colors.black12,
+                                                                                    height: 20,
+                                                                                    width: 50,
+                                                                                  ),
+                                                                                ),
+                                                                              );
+                                                                            } else if (snapshot.data ==
+                                                                                null) {
+                                                                              return ListTile(
+                                                                                leading: Shimmer.fromColors(
+                                                                                  baseColor: Colors.black,
+                                                                                  highlightColor: Colors.black12,
+                                                                                  child: Container(
+                                                                                    color: Colors.black12,
+                                                                                    height: 20,
+                                                                                    width: 50,
+                                                                                  ),
+                                                                                ),
+                                                                                title: Shimmer.fromColors(
+                                                                                  baseColor: Colors.black,
+                                                                                  highlightColor: Colors.black12,
+                                                                                  child: Container(
+                                                                                    color: Colors.black12,
+                                                                                    height: 20,
+                                                                                    width: 50,
+                                                                                  ),
+                                                                                ),
+                                                                              );
+                                                                            } else {
+                                                                              if (snapshot.data.documents.length != 0) {
+                                                                                for (int i = 0; i < snapshot.data.documents.length; i++) {
+                                                                                  if (snapshot.data.documents[i]['reportedBy'] == uId && snapshot.data.documents[i]['postId'] == postId) {
+                                                                                    return ListTile(
+                                                                                      leading: Icon(
+                                                                                        Icons.check,
+                                                                                        color: Colors.green,
+                                                                                      ),
+                                                                                      title: Text("Already Reported"),
+                                                                                      onTap: () {
+                                                                                        Fluttertoast.showToast(msg: "Already Reported");
+                                                                                      },
+                                                                                    );
+                                                                                  } else {
+                                                                                    return ListTile(
+                                                                                      leading: Icon(
+                                                                                        Icons.report,
+                                                                                        color: Colors.red,
+                                                                                      ),
+                                                                                      title: Text("Report This Post"),
+                                                                                      onTap: () async {
+                                                                                        Navigator.of(context).pop();
+                                                                                        Fluttertoast.showToast(msg: "Successfully Reported");
+                                                                                        await Firestore.instance.collection('reportedPosts').document(widget.id).collection("reportedBy").document(uId).setData({
+                                                                                          "postId": postId,
+                                                                                          "reportedBy": uId,
+                                                                                        });
+                                                                                      },
+                                                                                    );
+                                                                                  }
+                                                                                }
+                                                                              } else {
+                                                                                return ListTile(
+                                                                                  leading: Icon(
+                                                                                    Icons.report,
+                                                                                    color: Colors.red,
+                                                                                  ),
+                                                                                  title: Text("Report This Post"),
+                                                                                  onTap: () async {
+                                                                                    Navigator.of(context).pop();
+                                                                                    Fluttertoast.showToast(msg: "Successfully Reported");
+                                                                                    await Firestore.instance.collection('reportedPosts').document(widget.id).collection("reportedBy").document(uId).setData({
+                                                                                      "postId": postId,
+                                                                                      "reportedBy": uId,
+                                                                                    });
+                                                                                  },
+                                                                                );
+                                                                              }
+
+                                                                              return Container();
+                                                                            }
                                                                           },
-                                                                        );
-                                                                      } else {
-                                                                        for (int i =
-                                                                                0;
-                                                                            i < snapshot.data.documents.length;
-                                                                            i++) {
-                                                                          if (snapshot.data.documents[i]['reportedBy'] == uId &&
-                                                                              snapshot.data.documents[i]['postId'] == postId) {
-                                                                            return ListTile(
-                                                                              leading: Icon(
-                                                                                Icons.check,
-                                                                                color: Colors.green,
-                                                                              ),
-                                                                              title: Text("Already Reported"),
-                                                                              onTap: () {
-                                                                                Fluttertoast.showToast(msg: "Already Reported");
-                                                                              },
-                                                                            );
-                                                                          } else {
-                                                                            return ListTile(
-                                                                              leading: Icon(
-                                                                                Icons.report,
-                                                                                color: Colors.red,
-                                                                              ),
-                                                                              title: Text("Report This Post"),
-                                                                              onTap: () async {
-                                                                                Navigator.of(context).pop();
-                                                                                Fluttertoast.showToast(msg: "Successfully Reported");
-                                                                                await Firestore.instance.collection('reports').document().setData({
-                                                                                  "postId": postId,
-                                                                                  "reportedBy": uId,
-                                                                                });
-                                                                              },
-                                                                            );
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                      return null;
-                                                                    },
-                                                                  ),
+                                                                        )
+                                                                      : ListTile(
+                                                                          leading:
+                                                                              Icon(
+                                                                            Icons.do_not_disturb,
+                                                                            color:
+                                                                                Colors.red,
+                                                                          ),
+                                                                          title:
+                                                                              Text("You can't report this post"),
+                                                                          subtitle:
+                                                                              Text("This is your post, and you can't report your own post"),
+                                                                        ),
                                                                 ),
                                                               ],
                                                             ),

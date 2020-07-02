@@ -18,6 +18,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/CalculationTools/calculateFertilizer.dart';
 
 class MoreSettings extends StatefulWidget {
   final String userType;
@@ -408,6 +409,21 @@ class _MoreSettingsState extends State<MoreSettings>
                   child: ListWidget(
                     icon: "calculator",
                     title: "Calculation Tools",
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            alignment: Alignment.bottomLeft,
+                            duration: Duration(milliseconds: 100),
+                            child: TestCalculate()));
+                  },
+                  child: ListWidget(
+                    icon: "video",
+                    title: "Calculate test",
                   ),
                 ),
               ],

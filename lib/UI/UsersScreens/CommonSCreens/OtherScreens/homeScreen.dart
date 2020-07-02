@@ -249,9 +249,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           (document['isVerified'] == "Verified")
                               ? Icon(
-                                  Icons.check_circle,
+                                  Icons.verified_user,
                                   color: Colors.green,
-                                  size: 10,
+                                  size: 15,
                                 )
                               : Container(),
                         ],

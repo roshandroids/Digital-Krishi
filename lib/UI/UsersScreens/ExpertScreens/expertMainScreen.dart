@@ -165,8 +165,6 @@ class _ExpertMainScreenState extends State<ExpertMainScreen>
                 indicatorPadding: EdgeInsets.only(bottom: 5),
                 indicatorColor: Color.fromARGB(0xff, 25, 125, 35),
                 unselectedLabelColor: Colors.blueGrey,
-                labelStyle:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 unselectedLabelStyle:
                     TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 tabs: <Widget>[

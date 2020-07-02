@@ -394,9 +394,9 @@ class _UsersChatListState extends State<UsersChatList> {
                                     fontSize: 14, fontWeight: FontWeight.w600),
                               ),
                               Icon(
-                                Icons.check_circle_outline,
+                                Icons.verified_user,
                                 size: 15,
-                                color: Colors.red,
+                                color: Colors.green,
                               )
                             ],
                           ),
