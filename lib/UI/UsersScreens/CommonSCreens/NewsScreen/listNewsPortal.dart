@@ -45,60 +45,67 @@ class _ListNewsPortalState extends State<ListNewsPortal>
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Text(
-                  document['siteName'],
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.delete,
-                    color: Colors.red,
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      document['siteName'],
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
                   ),
-                  onPressed: () {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext bc) {
-                          return Container(
-                            child: Wrap(
-                              children: <Widget>[
-                                ListTile(
-                                    leading: Icon(
-                                      Icons.warning,
-                                      color: Colors.red,
-                                    ),
-                                    title: Text('Delete This Portal'),
-                                    onTap: () async {
-                                      Navigator.of(context).pop();
-                                      await FirebaseStorage.instance
-                                          .getReferenceFromUrl(
-                                              document['siteLogo'])
-                                          .then((value) => value.delete())
-                                          .catchError((onError) {
-                                        print(onError);
-                                      });
-                                      await Firestore.instance
-                                          .collection('newsPortal')
-                                          .document(document.documentID)
-                                          .delete();
-                                    }),
-                                ListTile(
-                                  leading: Icon(
-                                    Icons.close,
-                                    color: Colors.green,
-                                  ),
-                                  title: Text('Cancel'),
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
-                        });
-                  },
                 ),
+                (widget.userType == "Admin")
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext bc) {
+                                return Container(
+                                  child: Wrap(
+                                    children: <Widget>[
+                                      ListTile(
+                                          leading: Icon(
+                                            Icons.warning,
+                                            color: Colors.red,
+                                          ),
+                                          title: Text('Delete This Portal'),
+                                          onTap: () async {
+                                            Navigator.of(context).pop();
+                                            await FirebaseStorage.instance
+                                                .getReferenceFromUrl(
+                                                    document['siteLogo'])
+                                                .then((value) => value.delete())
+                                                .catchError((onError) {
+                                              print(onError);
+                                            });
+                                            await Firestore.instance
+                                                .collection('newsPortal')
+                                                .document(document.documentID)
+                                                .delete();
+                                          }),
+                                      ListTile(
+                                        leading: Icon(
+                                          Icons.close,
+                                          color: Colors.green,
+                                        ),
+                                        title: Text('Cancel'),
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              });
+                        },
+                      )
+                    : Container(),
               ],
             ),
           ],

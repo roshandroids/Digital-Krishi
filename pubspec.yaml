@@ -57,6 +57,11 @@ dependencies:
   flare_flutter: ^2.0.3
   page_transition: ^1.1.5
   argon_buttons_flutter: ^1.0.2
+  table_calendar: ^2.2.3
+  file_picker: ^1.9.0+1
+  flutter_pdfview: ^1.0.0+10
+  flutter_cache_manager: ^1.2.2
+  pdf_render: ^0.57.2
 
 dev_dependencies:
   flutter_test:

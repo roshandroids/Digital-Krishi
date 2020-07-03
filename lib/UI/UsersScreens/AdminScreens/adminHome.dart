@@ -4,6 +4,7 @@ import 'package:digitalKrishi/CustomComponents/customCard.dart';
 import 'package:digitalKrishi/CustomComponents/popupMenu.dart';
 import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
 import 'package:digitalKrishi/UI/UsersScreens/AdminScreens/reportedPost.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/Documents/documentList.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/listNewsPortal.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/listVegetableMarkets.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/allCategoryvideos.dart';
@@ -238,6 +239,24 @@ class _AdminHomeState extends State<AdminHome> {
                   endIndent: 20,
                   color: Colors.blueGrey,
                   thickness: 1,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.fade,
+                        child: DocumentList(
+                          userType: widget.userType,
+                        ),
+                      ),
+                    );
+                  },
+                  child: CustomCard(
+                    icon: "pdf",
+                    subTitle: "Upload Important Documents",
+                    title: "Documents",
+                  ),
                 ),
                 InkWell(
                   onTap: () {

@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/customListTile.dart';
 import 'package:digitalKrishi/CustomComponents/popupMenu.dart';
 import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/Documents/documentList.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/listNewsPortal.dart';
-import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/calculate.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/marketRate.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/updateProfile.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/weatherUpdate.dart';
@@ -12,6 +12,7 @@ import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/savedPos
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/myPosts.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/nearByMarket.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/allCategoryvideos.dart';
+import 'package:digitalKrishi/UI/UsersScreens/FarmerScreens/toDoTaskList.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -95,43 +96,24 @@ class _MoreSettingsState extends State<MoreSettings>
             color: Colors.black12,
             child: Column(
               children: <Widget>[
-                Expanded(
-                  child: ListTile(
-                      leading: Image.asset(
-                        'lib/Assets/Images/seeds.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      trailing: Icon(Icons.arrow_right),
-                      title: Text('Seed Calculator'),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => Calculate(
-                                  title: "Seed Calculator",
-                                  url: "https://agritechnepal.com/calc/seed/",
-                                )));
-                      }),
-                ),
-                Expanded(
-                  child: ListTile(
-                    leading: Image.asset(
-                      'lib/Assets/Images/pesticide.png',
-                      height: 30,
-                      width: 30,
-                    ),
-                    trailing: Icon(Icons.arrow_right),
-                    title: Text('Fertilizer calculator'),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => Calculate(
-                                title: "Fertilizer Calculator",
-                                url:
-                                    "https://agritechnepal.com/calc/fertilizer/",
-                              )));
-                    },
+                ListTile(
+                  leading: Image.asset(
+                    'lib/Assets/Images/pesticide.png',
+                    height: 30,
+                    width: 30,
                   ),
+                  trailing: Icon(Icons.arrow_right),
+                  title: Text('Fertilizer calculator'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            alignment: Alignment.bottomLeft,
+                            duration: Duration(milliseconds: 100),
+                            child: CalculateFertilizer()));
+                  },
                 ),
               ],
             ),
@@ -203,12 +185,12 @@ class _MoreSettingsState extends State<MoreSettings>
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
-              actionsIconTheme: IconThemeData(
-                color: Colors.black,
-              ),
               actions: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
+                Container(
+                  margin: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10)),
                   child: PopupMenuButton<Choice>(
                     onSelected: onItemMenuPress,
                     itemBuilder: (BuildContext context) {
@@ -378,6 +360,23 @@ class _MoreSettingsState extends State<MoreSettings>
                             type: PageTransitionType.rightToLeftWithFade,
                             alignment: Alignment.bottomLeft,
                             duration: Duration(milliseconds: 100),
+                            child: DocumentList(
+                              userType: widget.userType,
+                            )));
+                  },
+                  child: ListWidget(
+                    icon: "pdf",
+                    title: "Important Documents",
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            alignment: Alignment.bottomLeft,
+                            duration: Duration(milliseconds: 100),
                             child: NearByMarket()));
                   },
                   child: ListWidget(
@@ -411,21 +410,25 @@ class _MoreSettingsState extends State<MoreSettings>
                     title: "Calculation Tools",
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        PageTransition(
-                            type: PageTransitionType.rightToLeftWithFade,
-                            alignment: Alignment.bottomLeft,
-                            duration: Duration(milliseconds: 100),
-                            child: TestCalculate()));
-                  },
-                  child: ListWidget(
-                    icon: "video",
-                    title: "Calculate test",
-                  ),
-                ),
+                (widget.userType == "Farmer")
+                    ? GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  alignment: Alignment.bottomLeft,
+                                  duration: Duration(milliseconds: 100),
+                                  child: ToDoTaskList(
+                                    uId: widget.userId,
+                                  )));
+                        },
+                        child: ListWidget(
+                          icon: "calendar",
+                          title: "To Do Task",
+                        ),
+                      )
+                    : Container(),
               ],
             ),
           ),

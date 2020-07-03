@@ -383,8 +383,8 @@ class _FeedsState extends State<Feeds> {
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return LinearProgressIndicator(
-                            backgroundColor: Colors.green,
+                          return SpinKitWave(
+                            color: Colors.blueGrey,
                           );
                         } else if (snapshot.data.data == null) {
                           return CircularProgressIndicator(
@@ -724,9 +724,26 @@ class _FeedsState extends State<Feeds> {
                     stream: Firestore.instance.collection('posts').snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData)
-                        return LinearProgressIndicator(
-                          backgroundColor: Colors.green,
-                        );
+                        return ListView.builder(
+                            itemCount: 3,
+                            itemBuilder: (context, index) {
+                              return Column(children: <Widget>[
+                                Container(
+                                  height: 150,
+                                  width: 200,
+                                  padding: EdgeInsets.all(20),
+                                  child: Shimmer.fromColors(
+                                    baseColor: Colors.black,
+                                    highlightColor: Colors.black12,
+                                    child: Container(
+                                      color: Colors.black12,
+                                      height: 50,
+                                      width: 50,
+                                    ),
+                                  ),
+                                ),
+                              ]);
+                            });
                       if (snapshot.data.documents.length <= 0)
                         return Center(
                           child: Column(
