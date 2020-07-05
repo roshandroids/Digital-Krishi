@@ -199,7 +199,7 @@ class _AdminHomeState extends State<AdminHome> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        "Upadte The System",
+                        "Update The System",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w600),
                       ),

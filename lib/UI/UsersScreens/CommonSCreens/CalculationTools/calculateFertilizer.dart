@@ -64,8 +64,8 @@ class _CalculateFertilizerState extends State<CalculateFertilizer> {
       isCalculating = true;
     });
     Map body = {
-      "fertcat": categoryValue,
-      "crops": cropValue.name,
+      "fertcat": categoryValue.toLowerCase(),
+      "crops": cropValue.value,
       "num": areaController.text.trim(),
       "area": selectedCategory.name
     };
