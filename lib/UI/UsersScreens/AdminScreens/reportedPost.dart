@@ -48,44 +48,34 @@ class _ReportedPostsState extends State<ReportedPosts> {
           ])),
         ),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: StreamBuilder(
-                  stream: Firestore.instance.collection('reports').snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData)
-                      return LinearProgressIndicator(
-                        backgroundColor: Colors.green,
-                      );
-                    if (snapshot.data.documents.length <= 0)
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            SpinKitThreeBounce(
-                              color: Colors.green,
-                              size: 30.0,
-                            ),
-                            Text("No Posts Available yet")
-                          ],
-                        ),
-                      );
-                    return ListView.builder(
-                      physics: ClampingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) => _buildListItemPosts(
-                          context, snapshot.data.documents[index], 'posts'),
-                    );
-                  }),
-            ),
-          ],
-        ),
-      ),
+      body: StreamBuilder(
+          stream: Firestore.instance.collection('reports').snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return LinearProgressIndicator(
+                backgroundColor: Colors.green,
+              );
+            if (snapshot.data.documents.length <= 0)
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SpinKitThreeBounce(
+                      color: Colors.green,
+                      size: 30.0,
+                    ),
+                    Text("No Posts Available yet")
+                  ],
+                ),
+              );
+            return ListView.builder(
+              physics: ClampingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              itemCount: snapshot.data.documents.length,
+              itemBuilder: (context, index) => _buildListItemPosts(
+                  context, snapshot.data.documents[index], 'posts'),
+            );
+          }),
     );
   }
 

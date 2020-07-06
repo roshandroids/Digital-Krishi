@@ -138,7 +138,10 @@ class _ExpertMainScreenState extends State<ExpertMainScreen>
               physics: BouncingScrollPhysics(),
               controller: _tabController,
               children: <Widget>[
-                HomeScreen(userType: widget.userType),
+                HomeScreen(
+                  userType: widget.userType,
+                  userId: widget.usrId,
+                ),
                 Feeds(),
                 UsersChatList(),
                 MoreSettings(

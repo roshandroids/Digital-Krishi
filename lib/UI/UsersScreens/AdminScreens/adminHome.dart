@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/customCard.dart';
 import 'package:digitalKrishi/CustomComponents/popupMenu.dart';
 import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/Trainings/allTrainings.dart';
 import 'package:digitalKrishi/UI/UsersScreens/AdminScreens/reportedPost.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/Documents/documentList.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/listNewsPortal.dart';
@@ -239,6 +240,25 @@ class _AdminHomeState extends State<AdminHome> {
                   endIndent: 20,
                   color: Colors.blueGrey,
                   thickness: 1,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.fade,
+                        child: AllTrainings(
+                          userId: widget.uId,
+                          userType: widget.userType,
+                        ),
+                      ),
+                    );
+                  },
+                  child: CustomCard(
+                    icon: "training",
+                    subTitle: "Add Agriculturel Training Sessions",
+                    title: "Trainings",
+                  ),
                 ),
                 InkWell(
                   onTap: () {

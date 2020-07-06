@@ -179,17 +179,3 @@ class _EmailVerificationPendingState extends State<EmailVerificationPending> {
     );
   }
 }
-//  RaisedButton(
-//           child: Text("Log Out"),
-//           onPressed: () async {
-//             await FirebaseAuth.instance.signOut();
-//             Navigator.pushReplacement(
-//               context,
-//               PageTransition(
-//                 type: PageTransitionType.fade,
-//                 duration: Duration(milliseconds: 300),
-//                 child: SplashScreen(),
-//               ),
-//             );
-//           },
-//         ),

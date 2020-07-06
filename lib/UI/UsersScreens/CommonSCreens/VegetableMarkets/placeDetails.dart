@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PlaceDetails extends StatefulWidget {
   final String shopName;
@@ -42,13 +42,10 @@ class _PlaceDetailsState extends State<PlaceDetails> {
   }
 
   launchMap() async {
-    var mapSchema =
-        'geo:${widget.locationCoords.latitude},${widget.locationCoords.longitude}';
-    if (await canLaunch(mapSchema)) {
-      await launch(mapSchema);
-    } else {
-      throw 'Could not launch $mapSchema';
-    }
+    MapsLauncher.launchCoordinates(
+      widget.locationCoords.latitude,
+      widget.locationCoords.longitude,
+    );
   }
 
   @override

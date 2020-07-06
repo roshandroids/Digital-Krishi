@@ -299,6 +299,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
             type: PageTransitionType.fade,
             duration: Duration(milliseconds: 300),
             child: FarmerMainScreen(
+              userId: widget.userId,
               userType: widget.userType,
             ),
           ),

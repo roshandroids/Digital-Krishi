@@ -1,5 +1,4 @@
 import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
-import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/WeatherScreens/weatherFetch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

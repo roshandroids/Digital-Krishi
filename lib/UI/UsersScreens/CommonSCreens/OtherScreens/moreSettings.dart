@@ -7,11 +7,11 @@ import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/Documents/documentLi
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/listNewsPortal.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/marketRate.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/updateProfile.dart';
-import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/weatherUpdate.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/savedPosts.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/myPosts.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/nearByMarket.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VideoScreens/allCategoryvideos.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/WeatherScreens/weatherUpdate.dart';
 import 'package:digitalKrishi/UI/UsersScreens/FarmerScreens/toDoTaskList.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

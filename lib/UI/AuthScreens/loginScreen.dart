@@ -161,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   type: PageTransitionType.fade,
                   duration: Duration(milliseconds: 300),
                   child: FarmerMainScreen(
+                    userId: userId,
                     userType: loggedInUserType,
                   ),
                 ),

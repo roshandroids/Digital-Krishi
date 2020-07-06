@@ -96,6 +96,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   type: PageTransitionType.fade,
                   duration: Duration(milliseconds: 300),
                   child: FarmerMainScreen(
+                    userId: userId,
                     userType: loggedInUserType,
                   ),
                 ),

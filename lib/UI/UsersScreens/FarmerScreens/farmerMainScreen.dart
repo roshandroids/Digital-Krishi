@@ -15,7 +15,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FarmerMainScreen extends StatefulWidget {
   final String userType;
-  FarmerMainScreen({@required this.userType});
+  final String userId;
+  FarmerMainScreen({@required this.userType, @required this.userId});
   @override
   _FarmerMainScreenState createState() => _FarmerMainScreenState();
 }
@@ -133,6 +134,7 @@ class _FarmerMainScreenState extends State<FarmerMainScreen>
               controller: _tabController,
               children: <Widget>[
                 HomeScreen(
+                  userId: widget.userId,
                   userType: widget.userType,
                 ),
                 Feeds(),
