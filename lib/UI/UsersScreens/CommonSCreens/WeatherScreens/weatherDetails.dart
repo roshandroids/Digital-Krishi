@@ -105,7 +105,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "Date & Time",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -114,7 +114,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "Summary",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -123,7 +123,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "Forecast",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -132,7 +132,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "PrecipIntensity",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -141,7 +141,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "PrecipProbability",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -150,7 +150,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "PrecipType",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -159,7 +159,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "Temperature",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -168,7 +168,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "DewPoint",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -177,7 +177,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "Humidity",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -186,7 +186,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "Pressure",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -195,7 +195,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "WindSpeed",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -204,7 +204,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "WindBearing",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -213,7 +213,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "CloudCover",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -222,7 +222,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "Visibility",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -231,7 +231,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         Text(
                           "Ozone",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
@@ -254,135 +254,166 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          formatDate,
+                          (formatDate != null) ? formatDate : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.summary,
+                          (widget.summary != null)
+                              ? widget.summary
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
-                        Image.asset(
-                          "lib/Assets/Images/${widget.icon}.png",
-                          height: 23,
-                          width: 23,
+                        (widget.icon != null)
+                            ? Image.asset(
+                                "lib/Assets/Images/${widget.icon}.png",
+                                height: 24,
+                                width: 23,
+                              )
+                            : Container(
+                                height: 24,
+                                width: 23,
+                              ),
+                        Divider(
+                          thickness: .5,
+                          color: Colors.black,
+                        ),
+                        Text(
+                          (widget.precipIntensity.toString() != null)
+                              ? widget.precipIntensity.toString()
+                              : "Not Available !",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.precipIntensity.toString(),
+                          (widget.precipProbability.toString() != null)
+                              ? widget.precipProbability.toString()
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.precipProbability.toString(),
+                          (widget.precipType != null)
+                              ? widget.precipType
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.precipType,
+                          (widget.temperature.toString() != null)
+                              ? widget.temperature.toString() + " °C"
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.temperature.toString() + " °C",
+                          (widget.dewPoint.toString() != null)
+                              ? widget.dewPoint.toString()
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.dewPoint.toString(),
+                          (widget.humidity.toString() != null)
+                              ? widget.humidity.toString()
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.humidity.toString(),
+                          (widget.pressure.toString() != null)
+                              ? widget.pressure.toString()
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.pressure.toString(),
+                          (widget.windSpeed.toString() != null)
+                              ? widget.windSpeed.toString()
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.windSpeed.toString(),
+                          (widget.windBearing.toString() != null)
+                              ? widget.windBearing.toString()
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.windBearing.toString(),
+                          (widget.cloudCover.toString() != null)
+                              ? widget.cloudCover.toString()
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.cloudCover.toString(),
+                          (widget.visibility.toString() != null)
+                              ? widget.visibility.toString() + " KM"
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,
                           color: Colors.black,
                         ),
                         Text(
-                          widget.visibility.toString() + " KM",
+                          (widget.ozone.toString() != null)
+                              ? widget.ozone.toString()
+                              : "Not Available !",
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
-                        ),
-                        Divider(
-                          thickness: .5,
-                          color: Colors.black,
-                        ),
-                        Text(
-                          widget.ozone.toString(),
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Divider(
                           thickness: .5,

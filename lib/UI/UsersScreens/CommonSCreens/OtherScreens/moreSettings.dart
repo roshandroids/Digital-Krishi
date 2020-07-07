@@ -5,7 +5,7 @@ import 'package:digitalKrishi/CustomComponents/popupMenu.dart';
 import 'package:digitalKrishi/UI/AuthScreens/splashScreen.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/Documents/documentList.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/listNewsPortal.dart';
-import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/marketRate.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/VegetableMarkets/marketRate.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/updateProfile.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/savedPosts.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/PostScreens/myPosts.dart';

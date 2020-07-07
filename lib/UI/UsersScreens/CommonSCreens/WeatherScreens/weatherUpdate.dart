@@ -155,10 +155,16 @@ class _WeatherUpdateState extends State<WeatherUpdate> {
                                       height: 60,
                                       width: 60,
                                     ),
-                                    Text(
-                                      forecast.currently.summary,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
+                                    Text(forecast.currently.icon),
+                                    Row(
+                                      children: <Widget>[
+                                        Text("Summary : "),
+                                        Text(
+                                          forecast.currently.summary,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ],
                                     ),
                                     Row(
                                       mainAxisAlignment:
@@ -277,10 +283,17 @@ class _WeatherUpdateState extends State<WeatherUpdate> {
                                                   blurRadius: 1)
                                             ]),
                                         child: ListTile(
-                                          leading: Image.asset(
-                                            "lib/Assets/Images/${forecast.daily.icon}.png",
-                                            height: 60,
-                                            width: 60,
+                                          leading: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Image.asset(
+                                                  "lib/Assets/Images/${forecast.daily.icon}.png",
+                                                  height: 60,
+                                                  width: 60,
+                                                ),
+                                              ),
+                                              Text(forecast.daily.icon)
+                                            ],
                                           ),
                                           title: Text(
                                             forecast.daily.summary,
@@ -293,13 +306,15 @@ class _WeatherUpdateState extends State<WeatherUpdate> {
                                                 Icons.location_on,
                                                 color: Colors.blue,
                                               ),
-                                              Text(
-                                                placemark[0].locality +
-                                                    ", " +
-                                                    placemark[0].country,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w500),
+                                              Expanded(
+                                                child: Text(
+                                                  placemark[0].locality +
+                                                      ", " +
+                                                      placemark[0].country,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
                                               ),
                                             ],
                                           ),

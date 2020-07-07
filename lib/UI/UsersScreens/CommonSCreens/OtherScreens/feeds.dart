@@ -106,40 +106,35 @@ class _FeedsState extends State<Feeds> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 5),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    snapshot.data.data['fullName'],
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        snapshot.data.data['fullName'],
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      (snapshot.data.data['isVerified'] ==
+                                              "Verified")
+                                          ? Icon(Icons.verified_user,
+                                              color: Colors.green, size: 15)
+                                          : Container(),
+                                    ],
                                   ),
-                                  (snapshot.data.data['isVerified'] ==
-                                          "Verified")
-                                      ? Icon(Icons.verified_user,
-                                          color: Colors.green, size: 15)
-                                      : Container(),
+                                  Text(
+                                    timeago.format(
+                                      timestamp.toDate(),
+                                    ),
+                                    style: TextStyle(fontSize: 12),
+                                  ),
                                 ],
                               ),
                             ),
                           ],
-                        ),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Text(
-                                  timeago.format(
-                                    timestamp.toDate(),
-                                  ),
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
                         ),
                       ],
                     ));

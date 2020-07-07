@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digitalKrishi/CustomComponents/bookImage.dart';
+import 'package:digitalKrishi/UI/UsersScreens/AdminScreens/uploadDocuments.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/Documents/openPdf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -147,23 +148,24 @@ class _DocumentListState extends State<DocumentList> {
                             ],
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  PageTransition(
-                                      type: PageTransitionType
-                                          .rightToLeftWithFade,
-                                      alignment: Alignment.bottomLeft,
-                                      duration: Duration(milliseconds: 100),
-                                      child: OpenPdf(
-                                        url: snapshot.data.documents[index]
-                                            ["pdfUrl"],
-                                      )));
-                            },
-                            child: Column(
-                              children: <Widget>[
-                                Expanded(
+                          child: Column(
+                            children: <Widget>[
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        PageTransition(
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            alignment: Alignment.bottomLeft,
+                                            duration:
+                                                Duration(milliseconds: 100),
+                                            child: OpenPdf(
+                                              url: snapshot.data
+                                                  .documents[index]["pdfUrl"],
+                                            )));
+                                  },
                                   child: Container(
                                     margin: EdgeInsets.all(5),
                                     alignment: Alignment.center,
@@ -173,72 +175,79 @@ class _DocumentListState extends State<DocumentList> {
                                     ),
                                   ),
                                 ),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                        size: 20,
-                                      ),
-                                      onPressed: () {
-                                        showModalBottomSheet(
-                                            context: context,
-                                            builder: (BuildContext bc) {
-                                              return Container(
-                                                child: Wrap(
-                                                  children: <Widget>[
-                                                    ListTile(
-                                                        leading: Icon(
-                                                          Icons.warning,
-                                                          color: Colors.red,
+                              ),
+                              (widget.userType == "Admin")
+                                  ? Align(
+                                      alignment: Alignment.centerRight,
+                                      child: IconButton(
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 20,
+                                          ),
+                                          onPressed: () {
+                                            showModalBottomSheet(
+                                                context: context,
+                                                builder: (BuildContext bc) {
+                                                  return Container(
+                                                    child: Wrap(
+                                                      children: <Widget>[
+                                                        ListTile(
+                                                            leading: Icon(
+                                                              Icons.warning,
+                                                              color: Colors.red,
+                                                            ),
+                                                            title: Text(
+                                                                'Delete This Document'),
+                                                            onTap: () async {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'readingDocuments')
+                                                                  .document(snapshot
+                                                                      .data
+                                                                      .documents[
+                                                                          index]
+                                                                      .documentID)
+                                                                  .delete();
+
+                                                              Fluttertoast.showToast(
+                                                                  msg:
+                                                                      "Deleted Successfully",
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  textColor:
+                                                                      Colors
+                                                                          .green);
+                                                            }),
+                                                        ListTile(
+                                                          leading: Icon(
+                                                            Icons.close,
+                                                            color: Colors.green,
+                                                          ),
+                                                          title: Text('Cancel'),
+                                                          onTap: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
                                                         ),
-                                                        title: Text(
-                                                            'Delete This Video'),
-                                                        onTap: () async {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                          Navigator.of(context)
-                                                              .pop();
-
-                                                          await Firestore
-                                                              .instance
-                                                              .collection(
-                                                                  'readingDocuments')
-                                                              .document(snapshot
-                                                                  .data
-                                                                  .documents[
-                                                                      index]
-                                                                  .documentID)
-                                                              .delete();
-
-                                                          Fluttertoast.showToast(
-                                                              msg:
-                                                                  "Deleted Successfully",
-                                                              backgroundColor:
-                                                                  Colors.white,
-                                                              textColor:
-                                                                  Colors.green);
-                                                        }),
-                                                    ListTile(
-                                                      leading: Icon(
-                                                        Icons.close,
-                                                        color: Colors.green,
-                                                      ),
-                                                      title: Text('Cancel'),
-                                                      onTap: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
-                                              );
-                                            });
-                                      }),
-                                ),
-                              ],
-                            ),
+                                                  );
+                                                });
+                                          }),
+                                    )
+                                  : Container(),
+                            ],
                           ),
                         );
                       },
@@ -248,6 +257,29 @@ class _DocumentListState extends State<DocumentList> {
           ],
         ),
       ),
+      floatingActionButton: (widget.userType == "Admin")
+          ? InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        type: PageTransitionType.fade,
+                        child: UploadDocument()));
+              },
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(30)),
+                height: 60.0,
+                width: 60.0,
+                child: Icon(
+                  Icons.add,
+                  size: 30,
+                ),
+              ),
+            )
+          : Container(),
     );
   }
 }

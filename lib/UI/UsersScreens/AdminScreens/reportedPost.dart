@@ -48,45 +48,74 @@ class _ReportedPostsState extends State<ReportedPosts> {
           ])),
         ),
       ),
-      body: StreamBuilder(
-          stream: Firestore.instance.collection('reports').snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData)
-              return LinearProgressIndicator(
-                backgroundColor: Colors.green,
-              );
-            if (snapshot.data.documents.length <= 0)
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SpinKitThreeBounce(
-                      color: Colors.green,
-                      size: 30.0,
-                    ),
-                    Text("No Posts Available yet")
-                  ],
-                ),
-              );
-            return ListView.builder(
-              physics: ClampingScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: (context, index) => _buildListItemPosts(
-                  context, snapshot.data.documents[index], 'posts'),
-            );
-          }),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: StreamBuilder(
+                  stream: Firestore.instance
+                      .collection('reportedPosts')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData)
+                      return ListView.builder(
+                          itemCount: 3,
+                          itemBuilder: (context, index) {
+                            return Column(children: <Widget>[
+                              Container(
+                                height: 150,
+                                width: 200,
+                                padding: EdgeInsets.all(20),
+                                child: Shimmer.fromColors(
+                                  baseColor: Colors.black,
+                                  highlightColor: Colors.black12,
+                                  child: Container(
+                                    color: Colors.black12,
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                ),
+                              ),
+                            ]);
+                          });
+                    if (snapshot.data.documents.length <= 0)
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SpinKitThreeBounce(
+                              color: Colors.green,
+                              size: 30.0,
+                            ),
+                            Text("No Posts Available yet")
+                          ],
+                        ),
+                      );
+                    return ListView.builder(
+                      physics: ClampingScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      itemCount: snapshot.data.documents.length,
+                      itemBuilder: (context, index) => _buildListItemPosts(
+                          context,
+                          snapshot.data.documents[index],
+                          'reportedPosts'),
+                    );
+                  }),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildListItemPosts(
       BuildContext context, DocumentSnapshot document, String collectionName) {
-    String reportId = document.documentID;
+    String docId = document.documentID;
     return StreamBuilder(
-        stream: Firestore.instance
-            .collection('posts')
-            .document(document['postId'])
-            .snapshots(),
+        stream:
+            Firestore.instance.collection('posts').document(docId).snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return SpinKitWave(
@@ -96,7 +125,7 @@ class _ReportedPostsState extends State<ReportedPosts> {
           if (snapshot.data.data == null)
             return SpinKitWave(
               size: 30,
-              color: Colors.green,
+              color: Colors.redAccent,
             );
           return InkWell(
               child: Container(
@@ -265,7 +294,7 @@ class _ReportedPostsState extends State<ReportedPosts> {
                               StreamBuilder(
                                   stream: Firestore.instance
                                       .collection('posts')
-                                      .document(document.documentID)
+                                      .document(docId)
                                       .collection('likes')
                                       .where('like', isEqualTo: true)
                                       .snapshots(),
@@ -307,7 +336,7 @@ class _ReportedPostsState extends State<ReportedPosts> {
                               StreamBuilder(
                                   stream: Firestore.instance
                                       .collection('posts')
-                                      .document(document.documentID)
+                                      .document(docId)
                                       .collection('likes')
                                       .document(snapshot.data.data['PostedBy'])
                                       .snapshots(),
@@ -337,10 +366,9 @@ class _ReportedPostsState extends State<ReportedPosts> {
                                         onPressed: () {
                                           Firestore.instance
                                               .collection('posts')
-                                              .document(document.documentID)
+                                              .document(docId)
                                               .collection('likes')
-                                              .document(snapshot
-                                                  .data.data['PostedBy'])
+                                              .document(widget.uId)
                                               .setData({
                                             "like": snapshot.data.data == null
                                                 ? true
@@ -362,7 +390,7 @@ class _ReportedPostsState extends State<ReportedPosts> {
                               StreamBuilder(
                                   stream: Firestore.instance
                                       .collection('posts')
-                                      .document(document.documentID)
+                                      .document(docId)
                                       .collection('comments')
                                       .snapshots(),
                                   builder: (context, snapshot) {
@@ -421,7 +449,7 @@ class _ReportedPostsState extends State<ReportedPosts> {
                                                 snapshot.data.data['PostedAt'],
                                             postedBy:
                                                 snapshot.data.data['PostedBy'],
-                                            id: document.documentID,
+                                            id: docId,
                                             collectionName: collectionName,
                                           )),
                                     );
@@ -466,9 +494,9 @@ class _ReportedPostsState extends State<ReportedPosts> {
                                                               await Firestore
                                                                   .instance
                                                                   .collection(
-                                                                      'reports')
-                                                                  .document(
-                                                                      reportId)
+                                                                      'reportedPosts')
+                                                                  .document(document
+                                                                      .documentID)
                                                                   .delete();
 
                                                               Fluttertoast.showToast(
@@ -501,6 +529,13 @@ class _ReportedPostsState extends State<ReportedPosts> {
                                                               Navigator.of(
                                                                       context)
                                                                   .pop();
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'reportedPosts')
+                                                                  .document(
+                                                                      docId)
+                                                                  .delete();
                                                               await FirebaseStorage
                                                                   .instance
                                                                   .getReferenceFromUrl(
@@ -526,7 +561,7 @@ class _ReportedPostsState extends State<ReportedPosts> {
                                                                   .collection(
                                                                       'reports')
                                                                   .document(
-                                                                      reportId)
+                                                                      docId)
                                                                   .delete();
 
                                                               Fluttertoast.showToast(

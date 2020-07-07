@@ -58,7 +58,7 @@ class _FarmerDetailsState extends State<FarmerDetails> {
         ),
         centerTitle: true,
         title: Text(
-          "Expert Details",
+          "Farmer Details",
           style: TextStyle(),
         ),
       ),
@@ -145,12 +145,12 @@ class _FarmerDetailsState extends State<FarmerDetails> {
                             textAlign: TextAlign.justify,
                           ),
                           Divider(),
-                          Divider(),
                           Text(
-                            "Contact Doctor 👩🏻‍⚕️ ",
+                            "Address:- " + widget.address,
                             style: TextStyle(fontSize: 15.0),
                             textAlign: TextAlign.justify,
                           ),
+                          Divider(),
                         ],
                       ),
                     ),

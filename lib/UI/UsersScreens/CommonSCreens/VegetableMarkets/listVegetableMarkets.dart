@@ -18,7 +18,7 @@ class ListVegetableMarkets extends StatefulWidget {
 
 class _ListVegetableMarketsState extends State<ListVegetableMarkets>
     with SingleTickerProviderStateMixin {
-  Widget _buildListBooks(
+  Widget _buildListMarkets(
       BuildContext context, DocumentSnapshot document, String collectionName) {
     return InkWell(
       onTap: () {
@@ -52,11 +52,14 @@ class _ListVegetableMarketsState extends State<ListVegetableMarkets>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    document['shopName'],
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      document['shopName'],
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
                 IconButton(
@@ -166,7 +169,7 @@ class _ListVegetableMarketsState extends State<ListVegetableMarkets>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Available News Portals"),
+        title: Text("Available Vegetable Markets"),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -221,7 +224,7 @@ class _ListVegetableMarketsState extends State<ListVegetableMarkets>
                       physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.vertical,
                       itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) => _buildListBooks(
+                      itemBuilder: (context, index) => _buildListMarkets(
                           context, snapshot.data.documents[index], 'shops'),
                     );
                   }),

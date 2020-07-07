@@ -122,7 +122,6 @@ class _MarketRateState extends State<MarketRate> {
             ? Container(
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                 child: WebviewScaffold(
                   url: widget.url,
                   javascriptChannels: jsChannels,
@@ -201,7 +200,7 @@ class _MarketRateState extends State<MarketRate> {
                     children: [
                       Container(
                         alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width / 1.1,
+                        width: MediaQuery.of(context).size.width,
                         child: Column(
                           children: [
                             SpinKitWave(
