@@ -20,6 +20,7 @@ class ReportedPosts extends StatefulWidget {
 }
 
 class _ReportedPostsState extends State<ReportedPosts> {
+  bool isDeleting = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,64 +49,93 @@ class _ReportedPostsState extends State<ReportedPosts> {
           ])),
         ),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: StreamBuilder(
-                  stream: Firestore.instance
-                      .collection('reportedPosts')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData)
-                      return ListView.builder(
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
-                            return Column(children: <Widget>[
-                              Container(
-                                height: 150,
-                                width: 200,
-                                padding: EdgeInsets.all(20),
-                                child: Shimmer.fromColors(
-                                  baseColor: Colors.black,
-                                  highlightColor: Colors.black12,
-                                  child: Container(
-                                    color: Colors.black12,
-                                    height: 50,
-                                    width: 50,
+      body: Stack(
+        children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: StreamBuilder(
+                      stream: Firestore.instance
+                          .collection('reportedPosts')
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData)
+                          return ListView.builder(
+                              itemCount: 3,
+                              itemBuilder: (context, index) {
+                                return Column(children: <Widget>[
+                                  Container(
+                                    height: 150,
+                                    width: 200,
+                                    padding: EdgeInsets.all(20),
+                                    child: Shimmer.fromColors(
+                                      baseColor: Colors.black,
+                                      highlightColor: Colors.black12,
+                                      child: Container(
+                                        color: Colors.black12,
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                    ),
                                   ),
+                                ]);
+                              });
+                        if (snapshot.data.documents.length <= 0)
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                SpinKitThreeBounce(
+                                  color: Colors.green,
+                                  size: 30.0,
                                 ),
-                              ),
-                            ]);
-                          });
-                    if (snapshot.data.documents.length <= 0)
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            SpinKitThreeBounce(
-                              color: Colors.green,
-                              size: 30.0,
+                                Text("No Posts Reported yet")
+                              ],
                             ),
-                            Text("No Posts Available yet")
-                          ],
-                        ),
-                      );
-                    return ListView.builder(
-                      physics: ClampingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) => _buildListItemPosts(
-                          context,
-                          snapshot.data.documents[index],
-                          'reportedPosts'),
-                    );
-                  }),
+                          );
+                        return ListView.builder(
+                          physics: ClampingScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          itemCount: snapshot.data.documents.length,
+                          itemBuilder: (context, index) => _buildListItemPosts(
+                              context,
+                              snapshot.data.documents[index],
+                              'reportedPosts'),
+                        );
+                      }),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          (isDeleting)
+              ? Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.black.withOpacity(.5),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "Please Wait..",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white),
+                        ),
+                        SpinKitCircle(
+                          color: Colors.white,
+                          size: 60,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Container()
+        ],
       ),
     );
   }
@@ -372,7 +402,8 @@ class _ReportedPostsState extends State<ReportedPosts> {
                                               .setData({
                                             "like": snapshot.data.data == null
                                                 ? true
-                                                : !snapshot.data["like"]
+                                                : !snapshot.data["like"],
+                                            "likedBy": widget.uId
                                           });
                                         },
                                       );
@@ -490,15 +521,54 @@ class _ReportedPostsState extends State<ReportedPosts> {
                                                               Navigator.of(
                                                                       context)
                                                                   .pop();
-
+                                                              if (mounted)
+                                                                setState(() {
+                                                                  isDeleting =
+                                                                      true;
+                                                                });
                                                               await Firestore
                                                                   .instance
                                                                   .collection(
                                                                       'reportedPosts')
                                                                   .document(document
                                                                       .documentID)
+                                                                  .collection(
+                                                                      "reportedBy")
+                                                                  .getDocuments()
+                                                                  .then((ds) {
+                                                                for (int i = 0;
+                                                                    i <
+                                                                        ds.documents
+                                                                            .length;
+                                                                    i++) {
+                                                                  Firestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          "reportedPosts")
+                                                                      .document(
+                                                                          document
+                                                                              .documentID)
+                                                                      .collection(
+                                                                          "reportedBy")
+                                                                      .document(
+                                                                          ds.documents[i]
+                                                                              [
+                                                                              "reportedBy"])
+                                                                      .delete();
+                                                                }
+                                                              });
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      "reportedPosts")
+                                                                  .document(document
+                                                                      .documentID)
                                                                   .delete();
-
+                                                              if (mounted)
+                                                                setState(() {
+                                                                  isDeleting =
+                                                                      false;
+                                                                });
                                                               Fluttertoast.showToast(
                                                                   msg:
                                                                       "Removed Successfully",
@@ -529,13 +599,112 @@ class _ReportedPostsState extends State<ReportedPosts> {
                                                               Navigator.of(
                                                                       context)
                                                                   .pop();
+                                                              if (mounted)
+                                                                setState(() {
+                                                                  isDeleting =
+                                                                      true;
+                                                                });
                                                               await Firestore
                                                                   .instance
                                                                   .collection(
                                                                       'reportedPosts')
-                                                                  .document(
-                                                                      docId)
+                                                                  .document(document
+                                                                      .documentID)
+                                                                  .collection(
+                                                                      "reportedBy")
+                                                                  .getDocuments()
+                                                                  .then((ds) {
+                                                                for (int i = 0;
+                                                                    i <
+                                                                        ds.documents
+                                                                            .length;
+                                                                    i++) {
+                                                                  Firestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          "reportedPosts")
+                                                                      .document(
+                                                                          document
+                                                                              .documentID)
+                                                                      .collection(
+                                                                          "reportedBy")
+                                                                      .document(
+                                                                          ds.documents[i]
+                                                                              [
+                                                                              "reportedBy"])
+                                                                      .delete();
+                                                                }
+                                                              });
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'reportedPosts')
+                                                                  .document(document
+                                                                      .documentID)
                                                                   .delete();
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'posts')
+                                                                  .document(document
+                                                                      .documentID)
+                                                                  .collection(
+                                                                      "comments")
+                                                                  .getDocuments()
+                                                                  .then((ds) {
+                                                                for (int i = 0;
+                                                                    i <
+                                                                        ds.documents
+                                                                            .length;
+                                                                    i++) {
+                                                                  Firestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          "posts")
+                                                                      .document(
+                                                                          document
+                                                                              .documentID)
+                                                                      .collection(
+                                                                          "comments")
+                                                                      .document(
+                                                                          ds.documents[i]
+                                                                              [
+                                                                              "commentId"])
+                                                                      .delete();
+                                                                }
+                                                              });
+                                                              await Firestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'posts')
+                                                                  .document(document
+                                                                      .documentID)
+                                                                  .collection(
+                                                                      "likes")
+                                                                  .getDocuments()
+                                                                  .then((ds) {
+                                                                for (int i = 0;
+                                                                    i <
+                                                                        ds.documents
+                                                                            .length;
+                                                                    i++) {
+                                                                  Firestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          "posts")
+                                                                      .document(
+                                                                          document
+                                                                              .documentID)
+                                                                      .collection(
+                                                                          "likes")
+                                                                      .document(
+                                                                          ds.documents[i]
+                                                                              [
+                                                                              "likedBy"])
+                                                                      .delete();
+                                                                }
+                                                              });
+
                                                               await FirebaseStorage
                                                                   .instance
                                                                   .getReferenceFromUrl(
@@ -556,14 +725,11 @@ class _ReportedPostsState extends State<ReportedPosts> {
                                                                       document[
                                                                           'postId'])
                                                                   .delete();
-                                                              await Firestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'reports')
-                                                                  .document(
-                                                                      docId)
-                                                                  .delete();
-
+                                                              if (mounted)
+                                                                setState(() {
+                                                                  isDeleting =
+                                                                      false;
+                                                                });
                                                               Fluttertoast.showToast(
                                                                   msg:
                                                                       "Deleted Successfully",

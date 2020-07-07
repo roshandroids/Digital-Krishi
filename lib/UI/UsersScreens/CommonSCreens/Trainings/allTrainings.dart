@@ -17,7 +17,7 @@ class AllTrainings extends StatefulWidget {
 
 class _AllTrainingsState extends State<AllTrainings> {
   bool isLoading = false;
-  bool isDeleting = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,33 +72,31 @@ class _AllTrainingsState extends State<AllTrainings> {
                       context, snapshot.data.documents[index], 'trainings'),
                 );
               }),
-          (!isLoading)
-              ? Container()
-              : (isDeleting)
-                  ? Container(
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
-                      color: Colors.black.withOpacity(.5),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Booking your Seat..",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            SpinKitHourGlass(
+          (isLoading)
+              ? Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.black.withOpacity(.5),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "Booking your Seat..",
+                          style: TextStyle(
+                              fontSize: 18,
                               color: Colors.white,
-                              size: 60,
-                            ),
-                          ],
+                              fontWeight: FontWeight.w600),
                         ),
-                      ),
-                    )
-                  : Container()
+                        SpinKitHourGlass(
+                          color: Colors.white,
+                          size: 60,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Container()
         ],
       ),
       floatingActionButton: (widget.userType == "Admin")
@@ -615,95 +613,76 @@ class _AllTrainingsState extends State<AllTrainings> {
                     )
               : InkWell(
                   onTap: () async {
-                    await Firestore.instance
-                        .collection("trainings")
-                        .document(document.documentID)
-                        .collection("users")
-                        .getDocuments()
-                        .then((ds) {
-                      for (int i = 0; i < ds.documents.length; i++) {
-                        Firestore.instance
-                            .collection("trainings")
-                            .document(document.documentID)
-                            .collection("users")
-                            .document(ds.documents[i]["bookedBy"])
-                            .delete();
-                      }
-                      print(ds.documents.length);
-                    });
-                    // showModalBottomSheet(
-                    //     context: context,
-                    //     builder: (BuildContext bc) {
-                    //       return Container(
-                    //         height: 100,
-                    //         color: Colors.black12,
-                    //         child: Column(
-                    //           children: <Widget>[
-                    //             Expanded(
-                    //               child: ListTile(
-                    //                 leading: Icon(
-                    //                   Icons.delete,
-                    //                   color: Colors.redAccent,
-                    //                 ),
-                    //                 trailing: Icon(Icons.arrow_right),
-                    //                 title: Text('Delete This Taining'),
-                    //                 onTap: () async {
-                    //                   if (mounted)
-                    //                     setState(() {
-                    //                       isDeleting = true;
-                    //                     });
-                    //                   Firestore.instance
-                    //                       .collection("trainings")
-                    //                       .document(document.documentID)
-                    //                       .collection("users")
-                    //                       .getDocuments()
-                    //                       .then((value) {
-                    //                     print(value);
-                    //                   });
-                    //                   // await Firestore.instance
-                    //                   //     .collection("trainings")
-                    //                   //     .document(document.documentID)
-                    //                   //     .collection("users")
-                    //                   //     .document(widget.userId)
-                    //                   //     .delete();
-                    //                   // await Firestore.instance
-                    //                   //     .collection("trainings")
-                    //                   //     .document(document.documentID)
-                    //                   //     .delete();
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext bc) {
+                          return Container(
+                            height: 100,
+                            color: Colors.black12,
+                            child: Column(
+                              children: <Widget>[
+                                Expanded(
+                                  child: ListTile(
+                                    leading: Icon(
+                                      Icons.delete,
+                                      color: Colors.redAccent,
+                                    ),
+                                    trailing: Icon(Icons.arrow_right),
+                                    title: Text('Delete This Taining'),
+                                    onTap: () async {
+                                      Navigator.of(context).pop();
 
-                    //                   if (mounted)
-                    //                     setState(() {
-                    //                       isDeleting = false;
-                    //                     });
-                    //                   Navigator.of(context).pop();
-                    //                   Fluttertoast.showToast(
-                    //                       msg: "Delete Successfully",
-                    //                       backgroundColor: Colors.green,
-                    //                       textColor: Colors.white);
-                    //                 },
-                    //               ),
-                    //             ),
-                    //             Divider(
-                    //               thickness: .5,
-                    //               color: Colors.black,
-                    //             ),
-                    //             Expanded(
-                    //               child: ListTile(
-                    //                 leading: Icon(
-                    //                   Icons.cancel,
-                    //                   color: Colors.blueGrey,
-                    //                 ),
-                    //                 trailing: Icon(Icons.arrow_right),
-                    //                 title: Text('Cancel'),
-                    //                 onTap: () {
-                    //                   Navigator.of(context).pop();
-                    //                 },
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       );
-                    //     });
+                                      await Firestore.instance
+                                          .collection("trainings")
+                                          .document(document.documentID)
+                                          .collection("users")
+                                          .getDocuments()
+                                          .then((ds) {
+                                        for (int i = 0;
+                                            i < ds.documents.length;
+                                            i++) {
+                                          Firestore.instance
+                                              .collection("trainings")
+                                              .document(document.documentID)
+                                              .collection("users")
+                                              .document(
+                                                  ds.documents[i]["bookedBy"])
+                                              .delete();
+                                        }
+                                      });
+                                      await Firestore.instance
+                                          .collection("trainings")
+                                          .document(document.documentID)
+                                          .delete();
+
+                                      Fluttertoast.showToast(
+                                          msg: "Delete Successfully",
+                                          backgroundColor: Colors.green,
+                                          textColor: Colors.white);
+                                    },
+                                  ),
+                                ),
+                                Divider(
+                                  thickness: .5,
+                                  color: Colors.black,
+                                ),
+                                Expanded(
+                                  child: ListTile(
+                                    leading: Icon(
+                                      Icons.cancel,
+                                      color: Colors.blueGrey,
+                                    ),
+                                    trailing: Icon(Icons.arrow_right),
+                                    title: Text('Cancel'),
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
                   },
                   child: Container(
                     margin: EdgeInsets.all(10),
@@ -727,7 +706,6 @@ class _AllTrainingsState extends State<AllTrainings> {
                     ),
                   ),
                 ),
-          Text(document.documentID),
         ],
       ),
     );

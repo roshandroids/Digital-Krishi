@@ -65,26 +65,7 @@ class _SavedPostsState extends State<SavedPosts> {
                 ],
               ),
             );
-          if (snapshot.data.data == null)
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SpinKitDoubleBounce(
-                    color: Colors.blue,
-                    size: 50,
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "You have't saved any posts yet",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ],
-              ),
-            );
+          if (snapshot.data.data == null) return Container();
           return InkWell(
               child: Container(
             height: MediaQuery.of(context).size.height / 2,
@@ -326,12 +307,12 @@ class _SavedPostsState extends State<SavedPosts> {
                                               .collection('posts')
                                               .document(document.documentID)
                                               .collection('likes')
-                                              .document(snapshot
-                                                  .data.data['PostedBy'])
+                                              .document(widget.userId)
                                               .setData({
                                             "like": snapshot.data.data == null
                                                 ? true
-                                                : !snapshot.data["like"]
+                                                : !snapshot.data["like"],
+                                            "likedBy": widget.userId
                                           });
                                         },
                                       );

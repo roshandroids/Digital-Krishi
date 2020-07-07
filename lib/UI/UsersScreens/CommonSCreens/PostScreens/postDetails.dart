@@ -108,16 +108,25 @@ class _PostDetailsState extends State<PostDetails> {
           isPosting = true;
         });
 
+        String commentId = Firestore.instance
+            .collection("posts")
+            .document(postId)
+            .collection("comments")
+            .document()
+            .documentID;
+
         await Firestore.instance
             .collection("posts")
             .document(postId)
             .collection("comments")
-            .add({
+            .document(commentId)
+            .setData({
           "commentedBy": userName,
           "comment": commentController.text,
           "image": image,
           "userType": loggedInUserType,
           "time": DateTime.now(),
+          "commentId": commentId
         });
         commentController.clear();
         setState(() {

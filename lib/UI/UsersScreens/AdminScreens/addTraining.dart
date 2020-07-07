@@ -261,7 +261,7 @@ class _AddTrainingState extends State<AddTraining> {
                             size: 50,
                           ),
                           Text(
-                            "Adding Your Task..",
+                            "Adding Training..",
                             style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,

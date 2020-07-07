@@ -20,6 +20,7 @@ class MyPosts extends StatefulWidget {
 }
 
 class _MyPostsState extends State<MyPosts> {
+  bool isDeleting = false;
   Widget _buildListItemPosts(
       BuildContext context, DocumentSnapshot document, String collectionName) {
     String postedBy = document['PostedBy'];
@@ -272,7 +273,8 @@ class _MyPostsState extends State<MyPosts> {
                                         .setData({
                                       "like": snapshot.data.data == null
                                           ? true
-                                          : !snapshot.data["like"]
+                                          : !snapshot.data["like"],
+                                      "likedBy": widget.userId,
                                     });
                                   },
                                 );
@@ -386,6 +388,98 @@ class _MyPostsState extends State<MyPosts> {
                                                         Navigator.of(context)
                                                             .pop();
 
+                                                        if (mounted)
+                                                          setState(() {
+                                                            isDeleting = true;
+                                                          });
+                                                        await Firestore.instance
+                                                            .collection(
+                                                                'reportedPosts')
+                                                            .document(document
+                                                                .documentID)
+                                                            .collection(
+                                                                "reportedBy")
+                                                            .getDocuments()
+                                                            .then((ds) {
+                                                          for (int i = 0;
+                                                              i <
+                                                                  ds.documents
+                                                                      .length;
+                                                              i++) {
+                                                            Firestore.instance
+                                                                .collection(
+                                                                    "reportedPosts")
+                                                                .document(document
+                                                                    .documentID)
+                                                                .collection(
+                                                                    "reportedBy")
+                                                                .document(ds
+                                                                        .documents[i]
+                                                                    [
+                                                                    "reportedBy"])
+                                                                .delete();
+                                                          }
+                                                        });
+                                                        await Firestore.instance
+                                                            .collection(
+                                                                'reportedPosts')
+                                                            .document(document
+                                                                .documentID)
+                                                            .delete();
+                                                        await Firestore.instance
+                                                            .collection('posts')
+                                                            .document(document
+                                                                .documentID)
+                                                            .collection(
+                                                                "comments")
+                                                            .getDocuments()
+                                                            .then((ds) {
+                                                          for (int i = 0;
+                                                              i <
+                                                                  ds.documents
+                                                                      .length;
+                                                              i++) {
+                                                            Firestore.instance
+                                                                .collection(
+                                                                    "posts")
+                                                                .document(document
+                                                                    .documentID)
+                                                                .collection(
+                                                                    "comments")
+                                                                .document(ds
+                                                                        .documents[i]
+                                                                    [
+                                                                    "commentId"])
+                                                                .delete();
+                                                          }
+                                                        });
+                                                        await Firestore.instance
+                                                            .collection('posts')
+                                                            .document(document
+                                                                .documentID)
+                                                            .collection("likes")
+                                                            .getDocuments()
+                                                            .then((ds) {
+                                                          for (int i = 0;
+                                                              i <
+                                                                  ds.documents
+                                                                      .length;
+                                                              i++) {
+                                                            Firestore.instance
+                                                                .collection(
+                                                                    "posts")
+                                                                .document(document
+                                                                    .documentID)
+                                                                .collection(
+                                                                    "likes")
+                                                                .document(
+                                                                    ds.documents[
+                                                                            i][
+                                                                        "likedBy"])
+                                                                .delete();
+                                                          }
+                                                        });
+
                                                         await FirebaseStorage
                                                             .instance
                                                             .getReferenceFromUrl(
@@ -402,6 +496,10 @@ class _MyPostsState extends State<MyPosts> {
                                                             .document(document
                                                                 .documentID)
                                                             .delete();
+                                                        if (mounted)
+                                                          setState(() {
+                                                            isDeleting = false;
+                                                          });
 
                                                         Fluttertoast.showToast(
                                                             msg:
@@ -481,46 +579,75 @@ class _MyPostsState extends State<MyPosts> {
               TextStyle(color: Color(0xff203152), fontWeight: FontWeight.bold),
         ),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: StreamBuilder(
-                  stream: Firestore.instance
-                      .collection('posts')
-                      .where("PostedBy", isEqualTo: widget.userId)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData)
-                      return LinearProgressIndicator(
-                        backgroundColor: Colors.green,
-                      );
-                    if (snapshot.data.documents.length <= 0)
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            SpinKitThreeBounce(
-                              color: Colors.green,
-                              size: 30.0,
+      body: Stack(
+        children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: StreamBuilder(
+                      stream: Firestore.instance
+                          .collection('posts')
+                          .where("PostedBy", isEqualTo: widget.userId)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData)
+                          return LinearProgressIndicator(
+                            backgroundColor: Colors.green,
+                          );
+                        if (snapshot.data.documents.length <= 0)
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                SpinKitThreeBounce(
+                                  color: Colors.green,
+                                  size: 30.0,
+                                ),
+                                Text("No Posts Available yet")
+                              ],
                             ),
-                            Text("No Posts Available yet")
-                          ],
-                        ),
-                      );
-                    return ListView.builder(
-                      physics: ClampingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) => _buildListItemPosts(
-                          context, snapshot.data.documents[index], 'posts'),
-                    );
-                  }),
+                          );
+                        return ListView.builder(
+                          physics: ClampingScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          itemCount: snapshot.data.documents.length,
+                          itemBuilder: (context, index) => _buildListItemPosts(
+                              context, snapshot.data.documents[index], 'posts'),
+                        );
+                      }),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          (isDeleting)
+              ? Container(
+                  color: Colors.black.withOpacity(.5),
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "Please Wait..",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white),
+                        ),
+                        SpinKitCircle(
+                          color: Colors.white,
+                          size: 60,
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              : Container()
+        ],
       ),
     );
   }
