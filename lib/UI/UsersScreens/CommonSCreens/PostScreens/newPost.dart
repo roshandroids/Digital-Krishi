@@ -170,7 +170,7 @@ class _NewPostState extends State<NewPost> {
               Navigator.of(context).pop();
             }),
         title: Text(
-          'Add Post Upadte',
+          'Add Post Update',
           style:
               TextStyle(color: Color(0xff203152), fontWeight: FontWeight.bold),
         ),

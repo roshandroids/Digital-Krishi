@@ -546,7 +546,7 @@ class _SavedPostsState extends State<SavedPosts> {
         ),
         centerTitle: true,
         title: Text(
-          "Saved P osts",
+          "Saved Posts",
           style:
               TextStyle(color: Color(0xff203152), fontWeight: FontWeight.bold),
         ),

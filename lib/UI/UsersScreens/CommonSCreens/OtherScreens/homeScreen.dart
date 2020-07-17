@@ -629,109 +629,114 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color.fromRGBO(0, 0, 0, .4),
-                          blurRadius: 1.0,
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(left: 5, right: 0, top: 10),
-                        height: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                (widget.userType == "Expert")
+                    ? Container()
+                    : Container(
+                        margin: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color.fromRGBO(0, 0, 0, .4),
+                                blurRadius: 1.0,
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.white),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Expanded(
-                                    child: Image.asset(
-                                  "lib/Assets/Images/training.png",
-                                  color: Colors.green,
-                                )),
-                                Expanded(
-                                  child: Text(
-                                    "Trainings ",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
+                            Container(
+                              margin:
+                                  EdgeInsets.only(left: 5, right: 0, top: 10),
+                              height: 50,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Expanded(
+                                          child: Image.asset(
+                                        "lib/Assets/Images/training.png",
+                                        color: Colors.green,
+                                      )),
+                                      Expanded(
+                                        child: Text(
+                                          "Trainings ",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
+                                  IconButton(
+                                    icon: Icon(Icons.more_vert),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          type: PageTransitionType
+                                              .rightToLeftWithFade,
+                                          alignment: Alignment.bottomLeft,
+                                          duration: Duration(milliseconds: 100),
+                                          child: AllTrainings(
+                                            userId: widget.userId,
+                                            userType: widget.userType,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
                             ),
-                            IconButton(
-                              icon: Icon(Icons.more_vert),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  PageTransition(
-                                    type:
-                                        PageTransitionType.rightToLeftWithFade,
-                                    alignment: Alignment.bottomLeft,
-                                    duration: Duration(milliseconds: 100),
-                                    child: AllTrainings(
-                                      userId: widget.userId,
-                                      userType: widget.userType,
+                            Container(
+                              height: 150,
+                              child: StreamBuilder(
+                                stream: Firestore.instance
+                                    .collection('trainings')
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData)
+                                    return LinearProgressIndicator(
+                                      backgroundColor: Colors.black12,
+                                    );
+                                  if (snapshot.data.documents.length <= 0)
+                                    return Stack(
+                                      children: [
+                                        LinearProgressIndicator(
+                                          backgroundColor: Colors.green,
+                                        ),
+                                        Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "No Trainings Available Currently !",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w700),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  return ListView.builder(
+                                    physics: BouncingScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: snapshot.data.documents.length,
+                                    itemBuilder: (context, index) =>
+                                        _buildListTraining(
+                                      context,
+                                      snapshot.data.documents[index],
                                     ),
-                                  ),
-                                );
-                              },
-                            )
+                                  );
+                                },
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                      Container(
-                        height: 150,
-                        child: StreamBuilder(
-                          stream: Firestore.instance
-                              .collection('trainings')
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData)
-                              return LinearProgressIndicator(
-                                backgroundColor: Colors.black12,
-                              );
-                            if (snapshot.data.documents.length <= 0)
-                              return Stack(
-                                children: [
-                                  LinearProgressIndicator(
-                                    backgroundColor: Colors.green,
-                                  ),
-                                  Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      "No Trainings Available Currently !",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            return ListView.builder(
-                              physics: BouncingScrollPhysics(),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: snapshot.data.documents.length,
-                              itemBuilder: (context, index) =>
-                                  _buildListTraining(
-                                context,
-                                snapshot.data.documents[index],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 (widget.userType != "Expert")
                     ? Container(
                         margin: EdgeInsets.all(5),
