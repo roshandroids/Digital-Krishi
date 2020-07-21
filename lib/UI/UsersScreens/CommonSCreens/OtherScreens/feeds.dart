@@ -15,8 +15,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class Feeds extends StatefulWidget {
-  Feeds({Key key}) : super(key: key);
-
   @override
   _FeedsState createState() => _FeedsState();
 }
@@ -30,7 +28,10 @@ class _FeedsState extends State<Feeds> {
   @override
   void initState() {
     super.initState();
+    getCurrentUser();
+  }
 
+  void getCurrentUser() async {
     FirebaseAuth.instance.currentUser().then((firebaseUser) {
       if (firebaseUser != null) {
         if (mounted) {

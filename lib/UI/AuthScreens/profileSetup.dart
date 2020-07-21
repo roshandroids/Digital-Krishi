@@ -710,7 +710,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
                 height: 20,
               ),
 
-              (widget.userType != "Farmer")
+              (widget.userType == "Expert")
                   ? Container(
                       child: Theme(
                         data: Theme.of(context)
@@ -744,83 +744,86 @@ class _ProfileSetupState extends State<ProfileSetup> {
                       margin: EdgeInsets.only(left: 30.0, right: 30.0),
                     )
                   : Container(),
-              SizedBox(
-                height: 20,
-                child: Text("All field must be filled"),
-              ),
-              Stack(
-                children: <Widget>[
-                  (widget.userType != "Farmer")
-                      ? (!isUploadingDocument)
-                          ? Container(
-                              margin: EdgeInsets.symmetric(horizontal: 25),
-                              height: MediaQuery.of(context).size.height / 4,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                  border:
-                                      Border.all(width: 4, color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: (docUrl != null)
-                                  ? CachedNetworkImage(imageUrl: docUrl)
-                                  : (_image != null)
-                                      ? Image.file(
-                                          _image,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Container(),
-                            )
-                          : Container(
-                              margin: EdgeInsets.symmetric(horizontal: 25),
-                              height: MediaQuery.of(context).size.height / 4,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  border: Border.all(width: 1),
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  SpinKitWave(
-                                    color: Colors.blue,
-                                    size: 50.0,
-                                  ),
-                                  Text("Uploading..")
-                                ],
+              (widget.userType == "Expert")
+                  ? SizedBox(
+                      height: 20,
+                      child: Text("All field must be filled"),
+                    )
+                  : Container(),
+              (widget.userType == "Expert")
+                  ? Stack(
+                      children: <Widget>[
+                        (!isUploadingDocument)
+                            ? Container(
+                                margin: EdgeInsets.symmetric(horizontal: 25),
+                                height: MediaQuery.of(context).size.height / 4,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 4, color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: (docUrl != null)
+                                    ? CachedNetworkImage(imageUrl: docUrl)
+                                    : (_image != null)
+                                        ? Image.file(
+                                            _image,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Container(),
+                              )
+                            : Container(
+                                margin: EdgeInsets.symmetric(horizontal: 25),
+                                height: MediaQuery.of(context).size.height / 4,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    border: Border.all(width: 1),
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    SpinKitWave(
+                                      color: Colors.blue,
+                                      size: 50.0,
+                                    ),
+                                    Text("Uploading..")
+                                  ],
+                                ),
                               ),
-                            )
-                      : Container(),
-                  InkWell(
-                    onTap: getDocumentImage,
-                    child: Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.symmetric(horizontal: 25),
-                      height: MediaQuery.of(context).size.height / 4,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(.5),
-                          border: Border.all(width: 1, color: Colors.black),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          FaIcon(
-                            FontAwesomeIcons.cameraRetro,
-                            color: Colors.white,
-                            size: 30,
+                        InkWell(
+                          onTap: getDocumentImage,
+                          child: Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.symmetric(horizontal: 25),
+                            height: MediaQuery.of(context).size.height / 4,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(.5),
+                                border:
+                                    Border.all(width: 1, color: Colors.black),
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                FaIcon(
+                                  FontAwesomeIcons.cameraRetro,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                                Text(
+                                  "Tap to pick image",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18),
+                                ),
+                              ],
+                            ),
                           ),
-                          Text(
-                            "Tap to pick image",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                        ),
+                      ],
+                    )
+                  : Container(),
             ],
             crossAxisAlignment: CrossAxisAlignment.center,
           ),

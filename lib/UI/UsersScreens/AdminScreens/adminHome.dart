@@ -341,8 +341,8 @@ class _AdminHomeState extends State<AdminHome> {
                   },
                   child: CustomCard(
                     icon: "addMarker",
-                    subTitle: "Markets",
-                    title: "Add vegetable Market Details",
+                    subTitle: "Add vegetable Market Details",
+                    title: "Markets",
                   ),
                 ),
               ],

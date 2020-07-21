@@ -32,7 +32,7 @@ class _ToDoTaskListState extends State<ToDoTaskList> {
   Widget _buildListBooks(
       BuildContext context, DocumentSnapshot document, String collectionName) {
     Timestamp date = document["date"];
-    String formattedBookingDate =
+    String formattedDate =
         DateFormat('MMM dd,yyyy | hh:mm').format(date.toDate());
     return Container(
       margin: EdgeInsets.all(10),
@@ -155,7 +155,7 @@ class _ToDoTaskListState extends State<ToDoTaskList> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
               Text(
-                formattedBookingDate,
+                formattedDate,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
             ],

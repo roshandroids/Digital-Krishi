@@ -257,25 +257,28 @@ class _ExpertDetailsState extends State<ExpertDetails> {
                                   ],
                                 ),
                                 Divider(),
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'Contact Expert : ',
-                                    style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black,
-                                        fontSize: 16),
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                          text: "choose any of below",
+                                (widget.viewBy != "Admin")
+                                    ? RichText(
+                                        text: TextSpan(
+                                          text: 'Contact Expert : ',
                                           style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
                                               color: Colors.black,
-                                              fontWeight: FontWeight.w400)),
-                                    ],
-                                  ),
-                                ),
+                                              fontSize: 16),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                                text: "choose any of below",
+                                                style: TextStyle(
+                                                    fontFamily: 'Poppins',
+                                                    fontSize: 12,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w400)),
+                                          ],
+                                        ),
+                                      )
+                                    : Container(),
                                 (widget.viewBy != "Admin")
                                     ? Row(
                                         mainAxisAlignment:
