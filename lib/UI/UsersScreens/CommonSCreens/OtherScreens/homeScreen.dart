@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/OtherScreens/plantDetails.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/Trainings/allTrainings.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/listNewsPortal.dart';
 import 'package:digitalKrishi/UI/UsersScreens/CommonSCreens/NewsScreen/readNews.dart';
@@ -23,6 +24,60 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Widget _buildListPlants(BuildContext context, DocumentSnapshot document) {
+  //   return InkWell(
+  //     onTap: () {
+  //       Navigator.push(
+  //           context,
+  //           PageTransition(
+  //               type: PageTransitionType.fade,
+  //               child: PlantDetails(
+  //                 contact: document["Contact"],
+  //                 cost: document["Cost"],
+  //                 image: document["Image"],
+  //                 name: document["Name"],
+  //                 quality: document["Quality"],
+  //                 soldBy: document["SoldBy"],
+  //               )));
+  //     },
+  //     child: Container(
+  //       width: MediaQuery.of(context).size.width / 2.18,
+  //       margin: EdgeInsets.only(top: 5, bottom: 10, left: 5, right: 5),
+  //       decoration: BoxDecoration(boxShadow: [
+  //         BoxShadow(
+  //           color: Color.fromRGBO(0, 0, 0, .5),
+  //           blurRadius: 1.0,
+  //         ),
+  //       ], color: Colors.white, borderRadius: BorderRadius.circular(5)),
+  //       child: Column(
+  //         children: <Widget>[
+  //           SizedBox(
+  //             width: 5,
+  //           ),
+  //           Expanded(
+  //             child: ClipRRect(
+  //               borderRadius: BorderRadius.circular(5),
+  //               child: CachedNetworkImage(
+  //                 imageUrl: document['Image'],
+  //                 fit: BoxFit.contain,
+  //                 placeholder: (context, url) => SpinKitWave(
+  //                   color: Colors.blue,
+  //                   size: 50.0,
+  //                 ),
+  //                 errorWidget: (context, url, error) => Icon(Icons.error),
+  //               ),
+  //             ),
+  //           ),
+  //           Text(
+  //             document['Name'],
+  //             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildListNews(BuildContext context, DocumentSnapshot document) {
     return InkWell(
       onTap: () {
@@ -433,6 +488,95 @@ class _HomeScreenState extends State<HomeScreen> {
             physics: BouncingScrollPhysics(),
             child: Column(
               children: <Widget>[
+                // Container(
+                //   margin: EdgeInsets.all(5),
+                //   decoration: BoxDecoration(
+                //       boxShadow: [
+                //         BoxShadow(
+                //           color: Color.fromRGBO(0, 0, 0, .4),
+                //           blurRadius: 1.0,
+                //         ),
+                //       ],
+                //       borderRadius: BorderRadius.circular(5),
+                //       color: Colors.white),
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: <Widget>[
+                //       Container(
+                //         margin: EdgeInsets.only(left: 5, right: 0, top: 10),
+                //         height: 50,
+                //         child: Row(
+                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //           children: <Widget>[
+                //             Column(
+                //               crossAxisAlignment: CrossAxisAlignment.start,
+                //               children: <Widget>[
+                //                 Expanded(
+                //                   child: FaIcon(
+                //                     FontAwesomeIcons.dollarSign,
+                //                     color: Colors.green,
+                //                   ),
+                //                 ),
+                //                 Expanded(
+                //                   child: Text(
+                //                     "Buy Plants",
+                //                     style: TextStyle(
+                //                         fontSize: 16,
+                //                         fontWeight: FontWeight.w600),
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //             IconButton(
+                //               icon: Icon(Icons.more_vert),
+                //               onPressed: () {},
+                //             )
+                //           ],
+                //         ),
+                //       ),
+                //       Container(
+                //         height: 150,
+                //         child: StreamBuilder(
+                //           stream: Firestore.instance
+                //               .collection('productsOnSell')
+                //               .snapshots(),
+                //           builder: (context, snapshot) {
+                //             if (!snapshot.hasData)
+                //               return LinearProgressIndicator(
+                //                 backgroundColor: Colors.black12,
+                //               );
+                //             if (snapshot.data.documents.length <= 0)
+                //               return Stack(
+                //                 children: [
+                //                   LinearProgressIndicator(
+                //                     backgroundColor: Colors.green,
+                //                   ),
+                //                   Container(
+                //                     alignment: Alignment.center,
+                //                     child: Text(
+                //                       "Nothing on sell currently !",
+                //                       style: TextStyle(
+                //                           fontSize: 20,
+                //                           fontWeight: FontWeight.w700),
+                //                     ),
+                //                   ),
+                //                 ],
+                //               );
+                //             return ListView.builder(
+                //               physics: BouncingScrollPhysics(),
+                //               scrollDirection: Axis.horizontal,
+                //               itemCount: snapshot.data.documents.length,
+                //               itemBuilder: (context, index) => _buildListPlants(
+                //                 context,
+                //                 snapshot.data.documents[index],
+                //               ),
+                //             );
+                //           },
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 Container(
                   margin: EdgeInsets.all(5),
                   decoration: BoxDecoration(
